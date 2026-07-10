@@ -4,5 +4,8 @@
   "traffic": ["traffic", "도로", "교통", "고속도로", "carretera", "tráfico", "交通", "道路", "高速"],
   "harbor": ["harbor", "port", "항구", "puerto", "港", "港口"],
   "mountain": ["mountain", "산", "ski", "스키장", "montaña", "山", "スキー"],
-  "downtown": ["downtown", "도심", "street", "거리", "city", "시내", "centro", "街", "都市"]
+  "downtown": ["downtown", "도심", "street", "거리", "city", "시내", "centro", "街", "都市"],
+  "dashcam": ["dashcam", "dash cam", "블랙박스", "行车记录仪", "ドライブレコーダー", "cámara de salpicadero"],
+  "wildlife": ["wildlife", "야생동물", "동물원", "zoo", "野生动物", "野生生物", "動物園", "vida silvestre"],
+  "crowd": ["crowd", "군중", "인파", "보행자", "pedestrian", "人群", "群衆", "多人数"]
 }

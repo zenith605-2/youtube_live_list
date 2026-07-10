@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const KEYWORDS_PATH = path.join(ROOT, 'config', 'keywords.json');
+const KEYWORDS_VIDEO_PATH = path.join(ROOT, 'config', 'keywords-video.json');
 const EXCLUDE_KEYWORDS_PATH = path.join(ROOT, 'config', 'exclude-keywords.json');
 const CATEGORIES_PATH = path.join(ROOT, 'config', 'categories.json');
 
@@ -45,20 +46,31 @@ async function fetchJson(url) {
   return res.json();
 }
 
-// videoIds 중 현재 실제로 라이브 중인 것만 videoId -> {snippet, liveStreamingDetails} 맵으로 반환
-async function getLiveDetails(videoIds) {
-  const liveMap = new Map();
+// videoId -> {snippet, liveStreamingDetails, status} 맵으로 반환 (라이브/일반 영상 공통 조회)
+async function getVideoInfo(videoIds) {
+  const map = new Map();
   for (const batch of chunk(videoIds, 50)) {
     if (batch.length === 0) continue;
-    const url = `${BASE}/videos?part=snippet,liveStreamingDetails&id=${batch.join(',')}&key=${API_KEY}`;
+    const url = `${BASE}/videos?part=snippet,liveStreamingDetails,status&id=${batch.join(',')}&key=${API_KEY}`;
     const data = await fetchJson(url);
     for (const item of data.items || []) {
-      if (item.snippet?.liveBroadcastContent === 'live') {
-        liveMap.set(item.id, { snippet: item.snippet, liveStreamingDetails: item.liveStreamingDetails || {} });
-      }
+      map.set(item.id, {
+        snippet: item.snippet,
+        liveStreamingDetails: item.liveStreamingDetails || {},
+        status: item.status || {},
+      });
     }
   }
-  return liveMap;
+  return map;
+}
+
+// content_type에 따라 "지금도 유효한지" 판단 기준이 다름: live는 방송 중인지, video는 공개 상태인지
+function isValidFor(contentType, info) {
+  if (!info) return false;
+  if (contentType === 'video') {
+    return info.status?.privacyStatus === 'public' || info.status?.privacyStatus === 'unlisted';
+  }
+  return info.snippet?.liveBroadcastContent === 'live';
 }
 
 async function getChannelCountries(channelIds) {
@@ -103,6 +115,7 @@ async function searchLiveByKeyword(keyword, maxResults = 25) {
       channelId: item.snippet.channelId,
       thumbnail: snippetThumbnail(item.snippet),
       matchedKeyword: keyword,
+      contentType: 'live',
     }));
 }
 
@@ -119,6 +132,24 @@ async function searchChannelLive(channelId, maxResults = 25) {
       channelId: item.snippet.channelId,
       thumbnail: snippetThumbnail(item.snippet),
       matchedKeyword: 'channel scan',
+      contentType: 'live',
+    }));
+}
+
+// 라이브가 아닌 일반 업로드 영상(블랙박스/야생동물/군중 등) 탐색 — eventType 지정 안 함
+async function searchVideoByKeyword(keyword, maxResults = 25) {
+  const url = `${BASE}/search?part=snippet&type=video&maxResults=${maxResults}&q=${encodeURIComponent(keyword)}&key=${API_KEY}`;
+  const data = await fetchJson(url);
+  return (data.items || [])
+    .filter(item => item.id?.videoId)
+    .map(item => ({
+      videoId: item.id.videoId,
+      title: decodeHtmlEntities(item.snippet.title),
+      channelTitle: decodeHtmlEntities(item.snippet.channelTitle),
+      channelId: item.snippet.channelId,
+      thumbnail: snippetThumbnail(item.snippet),
+      matchedKeyword: keyword,
+      contentType: 'video',
     }));
 }
 
@@ -127,12 +158,14 @@ async function searchChannelLive(channelId, maxResults = 25) {
 const MAX_CHANNEL_SCANS_PER_RUN = 30;
 
 async function main() {
-  const [keywordsRaw, excludeRaw, categoriesRaw] = await Promise.all([
+  const [keywordsRaw, keywordsVideoRaw, excludeRaw, categoriesRaw] = await Promise.all([
     readFile(KEYWORDS_PATH, 'utf-8'),
+    readFile(KEYWORDS_VIDEO_PATH, 'utf-8').catch(() => '{"keywords":[]}'),
     readFile(EXCLUDE_KEYWORDS_PATH, 'utf-8').catch(() => '{"keywords":[]}'),
     readFile(CATEGORIES_PATH, 'utf-8').catch(() => '{}'),
   ]);
   const keywords = JSON.parse(keywordsRaw).keywords || [];
+  const keywordsVideo = JSON.parse(keywordsVideoRaw).keywords || [];
   const excludeKeywords = (JSON.parse(excludeRaw).keywords || []).map(k => k.toLowerCase());
   const categories = JSON.parse(categoriesRaw);
 
@@ -154,16 +187,18 @@ async function main() {
 
   console.log(`기존 목록 ${existingRows.length}건 생존 확인 중...`);
   const existingIds = existingRows.map(r => r.video_id);
-  const liveMap = await getLiveDetails(existingIds);
+  const infoMap = await getVideoInfo(existingIds);
 
   const toDelete = []; // 오탐(제외 키워드) 확정 삭제
   const toUpdate = []; // 상태전환/정보보강 업데이트
-  let liveCount = 0;
+  let validCount = 0;
   let offlineCount = 0;
 
   for (const row of existingRows) {
-    const detail = liveMap.get(row.video_id);
-    if (!detail) {
+    const contentType = row.content_type || 'live';
+    const info = infoMap.get(row.video_id);
+
+    if (!isValidFor(contentType, info)) {
       offlineCount += 1;
       if (row.status !== 'offline') {
         toUpdate.push({ video_id: row.video_id, status: 'offline' });
@@ -171,7 +206,7 @@ async function main() {
       continue;
     }
 
-    const { snippet, liveStreamingDetails } = detail;
+    const { snippet, liveStreamingDetails } = info;
     const title = decodeHtmlEntities(snippet.title);
     const channelTitle = decodeHtmlEntities(snippet.channelTitle);
     if (isExcluded(title, channelTitle)) {
@@ -179,7 +214,7 @@ async function main() {
       continue;
     }
 
-    liveCount += 1;
+    validCount += 1;
     const patch = { video_id: row.video_id };
     let needsUpdate = false;
     if (row.status !== 'live') {
@@ -200,14 +235,18 @@ async function main() {
       patch.category = classifyCategory(title, channelTitle);
       needsUpdate = true;
     }
-    if (!row.started_at && liveStreamingDetails?.actualStartTime) {
+    if (contentType === 'live' && !row.started_at && liveStreamingDetails?.actualStartTime) {
       patch.started_at = liveStreamingDetails.actualStartTime;
+      needsUpdate = true;
+    }
+    if (contentType === 'video' && !row.published_at && snippet.publishedAt) {
+      patch.published_at = snippet.publishedAt;
       needsUpdate = true;
     }
     if (needsUpdate) toUpdate.push(patch);
   }
 
-  console.log(`  -> 라이브 ${liveCount}건, 오프라인 전환 ${offlineCount}건, 오탐 삭제 ${toDelete.length}건, 정보 갱신 ${toUpdate.length}건`);
+  console.log(`  -> 유효 ${validCount}건, 오프라인 전환 ${offlineCount}건, 오탐 삭제 ${toDelete.length}건, 정보 갱신 ${toUpdate.length}건`);
 
   if (toDelete.length) {
     const { error } = await supabase.from('streams').delete().in('video_id', toDelete);
@@ -219,12 +258,12 @@ async function main() {
     if (error) console.error('업데이트 실패:', video_id, error.message);
   }
 
-  // 국가 정보가 비어있는 현재 생존 행들에 한해 channels.list로 조회 후 채움
-  const rowsNeedingCountry = existingRows.filter(r => !r.country && liveMap.has(r.video_id));
-  const countryChannelIds = rowsNeedingCountry.map(r => liveMap.get(r.video_id).snippet.channelId);
+  // 국가 정보가 비어있는 현재 유효한 행들에 한해 channels.list로 조회 후 채움
+  const rowsNeedingCountry = existingRows.filter(r => !r.country && isValidFor(r.content_type || 'live', infoMap.get(r.video_id)));
+  const countryChannelIds = rowsNeedingCountry.map(r => infoMap.get(r.video_id).snippet.channelId);
   const countryMap = await getChannelCountries(countryChannelIds);
   for (const row of rowsNeedingCountry) {
-    const channelId = liveMap.get(row.video_id).snippet.channelId;
+    const channelId = infoMap.get(row.video_id).snippet.channelId;
     const country = countryMap.get(channelId);
     if (country) {
       const { error } = await supabase.from('streams').update({ country }).eq('video_id', row.video_id);
@@ -256,8 +295,12 @@ async function main() {
   const scannedSet = new Set((scannedRows || []).map(r => r.channel_id));
 
   const observedChannelIds = new Set();
-  for (const detail of liveMap.values()) if (detail.snippet.channelId) observedChannelIds.add(detail.snippet.channelId);
-  for (const c of candidateMap.values()) if (c.channelId) observedChannelIds.add(c.channelId);
+  for (const row of existingRows) {
+    if ((row.content_type || 'live') !== 'live') continue;
+    const channelId = infoMap.get(row.video_id)?.snippet.channelId;
+    if (channelId && isValidFor('live', infoMap.get(row.video_id))) observedChannelIds.add(channelId);
+  }
+  for (const c of candidateMap.values()) if (c.contentType === 'live' && c.channelId) observedChannelIds.add(c.channelId);
 
   const unscannedChannelIds = [...observedChannelIds].filter(id => !scannedSet.has(id));
   const channelIdsToScan = unscannedChannelIds.slice(0, MAX_CHANNEL_SCANS_PER_RUN);
@@ -283,15 +326,30 @@ async function main() {
     if (error) console.error('scanned_channels 기록 실패:', error.message);
   }
 
+  // 라이브 외 일반 영상(블랙박스/야생동물/군중 등) 탐색
+  for (const keyword of keywordsVideo) {
+    try {
+      const results = await searchVideoByKeyword(keyword);
+      for (const r of results) {
+        if (knownIds.has(r.videoId) || candidateMap.has(r.videoId)) continue;
+        if (isExcluded(r.title, r.channelTitle)) continue;
+        candidateMap.set(r.videoId, r);
+      }
+      console.log(`  영상 검색 "${keyword}": ${results.length}건 조회`);
+    } catch (err) {
+      console.error(`  영상 검색 실패 "${keyword}":`, err.message);
+    }
+  }
+
   console.log(`신규 후보 ${candidateMap.size}건 검증 중...`);
   const candidateIds = [...candidateMap.keys()];
-  const verifiedLive = await getLiveDetails(candidateIds);
+  const candidateInfoMap = await getVideoInfo(candidateIds);
 
-  const newCandidates = [...candidateMap.values()].filter(c => verifiedLive.has(c.videoId));
+  const newCandidates = [...candidateMap.values()].filter(c => isValidFor(c.contentType, candidateInfoMap.get(c.videoId)));
   const newCountryMap = await getChannelCountries(newCandidates.map(c => c.channelId));
 
   const newRows = newCandidates.map(c => {
-    const detail = verifiedLive.get(c.videoId);
+    const info = candidateInfoMap.get(c.videoId);
     return {
       video_id: c.videoId,
       title: c.title,
@@ -300,10 +358,12 @@ async function main() {
       thumbnail: c.thumbnail,
       matched_keyword: c.matchedKeyword,
       source: 'keyword',
+      content_type: c.contentType,
       status: 'live',
       category: classifyCategory(c.title, c.channelTitle),
       country: newCountryMap.get(c.channelId) || null,
-      started_at: detail.liveStreamingDetails?.actualStartTime || null,
+      started_at: c.contentType === 'live' ? (info.liveStreamingDetails?.actualStartTime || null) : null,
+      published_at: c.contentType === 'video' ? (info.snippet?.publishedAt || null) : null,
     };
   });
 
@@ -314,7 +374,7 @@ async function main() {
     if (error) console.error('삽입 실패:', error.message);
   }
 
-  console.log(`완료: 라이브 ${liveCount}, 오프라인 ${offlineCount}, 오탐삭제 ${toDelete.length}, 신규 ${newRows.length}`);
+  console.log(`완료: 유효 ${validCount}, 오프라인 ${offlineCount}, 오탐삭제 ${toDelete.length}, 신규 ${newRows.length}`);
 }
 
 main().catch(err => {

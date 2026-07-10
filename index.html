@@ -26,6 +26,11 @@
     <span id="lastUpdated" class="last-updated"></span>
   </div>
   <div class="filter-bar">
+    <select id="contentTypeFilter">
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="live" data-i18n="content_type_live">Live</option>
+      <option value="video" data-i18n="content_type_video">Video</option>
+    </select>
     <select id="categoryFilter">
       <option value="" data-i18n="filter_all">All</option>
       <option value="beach" data-i18n="category_beach">Beach</option>
@@ -34,6 +39,9 @@
       <option value="harbor" data-i18n="category_harbor">Harbor</option>
       <option value="mountain" data-i18n="category_mountain">Mountain</option>
       <option value="downtown" data-i18n="category_downtown">Downtown</option>
+      <option value="dashcam" data-i18n="category_dashcam">Dashcam</option>
+      <option value="wildlife" data-i18n="category_wildlife">Wildlife</option>
+      <option value="crowd" data-i18n="category_crowd">Crowd</option>
       <option value="other" data-i18n="category_other">Other</option>
     </select>
     <select id="countryFilter">

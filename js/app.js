@@ -4,7 +4,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_IPRYfUNkhfTLWohT6gjXYw_APGRcPuP';
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const CATEGORY_KEYS = ['beach', 'parking', 'traffic', 'harbor', 'mountain', 'downtown', 'other'];
+const CATEGORY_KEYS = ['beach', 'parking', 'traffic', 'harbor', 'mountain', 'downtown', 'dashcam', 'wildlife', 'crowd', 'other'];
 const VIEW_MODE_KEY = 'viewMode';
 
 const grid = document.getElementById('grid');
@@ -27,6 +27,7 @@ const leaderboardModal = document.getElementById('leaderboardModal');
 const leaderboardClose = document.getElementById('leaderboardClose');
 const leaderboardList = document.getElementById('leaderboardList');
 const langSelect = document.getElementById('langSelect');
+const contentTypeFilter = document.getElementById('contentTypeFilter');
 const categoryFilter = document.getElementById('categoryFilter');
 const countryFilter = document.getElementById('countryFilter');
 const qualityFilter = document.getElementById('qualityFilter');
@@ -81,11 +82,14 @@ function mapRow(row) {
     category: row.category || null,
     maxQuality: row.max_quality || null,
     startedAt: row.started_at || null,
+    contentType: row.content_type || 'live',
+    publishedAt: row.published_at || null,
   };
 }
 
 function currentFiltered() {
   const q = searchInput.value.trim().toLowerCase();
+  const contentType = contentTypeFilter.value;
   const category = categoryFilter.value;
   const country = countryFilter.value;
   const quality = qualityFilter.value;
@@ -94,6 +98,7 @@ function currentFiltered() {
 
   const filtered = streams.filter(s => {
     if (q && !s.title.toLowerCase().includes(q) && !s.channelTitle.toLowerCase().includes(q)) return false;
+    if (contentType && s.contentType !== contentType) return false;
     if (category && s.category !== category) return false;
     if (country && s.country !== country) return false;
     if (quality && s.maxQuality !== quality) return false;
@@ -126,27 +131,40 @@ function render(list) {
     card.className = 'card';
     card.dataset.videoId = s.videoId;
     card.dataset.title = s.title;
-    const liveSnapshot = `https://i.ytimg.com/vi/${encodeURIComponent(s.videoId)}/hqdefault_live.jpg?cb=${pageLoadTime}`;
-    // 대표 썸네일이 이미 유튜브 자동 라이브 스냅샷이면(=커스텀 썸네일이 아니면) 굳이 두 개를 비교해서 보여줄 필요가 없음
-    const hasCustomThumbnail = !!s.thumbnail && !s.thumbnail.includes('_live');
-    const thumbHtml = hasCustomThumbnail
-      ? `
+    const isLiveType = s.contentType === 'live';
+    const isAvailable = s.status === 'live'; // 'live' 상태값은 두 타입 모두 "지금도 유효함"을 의미
+
+    let thumbHtml;
+    if (isLiveType) {
+      const liveSnapshot = `https://i.ytimg.com/vi/${encodeURIComponent(s.videoId)}/hqdefault_live.jpg?cb=${pageLoadTime}`;
+      // 대표 썸네일이 이미 유튜브 자동 라이브 스냅샷이면(=커스텀 썸네일이 아니면) 굳이 두 개를 비교해서 보여줄 필요가 없음
+      const hasCustomThumbnail = !!s.thumbnail && !s.thumbnail.includes('_live');
+      thumbHtml = hasCustomThumbnail
+        ? `
+          <div class="thumb-half">
+            <img src="${s.thumbnail}" alt="${escapeHtml(s.title)} - ${t('thumb_official')}" loading="lazy">
+            <span class="thumb-label">${t('thumb_official')}</span>
+          </div>
+          <div class="thumb-half">
+            <img src="${liveSnapshot}" alt="${escapeHtml(s.title)} - ${t('thumb_live')}" loading="lazy" onerror="this.closest('.thumb-half').style.display='none'">
+            <span class="thumb-label">${t('thumb_live')}</span>
+          </div>
+        `
+        : `
+          <div class="thumb-half">
+            <img src="${liveSnapshot}" alt="${escapeHtml(s.title)}" loading="lazy" onerror="this.src='${s.thumbnail}'">
+          </div>
+        `;
+    } else {
+      thumbHtml = `
         <div class="thumb-half">
-          <img src="${s.thumbnail}" alt="${escapeHtml(s.title)} - ${t('thumb_official')}" loading="lazy">
-          <span class="thumb-label">${t('thumb_official')}</span>
-        </div>
-        <div class="thumb-half">
-          <img src="${liveSnapshot}" alt="${escapeHtml(s.title)} - ${t('thumb_live')}" loading="lazy" onerror="this.closest('.thumb-half').style.display='none'">
-          <span class="thumb-label">${t('thumb_live')}</span>
-        </div>
-      `
-      : `
-        <div class="thumb-half">
-          <img src="${liveSnapshot}" alt="${escapeHtml(s.title)}" loading="lazy" onerror="this.src='${s.thumbnail}'">
+          <img src="${s.thumbnail}" alt="${escapeHtml(s.title)}" loading="lazy">
         </div>
       `;
+    }
 
-    const isLive = s.status === 'live';
+    const badgeText = !isAvailable ? t('status_offline') : (isLiveType ? 'LIVE' : t('content_type_video'));
+    const badgeClass = isAvailable && isLiveType ? '' : 'offline-badge';
     const isFav = favorites.has(s.videoId);
 
     const categoryHtml = currentUser
@@ -155,7 +173,9 @@ function render(list) {
         </select>`
       : (s.category ? `<span class="card-keyword">${escapeHtml(t('category_' + s.category))}</span>` : '');
     const countryHtml = s.country ? `<span class="card-keyword">${escapeHtml(countryDisplayName(s.country))}</span>` : '';
-    const startedHtml = s.startedAt ? `<span class="card-started">🕐 ${escapeHtml(formatRelativeTime(s.startedAt))}</span>` : '';
+    const dateHtml = isLiveType
+      ? (s.startedAt ? `<span class="card-started">🕐 ${escapeHtml(formatRelativeTime(s.startedAt))}</span>` : '')
+      : (s.publishedAt ? `<span class="card-started">📅 ${escapeHtml(formatRelativeTime(s.publishedAt))}</span>` : '');
 
     const actionsHtml = currentUser ? `
       <div class="card-actions">
@@ -168,7 +188,7 @@ function render(list) {
 
     card.innerHTML = `
       <div class="thumb-wrap">
-        <span class="live-badge ${isLive ? '' : 'offline-badge'}">${isLive ? 'LIVE' : t('status_offline')}</span>
+        <span class="live-badge ${badgeClass}">${badgeText}</span>
         ${thumbHtml}
       </div>
       <div class="card-body">
@@ -178,7 +198,7 @@ function render(list) {
         ${s.source === 'user' && s.upvoteCount > 0 ? `<span class="card-keyword">👍 ${s.upvoteCount}</span>` : ''}
         ${countryHtml}
         ${categoryHtml}
-        ${startedHtml}
+        ${dateHtml}
         ${actionsHtml}
       </div>
     `;
@@ -373,7 +393,7 @@ modalCopyBtn.addEventListener('click', async () => {
 });
 
 searchInput.addEventListener('input', () => render(currentFiltered()));
-[categoryFilter, countryFilter, qualityFilter, statusFilter].forEach(el => {
+[contentTypeFilter, categoryFilter, countryFilter, qualityFilter, statusFilter].forEach(el => {
   el.addEventListener('change', () => render(currentFiltered()));
 });
 favoritesOnlyCheckbox.addEventListener('change', () => render(currentFiltered()));
