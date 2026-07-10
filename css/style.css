@@ -43,7 +43,8 @@ body {
   color: var(--muted);
 }
 
-.auth-btn {
+.auth-btn,
+.lang-select {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -51,6 +52,10 @@ body {
   padding: 6px 14px;
   font-size: 0.85rem;
   cursor: pointer;
+}
+
+.lang-select {
+  padding: 6px 8px;
 }
 
 .auth-btn:hover {

@@ -1,41 +1,48 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>실시간 CCTV 라이브 모음</title>
+<title data-i18n="site_title">Live CCTV Streams</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <header class="site-header">
   <div class="header-actions">
-    <button type="button" id="leaderboardBtn" class="auth-btn">🏆 기여도 랭킹</button>
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <button type="button" id="leaderboardBtn" class="auth-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
     <div id="authArea" class="auth-area"></div>
   </div>
-  <h1>유튜브 실시간 CCTV 모음</h1>
-  <p class="subtitle">유튜브 라이브 중인 CCTV 영상을 매일 자동으로 모아 보여줍니다.</p>
+  <h1 data-i18n="site_h1">YouTube Live CCTV Collection</h1>
+  <p class="subtitle" data-i18n="site_subtitle">Automatically collecting live CCTV streams from YouTube every day.</p>
   <div class="controls">
-    <input type="text" id="searchInput" placeholder="제목 또는 채널명 검색...">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
     <span id="lastUpdated" class="last-updated"></span>
   </div>
   <form id="submitForm" class="submit-form" hidden>
-    <input type="text" id="submitUrl" placeholder="유튜브 라이브 URL 붙여넣기 (예: https://www.youtube.com/watch?v=...)">
-    <button type="submit">제보하기</button>
+    <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+    <button type="submit" data-i18n="submit_button">Submit</button>
     <span id="submitStatus" class="submit-status"></span>
   </form>
 </header>
 
 <main id="grid" class="grid"></main>
 
-<p id="emptyState" class="empty-state" hidden>표시할 CCTV 스트림이 없습니다.</p>
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No CCTV streams to display.</p>
 
 <div id="modal" class="modal" hidden>
   <div class="modal-backdrop"></div>
   <div class="modal-content">
     <div class="modal-header">
       <span id="modalTitle" class="modal-title"></span>
-      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener">유튜브에서 새 탭으로 열기</a>
-      <button id="modalClose" class="modal-close" aria-label="닫기">&times;</button>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
     </div>
     <div class="modal-player"></div>
   </div>
@@ -45,8 +52,8 @@
   <div class="modal-backdrop"></div>
   <div class="leaderboard-content">
     <div class="modal-header">
-      <span class="modal-title">🏆 기여도 랭킹</span>
-      <button type="button" id="leaderboardClose" class="modal-close" aria-label="닫기">&times;</button>
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
     </div>
     <ol id="leaderboardList" class="leaderboard-list"></ol>
   </div>
@@ -54,6 +61,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

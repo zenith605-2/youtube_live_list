@@ -21,6 +21,7 @@ const leaderboardBtn = document.getElementById('leaderboardBtn');
 const leaderboardModal = document.getElementById('leaderboardModal');
 const leaderboardClose = document.getElementById('leaderboardClose');
 const leaderboardList = document.getElementById('leaderboardList');
+const langSelect = document.getElementById('langSelect');
 
 let streams = [];
 let currentUser = null;
@@ -35,10 +36,10 @@ function escapeHtml(str) {
 function mapRow(row) {
   return {
     videoId: row.video_id,
-    title: row.title || '(정보 확인 중... 내일 정식 반영됩니다)',
+    title: row.title || t('info_pending'),
     channelTitle: row.channel_title || '',
     thumbnail: row.thumbnail,
-    matchedKeyword: row.source === 'user' ? '유저 제보' : (row.matched_keyword || ''),
+    matchedKeyword: row.source === 'user' ? t('source_user') : (row.matched_keyword || ''),
     addedAt: row.added_at,
     source: row.source,
     addedBy: row.added_by,
@@ -70,12 +71,12 @@ function render(list) {
     const thumbHtml = hasCustomThumbnail
       ? `
         <div class="thumb-half">
-          <img src="${s.thumbnail}" alt="${escapeHtml(s.title)} - 대표 썸네일" loading="lazy">
-          <span class="thumb-label">대표 썸네일</span>
+          <img src="${s.thumbnail}" alt="${escapeHtml(s.title)} - ${t('thumb_official')}" loading="lazy">
+          <span class="thumb-label">${t('thumb_official')}</span>
         </div>
         <div class="thumb-half">
-          <img src="${liveSnapshot}" alt="${escapeHtml(s.title)} - 실시간 화면" loading="lazy" onerror="this.closest('.thumb-half').style.display='none'">
-          <span class="thumb-label">실시간 화면</span>
+          <img src="${liveSnapshot}" alt="${escapeHtml(s.title)} - ${t('thumb_live')}" loading="lazy" onerror="this.closest('.thumb-half').style.display='none'">
+          <span class="thumb-label">${t('thumb_live')}</span>
         </div>
       `
       : `
@@ -95,8 +96,8 @@ function render(list) {
         ${s.source === 'user' && s.upvoteCount > 0 ? `<span class="card-keyword">👍 ${s.upvoteCount}</span>` : ''}
         ${currentUser ? `
           <div class="card-actions">
-            ${s.source === 'user' && s.addedBy !== currentUser.id ? `<button type="button" class="upvote-btn" data-video-id="${escapeHtml(s.videoId)}">👍 추천</button>` : ''}
-            <button type="button" class="report-btn" data-video-id="${escapeHtml(s.videoId)}">🚩 오탐 신고</button>
+            ${s.source === 'user' && s.addedBy !== currentUser.id ? `<button type="button" class="upvote-btn" data-video-id="${escapeHtml(s.videoId)}">${t('upvote_button')}</button>` : ''}
+            <button type="button" class="report-btn" data-video-id="${escapeHtml(s.videoId)}">${t('report_button')}</button>
           </div>
         ` : ''}
       </div>
@@ -128,9 +129,9 @@ async function handleReport(btn) {
   const videoId = btn.dataset.videoId;
   const { error } = await sb.from('reports').insert({ video_id: videoId, user_id: currentUser.id });
   if (error) {
-    btn.textContent = error.code === '23505' ? '이미 신고함' : '신고 실패';
+    btn.textContent = error.code === '23505' ? t('report_already') : t('report_failed');
   } else {
-    btn.textContent = '신고 완료';
+    btn.textContent = t('report_done');
   }
 }
 
@@ -140,9 +141,9 @@ async function handleUpvote(btn) {
   const videoId = btn.dataset.videoId;
   const { error } = await sb.from('upvotes').insert({ video_id: videoId, user_id: currentUser.id });
   if (error) {
-    btn.textContent = error.code === '23505' ? '이미 추천함' : '추천 실패';
+    btn.textContent = error.code === '23505' ? t('upvote_already') : t('upvote_failed');
   } else {
-    btn.textContent = '추천 완료';
+    btn.textContent = t('upvote_done');
     const s = streams.find(x => x.videoId === videoId);
     if (s) s.upvoteCount += 1;
   }
@@ -162,21 +163,17 @@ function withYtApi(fn) {
   else ytApiQueue.push(fn);
 }
 
-const PLAYER_ERROR_MESSAGES = {
-  2: '잘못된 영상 정보입니다.',
-  5: '이 브라우저에서 재생할 수 없습니다.',
-  100: '삭제되었거나 비공개로 전환된 영상입니다.',
-  101: '이 채널이 임베드 재생을 허용하지 않습니다.',
-  150: '이 채널이 임베드 재생을 허용하지 않습니다.',
-};
+function playerErrorMessage(code) {
+  const key = { 2: 'player_error_2', 5: 'player_error_5', 100: 'player_error_100', 101: 'player_error_101', 150: 'player_error_101' }[code];
+  return key ? t(key) : t('player_error_generic');
+}
 
 function showPlayerError(code) {
-  const message = PLAYER_ERROR_MESSAGES[code] || '영상을 재생할 수 없습니다.';
-  modalPlayer.innerHTML = `<div class="player-error">${escapeHtml(message)}<br>아래 버튼으로 유튜브에서 시청해주세요.</div>`;
+  modalPlayer.innerHTML = `<div class="player-error">${escapeHtml(playerErrorMessage(code))}<br>${escapeHtml(t('player_error_watch_hint'))}</div>`;
 }
 
 function openModal(videoId, title) {
-  modalPlayer.innerHTML = '<div class="player-loading">불러오는 중...</div>';
+  modalPlayer.innerHTML = `<div class="player-loading">${escapeHtml(t('loading'))}</div>`;
   modalOpenNewTab.href = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
   modalTitle.textContent = title || '';
   modal.hidden = false;
@@ -214,7 +211,7 @@ searchInput.addEventListener('input', () => render(currentFiltered()));
 
 async function openLeaderboard() {
   leaderboardModal.hidden = false;
-  leaderboardList.innerHTML = '<li class="leaderboard-empty">불러오는 중...</li>';
+  leaderboardList.innerHTML = `<li class="leaderboard-empty">${escapeHtml(t('leaderboard_loading'))}</li>`;
 
   const { data, error } = await sb
     .from('leaderboard')
@@ -223,13 +220,13 @@ async function openLeaderboard() {
     .limit(50);
 
   if (error) {
-    leaderboardList.innerHTML = `<li class="leaderboard-empty">랭킹을 불러오지 못했습니다.</li>`;
+    leaderboardList.innerHTML = `<li class="leaderboard-empty">${escapeHtml(t('leaderboard_failed'))}</li>`;
     console.error(error);
     return;
   }
 
   if (!data || data.length === 0) {
-    leaderboardList.innerHTML = `<li class="leaderboard-empty">아직 추천을 받은 제보가 없습니다.</li>`;
+    leaderboardList.innerHTML = `<li class="leaderboard-empty">${escapeHtml(t('leaderboard_empty'))}</li>`;
     return;
   }
 
@@ -237,8 +234,8 @@ async function openLeaderboard() {
     <li class="leaderboard-item">
       <span class="leaderboard-rank">${i + 1}</span>
       ${row.avatar_url ? `<img class="leaderboard-avatar" src="${row.avatar_url}" alt="">` : '<span class="leaderboard-avatar"></span>'}
-      <span class="leaderboard-name">${escapeHtml(row.display_name || '익명')}</span>
-      <span class="leaderboard-score">${row.score}점 (${row.submissions}건 제보)</span>
+      <span class="leaderboard-name">${escapeHtml(row.display_name || t('anonymous'))}</span>
+      <span class="leaderboard-score">${escapeHtml(t('leaderboard_score', { score: row.score, submissions: row.submissions }))}</span>
     </li>
   `).join('');
 }
@@ -256,15 +253,15 @@ document.addEventListener('keydown', (e) => {
 
 function renderAuthArea() {
   if (currentUser) {
-    const name = currentUser.user_metadata?.full_name || currentUser.email || '사용자';
+    const name = currentUser.user_metadata?.full_name || currentUser.email || t('anonymous');
     authArea.innerHTML = `
-      <span class="auth-user">${escapeHtml(name)}님</span>
-      <button type="button" id="logoutBtn" class="auth-btn">로그아웃</button>
+      <span class="auth-user">${escapeHtml(t('greeting', { name }))}</span>
+      <button type="button" id="logoutBtn" class="auth-btn">${escapeHtml(t('logout_button'))}</button>
     `;
     document.getElementById('logoutBtn').addEventListener('click', () => sb.auth.signOut());
     submitForm.hidden = false;
   } else {
-    authArea.innerHTML = `<button type="button" id="loginBtn" class="auth-btn">Google로 로그인</button>`;
+    authArea.innerHTML = `<button type="button" id="loginBtn" class="auth-btn">${escapeHtml(t('login_button'))}</button>`;
     document.getElementById('loginBtn').addEventListener('click', () => {
       sb.auth.signInWithOAuth({
         provider: 'google',
@@ -294,10 +291,10 @@ submitForm.addEventListener('submit', async (e) => {
   if (!currentUser) return;
   const videoId = extractVideoId(submitUrl.value);
   if (!videoId) {
-    submitStatus.textContent = '올바른 유튜브 URL이 아닙니다.';
+    submitStatus.textContent = t('submit_invalid_url');
     return;
   }
-  submitStatus.textContent = '제보 중...';
+  submitStatus.textContent = t('submitting');
   const { error } = await sb.from('streams').insert({
     video_id: videoId,
     source: 'user',
@@ -305,10 +302,10 @@ submitForm.addEventListener('submit', async (e) => {
     thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault_live.jpg`,
   });
   if (error) {
-    submitStatus.textContent = error.code === '23505' ? '이미 등록된 영상입니다.' : `제보 실패: ${error.message}`;
+    submitStatus.textContent = error.code === '23505' ? t('submit_duplicate') : t('submit_failed', { message: error.message });
     return;
   }
-  submitStatus.textContent = '제보 완료! 내일 목록 갱신 시 정식 반영됩니다.';
+  submitStatus.textContent = t('submit_success');
   submitUrl.value = '';
   await loadStreams();
 });
@@ -320,14 +317,14 @@ async function loadStreams() {
     .order('added_at', { ascending: false });
 
   if (error) {
-    emptyState.textContent = '목록을 불러오지 못했습니다.';
+    emptyState.textContent = t('load_failed');
     emptyState.hidden = false;
     console.error(error);
     return;
   }
 
   streams = (data || []).map(mapRow);
-  lastUpdatedEl.textContent = `총 ${streams.length}건`;
+  lastUpdatedEl.textContent = t('total_count', { n: streams.length });
   render(currentFiltered());
 }
 
@@ -337,7 +334,17 @@ sb.auth.onAuthStateChange((_event, session) => {
   render(currentFiltered());
 });
 
+langSelect.addEventListener('change', () => {
+  setLang(langSelect.value);
+  applyStaticTranslations();
+  renderAuthArea();
+  loadStreams();
+});
+
 async function init() {
+  langSelect.value = currentLang;
+  applyStaticTranslations();
+
   const { data: { session } } = await sb.auth.getSession();
   currentUser = session?.user || null;
   renderAuthArea();
