@@ -19,9 +19,10 @@ function render(list) {
     const card = document.createElement('div');
     card.className = 'card';
     const liveSnapshot = `https://i.ytimg.com/vi/${encodeURIComponent(s.videoId)}/hqdefault_live.jpg?cb=${pageLoadTime}`;
-    card.innerHTML = `
-      <div class="thumb-wrap">
-        <span class="live-badge">LIVE</span>
+    // 대표 썸네일이 이미 유튜브 자동 라이브 스냅샷이면(=커스텀 썸네일이 아니면) 굳이 두 개를 비교해서 보여줄 필요가 없음
+    const hasCustomThumbnail = !!s.thumbnail && !s.thumbnail.includes('_live');
+    const thumbHtml = hasCustomThumbnail
+      ? `
         <div class="thumb-half">
           <img src="${s.thumbnail}" alt="${escapeHtml(s.title)} - 대표 썸네일" loading="lazy">
           <span class="thumb-label">대표 썸네일</span>
@@ -30,6 +31,16 @@ function render(list) {
           <img src="${liveSnapshot}" alt="${escapeHtml(s.title)} - 실시간 화면" loading="lazy" onerror="this.closest('.thumb-half').style.display='none'">
           <span class="thumb-label">실시간 화면</span>
         </div>
+      `
+      : `
+        <div class="thumb-half">
+          <img src="${liveSnapshot}" alt="${escapeHtml(s.title)}" loading="lazy" onerror="this.src='${s.thumbnail}'">
+        </div>
+      `;
+    card.innerHTML = `
+      <div class="thumb-wrap">
+        <span class="live-badge">LIVE</span>
+        ${thumbHtml}
       </div>
       <div class="card-body">
         <p class="card-title">${escapeHtml(s.title)}</p>
