@@ -6,6 +6,7 @@ const modal = document.getElementById('modal');
 const modalPlayer = modal.querySelector('.modal-player');
 const modalClose = document.getElementById('modalClose');
 const modalOpenNewTab = document.getElementById('modalOpenNewTab');
+const modalTitle = document.getElementById('modalTitle');
 
 let streams = [];
 const pageLoadTime = Date.now();
@@ -36,7 +37,7 @@ function render(list) {
         <span class="card-keyword">${escapeHtml(s.matchedKeyword || '')}</span>
       </div>
     `;
-    card.addEventListener('click', () => openModal(s.videoId));
+    card.addEventListener('click', () => openModal(s.videoId, s.title));
     grid.appendChild(card);
   }
 }
@@ -74,9 +75,10 @@ function showPlayerError(code) {
   modalPlayer.innerHTML = `<div class="player-error">${escapeHtml(message)}<br>아래 버튼으로 유튜브에서 시청해주세요.</div>`;
 }
 
-function openModal(videoId) {
+function openModal(videoId, title) {
   modalPlayer.innerHTML = '<div class="player-loading">불러오는 중...</div>';
   modalOpenNewTab.href = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
+  modalTitle.textContent = title || '';
   modal.hidden = false;
 
   withYtApi(() => {
