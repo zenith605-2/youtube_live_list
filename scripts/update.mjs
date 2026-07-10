@@ -1,23 +1,31 @@
-// 매일 실행: 유튜브 라이브 중인 CCTV 스트림 목록을 갱신한다.
-// 1) 기존 목록의 생존 여부 확인 (중지된 것 제거)
+// 매일 실행: Supabase streams 테이블을 갱신한다.
+// 1) 기존 행 생존 확인 (중지/오탐 제거, 유저 제보의 빈 제목/채널명 보강)
 // 2) 키워드 검색으로 신규 라이브 CCTV 후보 탐색 및 검증 후 추가
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { createClient } from '@supabase/supabase-js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const STREAMS_PATH = path.join(ROOT, 'data', 'streams.json');
 const KEYWORDS_PATH = path.join(ROOT, 'config', 'keywords.json');
 const EXCLUDE_KEYWORDS_PATH = path.join(ROOT, 'config', 'exclude-keywords.json');
 
 const API_KEY = process.env.YOUTUBE_API_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const BASE = 'https://www.googleapis.com/youtube/v3';
 
 if (!API_KEY) {
   console.error('환경변수 YOUTUBE_API_KEY 가 설정되어 있지 않습니다.');
   process.exit(1);
 }
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('환경변수 SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY 가 설정되어 있지 않습니다.');
+  process.exit(1);
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 function chunk(arr, size) {
   const out = [];
@@ -55,7 +63,15 @@ const HTML_ENTITIES = {
   '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&apos;': "'",
 };
 function decodeHtmlEntities(str) {
-  return str.replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&apos;/g, m => HTML_ENTITIES[m]);
+  return (str || '').replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&apos;/g, m => HTML_ENTITIES[m]);
+}
+
+function snippetThumbnail(snippet) {
+  return (
+    snippet.thumbnails?.high?.url ||
+    snippet.thumbnails?.medium?.url ||
+    snippet.thumbnails?.default?.url
+  );
 }
 
 async function searchLiveByKeyword(keyword, maxResults = 25) {
@@ -67,21 +83,16 @@ async function searchLiveByKeyword(keyword, maxResults = 25) {
       videoId: item.id.videoId,
       title: decodeHtmlEntities(item.snippet.title),
       channelTitle: decodeHtmlEntities(item.snippet.channelTitle),
-      thumbnail:
-        item.snippet.thumbnails?.high?.url ||
-        item.snippet.thumbnails?.medium?.url ||
-        item.snippet.thumbnails?.default?.url,
+      thumbnail: snippetThumbnail(item.snippet),
       matchedKeyword: keyword,
     }));
 }
 
 async function main() {
-  const [streamsRaw, keywordsRaw, excludeRaw] = await Promise.all([
-    readFile(STREAMS_PATH, 'utf-8').catch(() => '{"streams":[]}'),
+  const [keywordsRaw, excludeRaw] = await Promise.all([
     readFile(KEYWORDS_PATH, 'utf-8'),
     readFile(EXCLUDE_KEYWORDS_PATH, 'utf-8').catch(() => '{"keywords":[]}'),
   ]);
-  const existing = JSON.parse(streamsRaw).streams || [];
   const keywords = JSON.parse(keywordsRaw).keywords || [];
   const excludeKeywords = (JSON.parse(excludeRaw).keywords || []).map(k => k.toLowerCase());
 
@@ -90,14 +101,52 @@ async function main() {
     return excludeKeywords.some(k => haystack.includes(k));
   };
 
-  console.log(`기존 목록 ${existing.length}건 생존 확인 중...`);
-  const existingIds = existing.map(s => s.videoId);
-  const liveMap = await getLiveSnippets(existingIds);
-  const survivors = existing.filter(s => liveMap.has(s.videoId) && !isExcluded(s.title, s.channelTitle));
-  const excludedSurvivorCount = existing.filter(s => liveMap.has(s.videoId) && isExcluded(s.title, s.channelTitle)).length;
-  console.log(`  -> 생존 ${survivors.length}건, 제거 ${existing.length - survivors.length}건 (그 중 제외 키워드로 걸러짐: ${excludedSurvivorCount}건)`);
+  const { data: existingRows, error: fetchErr } = await supabase.from('streams').select('*');
+  if (fetchErr) throw fetchErr;
 
-  const survivorIds = new Set(survivors.map(s => s.videoId));
+  console.log(`기존 목록 ${existingRows.length}건 생존 확인 중...`);
+  const existingIds = existingRows.map(r => r.video_id);
+  const liveMap = await getLiveSnippets(existingIds);
+
+  const toDelete = [];
+  const toUpdate = [];
+  let survivorCount = 0;
+
+  for (const row of existingRows) {
+    const snippet = liveMap.get(row.video_id);
+    if (!snippet) {
+      toDelete.push(row.video_id);
+      continue;
+    }
+    const title = decodeHtmlEntities(snippet.title);
+    const channelTitle = decodeHtmlEntities(snippet.channelTitle);
+    if (isExcluded(title, channelTitle)) {
+      toDelete.push(row.video_id);
+      continue;
+    }
+    survivorCount += 1;
+    if (!row.title || !row.channel_title) {
+      toUpdate.push({
+        video_id: row.video_id,
+        title,
+        channel_title: channelTitle,
+        thumbnail: row.thumbnail || snippetThumbnail(snippet),
+      });
+    }
+  }
+
+  console.log(`  -> 생존 ${survivorCount}건, 제거 ${toDelete.length}건, 정보 보강 ${toUpdate.length}건`);
+
+  if (toDelete.length) {
+    const { error } = await supabase.from('streams').delete().in('video_id', toDelete);
+    if (error) console.error('삭제 실패:', error.message);
+  }
+  for (const u of toUpdate) {
+    const { error } = await supabase.from('streams').update(u).eq('video_id', u.video_id);
+    if (error) console.error('업데이트 실패:', u.video_id, error.message);
+  }
+
+  const survivorIds = new Set(existingRows.map(r => r.video_id).filter(id => !toDelete.includes(id)));
   const candidateMap = new Map();
 
   for (const keyword of keywords) {
@@ -118,18 +167,25 @@ async function main() {
   const candidateIds = [...candidateMap.keys()];
   const verifiedLive = await getLiveSnippets(candidateIds);
 
-  const now = new Date().toISOString();
-  const newEntries = [...candidateMap.values()]
+  const newRows = [...candidateMap.values()]
     .filter(c => verifiedLive.has(c.videoId))
-    .map(c => ({ ...c, addedAt: now }));
+    .map(c => ({
+      video_id: c.videoId,
+      title: c.title,
+      channel_title: c.channelTitle,
+      thumbnail: c.thumbnail,
+      matched_keyword: c.matchedKeyword,
+      source: 'keyword',
+    }));
 
-  console.log(`  -> 검증 통과 신규 ${newEntries.length}건`);
+  console.log(`  -> 검증 통과 신규 ${newRows.length}건`);
 
-  const finalList = [...survivors, ...newEntries];
-  const output = { lastUpdated: now, streams: finalList };
+  if (newRows.length) {
+    const { error } = await supabase.from('streams').insert(newRows);
+    if (error) console.error('삽입 실패:', error.message);
+  }
 
-  await writeFile(STREAMS_PATH, JSON.stringify(output, null, 2) + '\n', 'utf-8');
-  console.log(`완료: 총 ${finalList.length}건 (제거 ${existing.length - survivors.length}, 추가 ${newEntries.length})`);
+  console.log(`완료: 생존 ${survivorCount}, 제거 ${toDelete.length}, 신규 ${newRows.length}`);
 }
 
 main().catch(err => {
