@@ -33,6 +33,7 @@ const contentTypeFilter = document.getElementById('contentTypeFilter');
 const categoryFilter = document.getElementById('categoryFilter');
 const countryFilter = document.getElementById('countryFilter');
 const qualityFilter = document.getElementById('qualityFilter');
+const addedFilter = document.getElementById('addedFilter');
 const statusFilter = document.getElementById('statusFilter');
 const visibilityFilter = document.getElementById('visibilityFilter');
 const favoritesOnlyCheckbox = document.getElementById('favoritesOnlyCheckbox');
@@ -116,6 +117,8 @@ function currentFiltered() {
   const status = statusFilter.value;
   const visibility = visibilityFilter.value;
   const favoritesOnly = favoritesOnlyCheckbox.checked;
+  const addedWithinDays = addedFilter.value ? Number(addedFilter.value) : null;
+  const addedCutoff = addedWithinDays ? Date.now() - addedWithinDays * 24 * 3600 * 1000 : null;
 
   const filtered = streams.filter(s => {
     if (q && !s.title.toLowerCase().includes(q) && !s.channelTitle.toLowerCase().includes(q)) return false;
@@ -126,6 +129,7 @@ function currentFiltered() {
     if (status && s.status !== status) return false;
     if (visibility && s.visibility !== visibility) return false;
     if (favoritesOnly && !favorites.has(s.videoId)) return false;
+    if (addedCutoff && (!s.addedAt || new Date(s.addedAt).getTime() < addedCutoff)) return false;
     return true;
   });
 
@@ -467,7 +471,7 @@ modalCopyBtn.addEventListener('click', async () => {
 });
 
 searchInput.addEventListener('input', () => render(currentFiltered()));
-[contentTypeFilter, categoryFilter, countryFilter, qualityFilter, statusFilter, visibilityFilter].forEach(el => {
+[contentTypeFilter, categoryFilter, countryFilter, qualityFilter, statusFilter, visibilityFilter, addedFilter].forEach(el => {
   el.addEventListener('change', () => {
     updateSidebarActiveState();
     render(currentFiltered());

@@ -82,6 +82,8 @@ const translations = {
     downvote_done: 'Downvoted',
     visibility_listed: 'Normal',
     visibility_hidden: 'Low-rated',
+    added_week: 'Past week',
+    added_month: 'Past month',
   },
   ko: {
     site_title: '실시간 CCTV 라이브 모음',
@@ -166,6 +168,8 @@ const translations = {
     downvote_done: '비추 완료',
     visibility_listed: '일반',
     visibility_hidden: '저품질',
+    added_week: '일주일 이내',
+    added_month: '한달 이내',
   },
   ja: {
     site_title: 'ライブCCTVストリーム',
@@ -250,6 +254,8 @@ const translations = {
     downvote_done: '低評価しました',
     visibility_listed: '通常',
     visibility_hidden: '低評価',
+    added_week: '過去1週間',
+    added_month: '過去1ヶ月',
   },
   zh: {
     site_title: 'YouTube实时CCTV直播合集',
@@ -334,6 +340,8 @@ const translations = {
     downvote_done: '已点踩',
     visibility_listed: '普通',
     visibility_hidden: '低质量',
+    added_week: '最近一周',
+    added_month: '最近一个月',
   },
   es: {
     site_title: 'Cámaras CCTV en Vivo',
@@ -418,6 +426,8 @@ const translations = {
     downvote_done: 'Voto negativo registrado',
     visibility_listed: 'Normal',
     visibility_hidden: 'Baja calidad',
+    added_week: 'Última semana',
+    added_month: 'Último mes',
   },
 };
 
