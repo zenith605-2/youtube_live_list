@@ -135,6 +135,41 @@ async function searchChannelLive(channelId, maxResults = 25) {
     }));
 }
 
+// 채널의 업로드 재생목록 ID 조회 (channels.list, 배치당 1 unit — search.list보다 훨씬 저렴)
+async function getUploadsPlaylistIds(channelIds) {
+  const map = new Map();
+  const uniqueIds = [...new Set(channelIds.filter(Boolean))];
+  for (const batch of chunk(uniqueIds, 50)) {
+    if (batch.length === 0) continue;
+    const url = `${BASE}/channels?part=contentDetails&id=${batch.join(',')}&key=${API_KEY}`;
+    const data = await fetchJson(url);
+    for (const item of data.items || []) {
+      const uploadsId = item.contentDetails?.relatedPlaylists?.uploads;
+      if (uploadsId) map.set(item.id, uploadsId);
+    }
+  }
+  return map;
+}
+
+// 재생목록(채널 업로드 목록) 한 페이지 조회 (playlistItems.list, 호출당 1 unit)
+async function getPlaylistVideos(playlistId, pageToken) {
+  const pageParam = pageToken ? `&pageToken=${pageToken}` : '';
+  const url = `${BASE}/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageParam}&key=${API_KEY}`;
+  const data = await fetchJson(url);
+  const items = (data.items || [])
+    .filter(item => item.snippet?.resourceId?.videoId)
+    .map(item => ({
+      videoId: item.snippet.resourceId.videoId,
+      title: decodeHtmlEntities(item.snippet.title),
+      channelTitle: decodeHtmlEntities(item.snippet.channelTitle),
+      channelId: item.snippet.channelId,
+      thumbnail: snippetThumbnail(item.snippet),
+      matchedKeyword: 'channel scan',
+      contentType: 'video',
+    }));
+  return { items, nextPageToken: data.nextPageToken || null };
+}
+
 // 라이브가 아닌 일반 업로드 영상(블랙박스/야생동물/군중 등) 탐색 — eventType 지정 안 함
 async function searchVideoByKeyword(keyword, maxResults = 25) {
   const url = `${BASE}/search?part=snippet&type=video&maxResults=${maxResults}&q=${encodeURIComponent(keyword)}&key=${API_KEY}`;
@@ -158,6 +193,11 @@ async function searchVideoByKeyword(keyword, maxResults = 25) {
 const SEARCH_BUDGET_PER_RUN = 95;
 const MAX_LIVE_KEYWORDS_PER_RUN = 20;
 const MAX_VIDEO_KEYWORDS_PER_RUN = 15;
+
+// 채널 업로드 스캔(playlistItems.list)은 search.list 하루 100회 한도와 무관한 별도 예산이라
+// 훨씬 넉넉하게 잡는다 (호출당 1 unit, 하루 10,000 unit 예산 대비 사실상 무시할 수준).
+const MAX_VIDEO_CHANNELS_PER_RUN = 10;
+const MAX_PAGES_PER_CHANNEL_PER_RUN = 6; // 채널당 최대 300개(50개 x 6페이지)씩 처리, 남으면 다음 실행에 이어서
 
 // 키워드 목록이 위 한도보다 길어지면, 매일 같은 키워드만 반복하지 않도록 날짜 기준으로 창을 옮겨가며 선택한다.
 // (키워드가 한도 이하면 매일 전부 사용 — 지금은 두 목록 다 한도 이내라 항상 전체 사용됨)
@@ -379,6 +419,67 @@ async function main() {
       .from('scanned_channels')
       .upsert(channelIdsToScan.map(channel_id => ({ channel_id })), { onConflict: 'channel_id' });
     if (error) console.error('scanned_channels 기록 실패:', error.message);
+  }
+
+  // 일반 영상 채널 업로드 전체 스캔: playlistItems.list는 search.list 한도와 무관하게 저렴하므로
+  // 한 번 발견된 채널(블랙박스/야생동물/군중 등)의 업로드 영상 수백~수천 개를 지속적으로 훑는다.
+  const { data: scannedVideoRows } = await supabase
+    .from('scanned_video_channels')
+    .select('channel_id, next_page_token, done');
+  const scannedVideoMap = new Map((scannedVideoRows || []).map(r => [r.channel_id, r]));
+
+  const observedVideoChannelIds = new Set();
+  for (const row of existingRows) {
+    if ((row.content_type || 'live') !== 'video') continue;
+    const channelId = infoMap.get(row.video_id)?.snippet.channelId || row.channel_id;
+    if (channelId) observedVideoChannelIds.add(channelId);
+  }
+  for (const c of candidateMap.values()) if (c.contentType === 'video' && c.channelId) observedVideoChannelIds.add(c.channelId);
+
+  const videoChannelIdsToScan = [...observedVideoChannelIds]
+    .filter(id => !scannedVideoMap.get(id)?.done)
+    .slice(0, MAX_VIDEO_CHANNELS_PER_RUN);
+  console.log(`영상 채널 업로드 스캔: 대상 ${observedVideoChannelIds.size}개 중 ${videoChannelIdsToScan.length}개 처리`);
+
+  if (videoChannelIdsToScan.length) {
+    const uploadsPlaylistMap = await getUploadsPlaylistIds(videoChannelIdsToScan);
+    const videoChannelUpdates = [];
+
+    for (const channelId of videoChannelIdsToScan) {
+      const playlistId = uploadsPlaylistMap.get(channelId);
+      if (!playlistId) {
+        videoChannelUpdates.push({ channel_id: channelId, next_page_token: null, done: true });
+        continue;
+      }
+      let pageToken = scannedVideoMap.get(channelId)?.next_page_token || undefined;
+      let pagesFetched = 0;
+      let found = 0;
+      try {
+        while (pagesFetched < MAX_PAGES_PER_CHANNEL_PER_RUN) {
+          const { items, nextPageToken } = await getPlaylistVideos(playlistId, pageToken);
+          for (const r of items) {
+            found += 1;
+            if (knownIds.has(r.videoId) || candidateMap.has(r.videoId)) continue;
+            if (isExcluded(r.title, r.channelTitle)) continue;
+            candidateMap.set(r.videoId, r);
+          }
+          pagesFetched += 1;
+          pageToken = nextPageToken || undefined;
+          if (!pageToken) break;
+        }
+        console.log(`  채널 업로드 스캔 ${channelId}: ${found}건 조회 (${pagesFetched}페이지, ${pageToken ? '이어서 진행 필요' : '완료'})`);
+        videoChannelUpdates.push({ channel_id: channelId, next_page_token: pageToken || null, done: !pageToken });
+      } catch (err) {
+        console.error(`  영상 채널 스캔 실패 ${channelId}:`, err.message);
+      }
+    }
+
+    if (videoChannelUpdates.length) {
+      const { error } = await supabase
+        .from('scanned_video_channels')
+        .upsert(videoChannelUpdates, { onConflict: 'channel_id' });
+      if (error) console.error('scanned_video_channels 기록 실패:', error.message);
+    }
   }
 
   console.log(`신규 후보 ${candidateMap.size}건 검증 중...`);
