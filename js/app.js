@@ -6,6 +6,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const VIEW_MODE_KEY = 'viewMode';
 const NEW_WINDOW_MS = 7 * 24 * 3600 * 1000; // 7일 이내는 "신규" 링크로 취급 (열람권 게이팅 대상)
+// 사이트 활성화 초기 단계라 신규 링크 열람 제한을 잠시 꺼둠. 다시 켜려면 true로 변경.
+const VIEW_GATING_ENABLED = false;
 
 const grid = document.getElementById('grid');
 const emptyState = document.getElementById('emptyState');
@@ -146,7 +148,7 @@ function render(list) {
       lastChannel = s.channelTitle;
     }
 
-    const isLocked = isNewStream(s) && !unlockedVideos.has(s.videoId);
+    const isLocked = VIEW_GATING_ENABLED && isNewStream(s) && !unlockedVideos.has(s.videoId);
     const card = document.createElement('div');
     card.className = 'card' + (isLocked ? ' locked' : '');
     card.dataset.videoId = s.videoId;
@@ -253,7 +255,7 @@ grid.addEventListener('click', async (e) => {
 
 async function openCard(videoId, title) {
   const s = streams.find(x => x.videoId === videoId);
-  if (s && isNewStream(s) && !unlockedVideos.has(videoId)) {
+  if (VIEW_GATING_ENABLED && s && isNewStream(s) && !unlockedVideos.has(videoId)) {
     const result = await tryUnlock(videoId);
     if (!result.ok) {
       showUnlockBlocked(result.reason, title);
@@ -597,7 +599,7 @@ async function loadUnlockedVideos() {
 }
 
 async function refreshQuotaInfo() {
-  if (!currentUser) {
+  if (!VIEW_GATING_ENABLED || !currentUser) {
     quotaInfo.hidden = true;
     return;
   }
