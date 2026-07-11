@@ -38,7 +38,7 @@
     <select id="categoryFilter" hidden>
       <option value="">All</option>
     </select>
-    <select id="countryFilter">
+    <select id="countryFilter" hidden>
       <option value="" data-i18n="filter_all">All</option>
     </select>
     <select id="qualityFilter">
@@ -52,17 +52,17 @@
       <option value="small">240p</option>
       <option value="tiny">144p</option>
     </select>
-    <select id="statusFilter">
+    <select id="statusFilter" hidden>
       <option value="live" data-i18n="status_live">Live</option>
       <option value="" data-i18n="filter_all">All</option>
       <option value="offline" data-i18n="status_offline">Offline</option>
     </select>
-    <select id="visibilityFilter">
+    <select id="visibilityFilter" hidden>
       <option value="listed" data-i18n="visibility_listed">Normal</option>
       <option value="" data-i18n="filter_all">All</option>
       <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
     </select>
-    <label class="favorites-only-label">
+    <label class="favorites-only-label" hidden>
       <input type="checkbox" id="favoritesOnlyCheckbox">
       <span data-i18n="favorites_only">⭐ My favorites</span>
     </label>
