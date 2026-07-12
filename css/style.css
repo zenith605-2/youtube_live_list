@@ -361,6 +361,10 @@ body {
   cursor: pointer;
 }
 
+.bulk-action-bar[hidden] {
+  display: none;
+}
+
 .bulk-action-bar {
   position: fixed;
   left: 50%;

@@ -266,6 +266,7 @@ function render(list) {
 
 grid.addEventListener('click', async (e) => {
   if (e.target.closest('select')) return; // 카테고리 select 클릭은 모달을 열지 않음
+  if (e.target.closest('.admin-select-checkbox') || e.target.closest('.channel-select-all')) return; // 체크박스는 모달을 열지 않음
 
   const upvoteBtn = e.target.closest('.upvote-btn');
   if (upvoteBtn) return handleUpvote(upvoteBtn);
