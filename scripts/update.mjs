@@ -429,6 +429,25 @@ async function main() {
     if (error) console.error('삽입 실패:', error.message);
   }
 
+  // 7일 임시등록 만료 처리: 승인(3추천 또는 관리자 승인)도 못 받고 7일이 지난 유저 제보는 삭제한다.
+  // (차단목록에는 올리지 않음 — 나중에 다시 제보하면 새로 기회를 준다)
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+  const { data: expiredRows, error: expiredFetchErr } = await supabase
+    .from('streams')
+    .select('video_id')
+    .eq('approval_status', 'pending')
+    .lt('added_at', sevenDaysAgo);
+  if (expiredFetchErr) {
+    console.error('임시등록 만료 대상 조회 실패:', expiredFetchErr.message);
+  } else if (expiredRows.length) {
+    const { error: expireErr } = await supabase
+      .from('streams')
+      .delete()
+      .in('video_id', expiredRows.map(r => r.video_id));
+    if (expireErr) console.error('임시등록 만료 삭제 실패:', expireErr.message);
+    else console.log(`임시등록 만료로 삭제: ${expiredRows.length}건`);
+  }
+
   console.log(`완료: 유효 ${validCount}, 오프라인 ${offlineCount}, 오탐삭제 ${toDelete.length}, 신규 ${newRows.length}`);
 }
 

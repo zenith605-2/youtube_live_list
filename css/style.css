@@ -492,6 +492,10 @@ body {
   background: var(--muted);
 }
 
+.new-badge.pending-badge {
+  background: #f59e0b;
+}
+
 .new-badge {
   position: absolute;
   top: 8px;
@@ -566,10 +570,11 @@ body {
   margin-top: 10px;
 }
 
-.report-btn,
 .upvote-btn,
 .downvote-btn,
-.favorite-btn {
+.favorite-btn,
+.admin-delete-btn,
+.admin-approve-btn {
   flex: 1;
   background: transparent;
   border: 1px solid var(--border);
@@ -588,6 +593,16 @@ body {
 .favorite-btn:hover:not(:disabled) {
   border-color: #ffb400;
   color: #ffb400;
+}
+
+.admin-approve-btn:hover:not(:disabled) {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.admin-delete-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .report-btn:hover:not(:disabled) {

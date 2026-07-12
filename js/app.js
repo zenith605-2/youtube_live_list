@@ -55,6 +55,7 @@ const sidebar = document.getElementById('sidebar');
 let streams = [];
 let currentUser = null;
 let isAdmin = false;
+let showPendingOnly = false; // "대기중" 사이드바 항목을 눌렀을 때만 true
 let selectedForDelete = new Set(); // 관리자 일괄삭제용 선택된 videoId
 let channelGroupsFullySelected = new Map(); // groupIndex -> channelId ("채널 전체선택"으로 체크된 그룹만)
 let submitterNames = new Map(); // userId -> display_name
@@ -120,6 +121,7 @@ function mapRow(row) {
     startedAt: row.started_at || null,
     contentType: row.content_type || 'live',
     publishedAt: row.published_at || null,
+    approvalStatus: row.approval_status || null,
   };
 }
 
@@ -136,6 +138,8 @@ function currentFiltered() {
   const addedCutoff = addedWithinDays ? Date.now() - addedWithinDays * 24 * 3600 * 1000 : null;
 
   const filtered = streams.filter(s => {
+    if (showPendingOnly) return s.approvalStatus === 'pending';
+    if (s.approvalStatus === 'pending') return false;
     if (q && !s.title.toLowerCase().includes(q) && !s.channelTitle.toLowerCase().includes(q)) return false;
     if (contentType && s.contentType !== contentType) return false;
     if (category && s.category !== category) return false;
@@ -237,6 +241,7 @@ function render(list) {
         <button type="button" class="downvote-btn" data-video-id="${escapeHtml(s.videoId)}">${t('downvote_button')}</button>
         <button type="button" class="favorite-btn ${isFav ? 'active' : ''}" data-video-id="${escapeHtml(s.videoId)}">${isFav ? t('favorite_remove') : t('favorite_add')}</button>
         ${isFav ? `<button type="button" class="note-btn" data-video-id="${escapeHtml(s.videoId)}">📝</button>` : ''}
+        ${isAdmin && s.approvalStatus === 'pending' ? `<button type="button" class="admin-approve-btn" data-video-id="${escapeHtml(s.videoId)}">${t('approve_button')}</button>` : ''}
         ${isAdmin ? `<button type="button" class="admin-delete-btn" data-video-id="${escapeHtml(s.videoId)}">${t('admin_delete_button')}</button>` : ''}
       </div>
     ` : '';
@@ -245,7 +250,7 @@ function render(list) {
       <div class="thumb-wrap">
         ${isAdmin ? `<input type="checkbox" class="admin-select-checkbox" data-video-id="${escapeHtml(s.videoId)}" data-channel-group="${groupIndex}" ${selectedForDelete.has(s.videoId) ? 'checked' : ''}>` : ''}
         <span class="live-badge ${badgeClass}">${badgeText}</span>
-        ${isRecentlyAdded ? '<span class="new-badge">NEW</span>' : ''}
+        ${s.approvalStatus === 'pending' ? `<span class="new-badge pending-badge">${t('pending_badge')}</span>` : (isRecentlyAdded ? '<span class="new-badge">NEW</span>' : '')}
         ${thumbHtml}
       </div>
       <div class="card-body">
@@ -286,6 +291,9 @@ grid.addEventListener('click', async (e) => {
 
   const adminDeleteBtn = e.target.closest('.admin-delete-btn');
   if (adminDeleteBtn) return handleAdminDelete(adminDeleteBtn);
+
+  const adminApproveBtn = e.target.closest('.admin-approve-btn');
+  if (adminApproveBtn) return handleAdminApprove(adminApproveBtn);
 
   const card = e.target.closest('.card');
   if (card) {
@@ -411,6 +419,21 @@ async function handleAdminDelete(btn) {
     return;
   }
   streams = streams.filter(s => s.videoId !== videoId);
+  render(currentFiltered());
+}
+
+async function handleAdminApprove(btn) {
+  if (!isAdmin) return;
+  const videoId = btn.dataset.videoId;
+  btn.disabled = true;
+  const { error } = await sb.from('streams').update({ approval_status: 'approved' }).eq('video_id', videoId);
+  if (error) {
+    alert(t('approve_failed', { message: error.message }));
+    btn.disabled = false;
+    return;
+  }
+  const s = streams.find(x => x.videoId === videoId);
+  if (s) s.approvalStatus = 'approved';
   render(currentFiltered());
 }
 
@@ -877,6 +900,7 @@ submitForm.addEventListener('submit', async (e) => {
     title: oembed.title || null,
     channel_title: oembed.author_name || null,
     thumbnail: `https://i.ytimg.com/vi/${videoId}/${contentType === 'live' ? 'hqdefault_live' : 'hqdefault'}.jpg`,
+    approval_status: 'pending',
   });
   if (error) {
     submitStatus.textContent = error.code === '23505' ? t('submit_duplicate') : t('submit_failed', { message: error.message });
@@ -922,8 +946,17 @@ function sidebarCount(type, category) {
   ).length;
 }
 
+function pendingCount() {
+  return streams.filter(s => s.approvalStatus === 'pending').length;
+}
+
 function renderSidebar() {
-  sidebar.innerHTML = SIDEBAR_GROUPS.map(g => `
+  const pendingHtml = `
+    <div class="sidebar-section">
+      <button type="button" id="sidebarPendingBtn" class="sidebar-group-btn">⏳ ${escapeHtml(t('sidebar_pending'))} <span class="sidebar-count">${pendingCount()}</span></button>
+    </div>
+  `;
+  sidebar.innerHTML = pendingHtml + SIDEBAR_GROUPS.map(g => `
     <div class="sidebar-section">
       <button type="button" class="sidebar-group-btn" data-content-type="${g.type}" data-category="">${g.icon} ${escapeHtml(t(g.labelKey))} <span class="sidebar-count">${sidebarCount(g.type, null)}</span></button>
       <ul class="sidebar-sublist">
@@ -941,16 +974,25 @@ function updateSidebarActiveState() {
   const activeCategory = categoryFilter.value;
   sidebar.querySelectorAll('button[data-content-type]').forEach(btn => {
     const isGroupBtn = btn.classList.contains('sidebar-group-btn');
-    const matches = isGroupBtn
+    const matches = !showPendingOnly && (isGroupBtn
       ? btn.dataset.contentType === activeType && activeCategory === ''
-      : btn.dataset.contentType === activeType && btn.dataset.category === activeCategory;
+      : btn.dataset.contentType === activeType && btn.dataset.category === activeCategory);
     btn.classList.toggle('active', matches);
   });
+  const pendingBtn = document.getElementById('sidebarPendingBtn');
+  if (pendingBtn) pendingBtn.classList.toggle('active', showPendingOnly);
 }
 
 sidebar.addEventListener('click', (e) => {
+  if (e.target.closest('#sidebarPendingBtn')) {
+    showPendingOnly = true;
+    updateSidebarActiveState();
+    render(currentFiltered());
+    return;
+  }
   const btn = e.target.closest('button[data-content-type]');
   if (!btn) return;
+  showPendingOnly = false;
   contentTypeFilter.value = btn.dataset.contentType;
   categoryFilter.value = btn.dataset.category || '';
   updateSidebarActiveState();
