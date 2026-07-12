@@ -996,20 +996,21 @@ body {
   margin-bottom: 10px;
 }
 
-.site-footer {
+.site-topbar {
   text-align: center;
-  padding: 24px;
+  padding: 10px 24px;
   color: var(--muted);
   font-size: 0.8rem;
+  border-bottom: 1px solid var(--border);
 }
 
-.site-footer a {
+.site-topbar a {
   color: var(--muted);
 }
 
 .visitor-stats {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .card.locked {
