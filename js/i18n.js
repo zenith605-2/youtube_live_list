@@ -14,11 +14,7 @@ const translations = {
     info_pending: '(Checking info... updates daily at 06:00 KST)',
     thumb_official: 'Official thumbnail',
     thumb_live: 'Live view',
-    report_button: '🚩 Report',
     upvote_button: '👍 Upvote',
-    report_already: 'Already reported',
-    report_failed: 'Report failed',
-    report_done: 'Reported',
     upvote_already: 'Already upvoted',
     upvote_failed: 'Upvote failed',
     upvote_done: 'Upvoted',
@@ -119,11 +115,7 @@ const translations = {
     info_pending: '(정보 확인 중... 매일 오전 6시에 갱신됩니다)',
     thumb_official: '대표 썸네일',
     thumb_live: '실시간 화면',
-    report_button: '🚩 오탐 신고',
     upvote_button: '👍 추천',
-    report_already: '이미 신고함',
-    report_failed: '신고 실패',
-    report_done: '신고 완료',
     upvote_already: '이미 추천함',
     upvote_failed: '추천 실패',
     upvote_done: '추천 완료',
@@ -224,11 +216,7 @@ const translations = {
     info_pending: '(情報確認中... 毎日午前6時(KST)に更新されます)',
     thumb_official: '公式サムネイル',
     thumb_live: 'ライブ映像',
-    report_button: '🚩 誤検出を報告',
     upvote_button: '👍 いいね',
-    report_already: '報告済み',
-    report_failed: '報告に失敗しました',
-    report_done: '報告しました',
     upvote_already: 'いいね済み',
     upvote_failed: 'いいねに失敗しました',
     upvote_done: 'いいねしました',
@@ -329,11 +317,7 @@ const translations = {
     info_pending: '（信息确认中……每天早上6点(KST)更新）',
     thumb_official: '官方缩略图',
     thumb_live: '实时画面',
-    report_button: '🚩 举报误判',
     upvote_button: '👍 推荐',
-    report_already: '已举报',
-    report_failed: '举报失败',
-    report_done: '举报成功',
     upvote_already: '已推荐',
     upvote_failed: '推荐失败',
     upvote_done: '推荐成功',
@@ -434,11 +418,7 @@ const translations = {
     info_pending: '(Verificando información... se actualiza todos los días a las 06:00 KST)',
     thumb_official: 'Miniatura oficial',
     thumb_live: 'Vista en vivo',
-    report_button: '🚩 Reportar',
     upvote_button: '👍 Votar',
-    report_already: 'Ya reportado',
-    report_failed: 'Error al reportar',
-    report_done: 'Reportado',
     upvote_already: 'Ya votado',
     upvote_failed: 'Error al votar',
     upvote_done: 'Votado',
@@ -532,8 +512,6 @@ const DEFAULT_LANG = 'en';
 function detectInitialLang() {
   const saved = localStorage.getItem('lang');
   if (saved && SUPPORTED_LANGS.includes(saved)) return saved;
-  const browserLang = (navigator.language || '').split('-')[0];
-  if (SUPPORTED_LANGS.includes(browserLang)) return browserLang;
   return DEFAULT_LANG;
 }
 

@@ -233,7 +233,6 @@ function render(list) {
         <button type="button" class="downvote-btn" data-video-id="${escapeHtml(s.videoId)}">${t('downvote_button')}</button>
         <button type="button" class="favorite-btn ${isFav ? 'active' : ''}" data-video-id="${escapeHtml(s.videoId)}">${isFav ? t('favorite_remove') : t('favorite_add')}</button>
         ${isFav ? `<button type="button" class="note-btn" data-video-id="${escapeHtml(s.videoId)}">📝</button>` : ''}
-        <button type="button" class="report-btn" data-video-id="${escapeHtml(s.videoId)}">${t('report_button')}</button>
         ${isAdmin ? `<button type="button" class="admin-delete-btn" data-video-id="${escapeHtml(s.videoId)}">${t('admin_delete_button')}</button>` : ''}
       </div>
     ` : '';
@@ -251,7 +250,7 @@ function render(list) {
         ${s.source === 'user'
           ? `<span class="card-keyword">👤 ${escapeHtml(submitterNames.get(s.addedBy) || t('anonymous'))}</span>`
           : (s.matchedKeyword ? `<span class="card-keyword">${escapeHtml(s.matchedKeyword)}</span>` : '')}
-        ${s.source === 'user' && s.upvoteCount > 0 ? `<span class="card-keyword">👍 ${s.upvoteCount}</span>` : ''}
+        <span class="card-keyword">👍 ${s.upvoteCount} · 👎 ${s.downvoteCount}</span>
         ${countryHtml}
         ${categoryHtml}
         ${dateHtml}
@@ -265,9 +264,6 @@ function render(list) {
 
 grid.addEventListener('click', async (e) => {
   if (e.target.closest('select')) return; // 카테고리 select 클릭은 모달을 열지 않음
-
-  const reportBtn = e.target.closest('.report-btn');
-  if (reportBtn) return handleReport(reportBtn);
 
   const upvoteBtn = e.target.closest('.upvote-btn');
   if (upvoteBtn) return handleUpvote(upvoteBtn);
@@ -392,18 +388,6 @@ async function handleAdminDelete(btn) {
   }
   streams = streams.filter(s => s.videoId !== videoId);
   render(currentFiltered());
-}
-
-async function handleReport(btn) {
-  if (!currentUser) return;
-  btn.disabled = true;
-  const videoId = btn.dataset.videoId;
-  const { error } = await sb.from('reports').insert({ video_id: videoId, user_id: currentUser.id });
-  if (error) {
-    btn.textContent = error.code === '23505' ? t('report_already') : t('report_failed');
-  } else {
-    btn.textContent = t('report_done');
-  }
 }
 
 async function handleUpvote(btn) {
