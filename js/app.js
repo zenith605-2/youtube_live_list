@@ -264,6 +264,8 @@ function render(list) {
     `;
     grid.appendChild(card);
   }
+
+  setupViewportAutoplay();
 }
 
 grid.addEventListener('click', async (e) => {
@@ -523,49 +525,50 @@ async function loadFavorites() {
 
 let currentPlayer = null;
 let currentModalVideoId = null;
-let hoverPreviewEl = null;
-let hoverPreviewVideoId = null;
-let hoverPreviewTimer = null;
+let viewportPreviewObserver = null;
+const viewportPreviewTimers = new Map(); // videoId -> pending start timer
 
-function clearHoverPreview() {
-  clearTimeout(hoverPreviewTimer);
-  hoverPreviewTimer = null;
-  if (hoverPreviewEl) hoverPreviewEl.remove();
-  hoverPreviewEl = null;
-  hoverPreviewVideoId = null;
+function startViewportPreview(thumbWrap, videoId) {
+  if (thumbWrap.querySelector('.hover-preview-iframe')) return;
+  const iframe = document.createElement('iframe');
+  iframe.className = 'hover-preview-iframe';
+  iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1`;
+  iframe.setAttribute('allow', 'autoplay; encrypted-media');
+  iframe.setAttribute('frameborder', '0');
+  thumbWrap.appendChild(iframe);
 }
 
-grid.addEventListener('mouseover', (e) => {
-  const thumbWrap = e.target.closest('.thumb-wrap');
-  if (!thumbWrap) return;
-  const card = thumbWrap.closest('.card');
-  if (!card) return;
-  const videoId = card.dataset.videoId;
-  if (videoId === hoverPreviewVideoId) return;
-  clearHoverPreview();
-  hoverPreviewTimer = setTimeout(() => {
-    const iframe = document.createElement('iframe');
-    iframe.className = 'hover-preview-iframe';
-    iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1`;
-    iframe.setAttribute('allow', 'autoplay; encrypted-media');
-    iframe.setAttribute('frameborder', '0');
-    thumbWrap.appendChild(iframe);
-    hoverPreviewEl = iframe;
-    hoverPreviewVideoId = videoId;
-  }, 350); // 카드 위를 빠르게 지나칠 때마다 iframe을 만들지 않도록 짧은 지연
-});
+function stopViewportPreview(thumbWrap) {
+  const iframe = thumbWrap.querySelector('.hover-preview-iframe');
+  if (iframe) iframe.remove();
+}
 
-grid.addEventListener('mouseout', (e) => {
-  const thumbWrap = e.target.closest('.thumb-wrap');
-  if (!thumbWrap) return;
-  if (thumbWrap.contains(e.relatedTarget)) return; // 같은 thumb-wrap 내부 이동은 무시
-  const card = thumbWrap.closest('.card');
-  if (card && card.dataset.videoId === hoverPreviewVideoId) {
-    clearHoverPreview();
-  } else {
-    clearTimeout(hoverPreviewTimer);
-  }
-});
+function clearHoverPreview() {
+  if (viewportPreviewObserver) viewportPreviewObserver.disconnect();
+  viewportPreviewTimers.forEach(timer => clearTimeout(timer));
+  viewportPreviewTimers.clear();
+  grid.querySelectorAll('.hover-preview-iframe').forEach(el => el.remove());
+}
+
+function setupViewportAutoplay() {
+  viewportPreviewObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const thumbWrap = entry.target;
+      const card = thumbWrap.closest('.card');
+      if (!card) continue;
+      const videoId = card.dataset.videoId;
+      clearTimeout(viewportPreviewTimers.get(videoId));
+      if (entry.isIntersecting) {
+        // 스크롤 중 잠깐 지나치는 카드마다 iframe을 만들지 않도록 짧은 지연
+        viewportPreviewTimers.set(videoId, setTimeout(() => startViewportPreview(thumbWrap, videoId), 400));
+      } else {
+        viewportPreviewTimers.delete(videoId);
+        stopViewportPreview(thumbWrap);
+      }
+    }
+  }, { threshold: 0.6 });
+  grid.querySelectorAll('.thumb-wrap').forEach(el => viewportPreviewObserver.observe(el));
+}
 let ytApiReady = false;
 let qualityReportedFor = null;
 const ytApiQueue = [];
