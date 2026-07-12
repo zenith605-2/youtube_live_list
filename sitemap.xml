@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://zenith605-2.github.io/youtube_live_list/</loc>
+    <loc>https://camlisted.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://zenith605-2.github.io/youtube_live_list/about.html</loc>
+    <loc>https://camlisted.com/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zenith605-2.github.io/youtube_live_list/feedback.html</loc>
+    <loc>https://camlisted.com/feedback.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://zenith605-2.github.io/youtube_live_list/privacy.html</loc>
+    <loc>https://camlisted.com/privacy.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://zenith605-2.github.io/youtube_live_list/terms.html</loc>
+    <loc>https://camlisted.com/terms.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

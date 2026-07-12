@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /account.html
 
-Sitemap: https://zenith605-2.github.io/youtube_live_list/sitemap.xml
+Sitemap: https://camlisted.com/sitemap.xml
