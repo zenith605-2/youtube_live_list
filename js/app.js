@@ -1195,11 +1195,12 @@ function pendingCount() {
 }
 
 function renderSidebar() {
-  const pendingHtml = `
+  // 대기 건이 없으면 일반 방문자에겐 굳이 빈 섹션을 보여주지 않는다 (관리자는 항상 표시)
+  const pendingHtml = (pendingCount() > 0 || isAdmin) ? `
     <div class="sidebar-section">
       <button type="button" id="sidebarPendingBtn" class="sidebar-group-btn">⏳ ${escapeHtml(t('sidebar_pending'))} <span class="sidebar-count">${pendingCount()}</span></button>
     </div>
-  `;
+  ` : '';
   sidebar.innerHTML = pendingHtml + SIDEBAR_GROUPS.map(g => `
     <div class="sidebar-section">
       <button type="button" class="sidebar-group-btn" data-content-type="${g.type}" data-category="">${g.icon} ${escapeHtml(t(g.labelKey))} <span class="sidebar-count">${sidebarCount(g.type, null)}</span></button>

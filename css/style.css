@@ -106,11 +106,16 @@ body {
 
 @media (max-width: 800px) {
   .page-layout {
-    grid-template-columns: 1fr;
+    /* minmax(0,1fr): 자식의 최소 콘텐츠 폭이 커도 트랙이 화면보다 넓어지지 않게 */
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "header"
       "sidebar"
       "content";
+  }
+  .header-toolbar {
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .sidebar {
     width: 100%;
@@ -118,13 +123,40 @@ body {
     max-height: none;
     border-right: none;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
+    padding: 12px 16px;
   }
   .sidebar-section {
-    flex: 0 0 auto;
-    margin-bottom: 0;
+    margin-bottom: 12px;
+  }
+  /* 좁은 화면에선 세로 기둥 대신 그룹 제목 + 칩(chip) 나열로 압축 */
+  .sidebar-group-btn {
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+  }
+  .sidebar-sublist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0 0;
+    padding: 0;
+  }
+  .sidebar-cat-btn {
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 11px;
+  }
+  .site-header h1 {
+    font-size: 1.4rem;
+  }
+  .header-actions {
+    justify-content: center;
   }
 }
 
@@ -169,6 +201,7 @@ body {
   font-size: 0.85rem;
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .pill-btn:hover {
