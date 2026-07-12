@@ -962,6 +962,11 @@ body {
   color: var(--muted);
 }
 
+.visitor-stats {
+  display: block;
+  margin-bottom: 8px;
+}
+
 .card.locked {
   cursor: pointer;
 }
@@ -998,6 +1003,44 @@ body {
 
 .policy-page a {
   color: var(--accent);
+}
+
+.account-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.account-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.account-section h2 {
+  margin-top: 0;
+  font-size: 1.05rem;
+}
+
+.account-danger-zone {
+  border-color: var(--accent);
+}
+
+.account-danger-zone h2 {
+  color: var(--accent);
+}
+
+.account-delete-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  padding: 9px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 8px;
 }
 
 .admin-list {

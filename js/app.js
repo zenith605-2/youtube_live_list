@@ -13,6 +13,7 @@ const grid = document.getElementById('grid');
 const emptyState = document.getElementById('emptyState');
 const searchInput = document.getElementById('searchInput');
 const resultCountEl = document.getElementById('resultCount');
+const visitorStatsEl = document.getElementById('visitorStats');
 const modal = document.getElementById('modal');
 const modalPlayer = modal.querySelector('.modal-player');
 const modalClose = document.getElementById('modalClose');
@@ -833,6 +834,7 @@ function renderAuthArea() {
     authArea.innerHTML = `
       <span class="auth-user">${escapeHtml(t('greeting', { name }))}</span>
       <button type="button" id="nicknameEditBtn" class="auth-btn" title="${escapeHtml(t('nickname_edit_button'))}">✏️</button>
+      <a href="account.html" class="auth-btn" title="${escapeHtml(t('account_title'))}">⚙️</a>
       <button type="button" id="logoutBtn" class="auth-btn">${escapeHtml(t('logout_button'))}</button>
     `;
     document.getElementById('logoutBtn').addEventListener('click', () => sb.auth.signOut());
@@ -1072,6 +1074,23 @@ langSelect.addEventListener('change', () => {
   loadStreams();
 });
 
+async function trackVisit() {
+  let visitorKey = localStorage.getItem('visitorKey');
+  if (!visitorKey) {
+    visitorKey = crypto.randomUUID();
+    localStorage.setItem('visitorKey', visitorKey);
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  await sb.from('visit_log').insert({ visit_date: today, visitor_key: visitorKey });
+  // 같은 날 중복 방문 시 유니크 제약 위반 에러가 나는데, 의도된 동작이라 무시한다.
+}
+
+async function loadVisitStats() {
+  const { data, error } = await sb.from('visit_stats').select('*').maybeSingle();
+  if (error || !data) return;
+  visitorStatsEl.textContent = t('visitor_stats', { today: data.today_count, total: data.total_count });
+}
+
 async function init() {
   langSelect.value = currentLang;
   applyStaticTranslations();
@@ -1084,6 +1103,8 @@ async function init() {
   await Promise.all([loadFavorites(), loadUnlockedVideos(), checkAdmin(), loadMyProfile()]);
   renderAuthArea();
   await refreshQuotaInfo();
+  await trackVisit();
+  await loadVisitStats();
   await loadStreams();
 }
 

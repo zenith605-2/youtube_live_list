@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="account_title">Account Settings</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-actions">
+    <a href="index.html" class="auth-btn" data-i18n="back_to_site">← Back to site</a>
+  </div>
+  <h1 data-i18n="account_title">Account Settings</h1>
+</header>
+
+<main class="account-page">
+  <p id="accountLoggedOut" class="empty-state" hidden data-i18n="account_login_required">Sign in to manage your account.</p>
+
+  <div id="accountContent" hidden>
+    <section class="account-section">
+      <h2 data-i18n="account_profile_heading">Profile</h2>
+      <p><strong data-i18n="account_email_label">Email:</strong> <span id="accountEmail"></span></p>
+      <p><strong data-i18n="account_nickname_label">Nickname:</strong> <span id="accountNickname"></span>
+        <button type="button" id="accountEditNicknameBtn" class="auth-btn" data-i18n="nickname_edit_button">Edit nickname</button>
+      </p>
+    </section>
+
+    <section class="account-section account-danger-zone">
+      <h2 data-i18n="account_danger_heading">Danger Zone</h2>
+      <p data-i18n="account_delete_warning">Deleting your account removes your profile, favorites, votes, and comments. Links you submitted stay on the site (just no longer credited to you). This cannot be undone.</p>
+      <button type="button" id="accountDeleteBtn" class="account-delete-btn" data-i18n="account_delete_button">Delete my account</button>
+    </section>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/account.js"></script>
+</body>
+</html>
