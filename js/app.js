@@ -45,6 +45,7 @@ const categoryFilter = document.getElementById('categoryFilter');
 const countryFilter = document.getElementById('countryFilter');
 const qualityFilter = document.getElementById('qualityFilter');
 const addedFilter = document.getElementById('addedFilter');
+const sortSelect = document.getElementById('sortSelect');
 const statusFilter = document.getElementById('statusFilter');
 const visibilityFilter = document.getElementById('visibilityFilter');
 const favoritesOnlyCheckbox = document.getElementById('favoritesOnlyCheckbox');
@@ -133,6 +134,7 @@ function mapRow(row) {
     publishedAt: row.published_at || null,
     approvalStatus: row.approval_status || null,
     offlineSince: row.offline_since || null,
+    commentCount: 0,
   };
 }
 
@@ -163,10 +165,21 @@ function currentFiltered() {
     return true;
   });
 
-  // 같은 채널의 영상들을 붙여서 보여주기 위해 채널명 기준으로 정렬
-  return filtered.sort((a, b) =>
-    a.channelTitle.localeCompare(b.channelTitle) || a.title.localeCompare(b.title)
-  );
+  switch (sortSelect.value) {
+    case 'newest':
+      return filtered.sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0));
+    case 'upvotes':
+      return filtered.sort((a, b) => b.upvoteCount - a.upvoteCount);
+    case 'downvotes':
+      return filtered.sort((a, b) => b.downvoteCount - a.downvoteCount);
+    case 'comments':
+      return filtered.sort((a, b) => b.commentCount - a.commentCount);
+    default:
+      // 같은 채널의 영상들을 붙여서 보여주기 위해 채널명 기준으로 정렬
+      return filtered.sort((a, b) =>
+        a.channelTitle.localeCompare(b.channelTitle) || a.title.localeCompare(b.title)
+      );
+  }
 }
 
 function render(list) {
@@ -174,7 +187,7 @@ function render(list) {
   grid.innerHTML = '';
   emptyState.hidden = list.length > 0;
   resultCountEl.textContent = t('total_count', { n: list.length });
-  const isListView = grid.classList.contains('list-view');
+  const isListView = grid.classList.contains('list-view') && sortSelect.value === 'default';
   let lastChannel = undefined;
   let groupIndex = -1;
 
@@ -547,6 +560,14 @@ async function loadSubmitterNames(list) {
   for (const row of data || []) submitterNames.set(row.id, row.display_name);
 }
 
+async function loadCommentCounts() {
+  const { data, error } = await sb.from('comments').select('video_id');
+  if (error || !data) return;
+  const counts = new Map();
+  for (const row of data) counts.set(row.video_id, (counts.get(row.video_id) || 0) + 1);
+  for (const s of streams) s.commentCount = counts.get(s.videoId) || 0;
+}
+
 async function checkAdmin() {
   if (!currentUser) {
     isAdmin = false;
@@ -817,7 +838,7 @@ modalCopyBtn.addEventListener('click', async () => {
 });
 
 searchInput.addEventListener('input', () => render(currentFiltered()));
-[contentTypeFilter, categoryFilter, countryFilter, qualityFilter, statusFilter, visibilityFilter, addedFilter].forEach(el => {
+[contentTypeFilter, categoryFilter, countryFilter, qualityFilter, statusFilter, visibilityFilter, addedFilter, sortSelect].forEach(el => {
   el.addEventListener('change', () => {
     updateSidebarActiveState();
     render(currentFiltered());
@@ -1100,6 +1121,7 @@ async function loadStreams() {
 
   streams = (data || []).map(mapRow);
   await loadSubmitterNames(streams);
+  await loadCommentCounts();
   populateCountryFilter();
   renderSidebar();
   render(currentFiltered());
