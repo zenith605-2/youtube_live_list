@@ -184,6 +184,14 @@ function currentFiltered() {
   }
 }
 
+// 무한 스크롤: 처음에 RENDER_CHUNK개만 그리고, 하단 센티널이 가까워지면 이어서 그린다
+const RENDER_CHUNK = 60;
+let renderFullList = [];
+let renderedCount = 0;
+let renderLastChannel;
+let renderGroupIndex = -1;
+let renderIsListView = false;
+
 function render(list) {
   clearHoverPreview();
   grid.innerHTML = '';
@@ -201,26 +209,39 @@ function render(list) {
     approveAllBtn.addEventListener('click', handleApproveAll);
     resultCountEl.after(approveAllBtn);
   }
-  const isListView = grid.classList.contains('list-view') && sortSelect.value === 'default';
-  let lastChannel = undefined;
-  let groupIndex = -1;
+  renderIsListView = grid.classList.contains('list-view') && sortSelect.value === 'default';
+  renderFullList = list;
+  renderedCount = 0;
+  renderLastChannel = undefined;
+  renderGroupIndex = -1;
 
-  for (const s of list) {
-    if (s.channelTitle !== lastChannel) {
-      groupIndex += 1;
-      if (isListView) {
+  setupViewportAutoplay();
+  ensureLoadMoreSentinel();
+  appendMoreCards();
+  maybeAppendMore(); // 첫 청크가 화면을 못 채우는 경우(짧은 리스트뷰 등) 바로 이어서 채움
+}
+
+function appendMoreCards() {
+  const end = Math.min(renderedCount + RENDER_CHUNK, renderFullList.length);
+
+  for (let i = renderedCount; i < end; i++) {
+    const s = renderFullList[i];
+    if (s.channelTitle !== renderLastChannel) {
+      renderGroupIndex += 1;
+      if (renderIsListView) {
         const header = document.createElement('div');
         header.className = 'channel-header';
-        header.dataset.channelGroup = String(groupIndex);
+        header.dataset.channelGroup = String(renderGroupIndex);
         if (s.channelId) header.dataset.channelId = s.channelId;
         header.innerHTML = `
-          ${isAdmin ? `<input type="checkbox" class="channel-select-all" data-channel-group="${groupIndex}">` : ''}
+          ${isAdmin ? `<input type="checkbox" class="channel-select-all" data-channel-group="${renderGroupIndex}">` : ''}
           <span>${escapeHtml(s.channelTitle || t('anonymous'))}</span>
         `;
         grid.appendChild(header);
       }
-      lastChannel = s.channelTitle;
+      renderLastChannel = s.channelTitle;
     }
+    const groupIndex = renderGroupIndex;
 
     const isLocked = VIEW_GATING_ENABLED && isNewStream(s) && !unlockedVideos.has(s.videoId);
     const card = document.createElement('div');
@@ -321,9 +342,39 @@ function render(list) {
       </div>
     `;
     grid.appendChild(card);
+    const wrap = card.querySelector('.thumb-wrap');
+    if (wrap && viewportPreviewObserver) viewportPreviewObserver.observe(wrap);
   }
 
-  setupViewportAutoplay();
+  renderedCount = end;
+}
+
+let loadMoreObserver = null;
+
+function ensureLoadMoreSentinel() {
+  if (document.getElementById('loadMoreSentinel')) return;
+  const sentinel = document.createElement('div');
+  sentinel.id = 'loadMoreSentinel';
+  grid.after(sentinel);
+  loadMoreObserver = new IntersectionObserver(entries => {
+    if (entries.some(en => en.isIntersecting)) maybeAppendMore();
+  }, { rootMargin: '800px' });
+  loadMoreObserver.observe(sentinel);
+}
+
+function maybeAppendMore() {
+  const sentinel = document.getElementById('loadMoreSentinel');
+  if (!sentinel) return;
+  // 센티널이 계속 관측 범위 안에 머물러 있으면 IntersectionObserver가 다시 안 울리므로,
+  // 범위를 벗어나거나 목록이 끝날 때까지 직접 반복해서 채운다
+  let guard = 0;
+  while (
+    renderedCount < renderFullList.length &&
+    sentinel.getBoundingClientRect().top < window.innerHeight + 800 &&
+    guard++ < 30
+  ) {
+    appendMoreCards();
+  }
 }
 
 grid.addEventListener('click', async (e) => {

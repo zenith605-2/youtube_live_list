@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Not Found - YouTube Live Cams & Footage</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📹</text></svg>">
+<style>
+  body { margin:0; font-family:-apple-system,"Segoe UI","Malgun Gothic",sans-serif; background:#0f1115; color:#eef0f3;
+         display:flex; align-items:center; justify-content:center; min-height:100vh; text-align:center; }
+  h1 { font-size:3.5rem; margin:0 0 8px; }
+  p { color:#9aa2af; font-size:1.05rem; }
+  a { color:#ff3b3b; }
+</style>
+</head>
+<body>
+<main>
+  <h1>404</h1>
+  <p>This page doesn't exist — maybe the camera moved. 📹</p>
+  <p><a id="homeLink" href="/">← Back to YouTube Live Cams &amp; Footage</a></p>
+</main>
+<script>
+  // 프로젝트 페이지(/youtube_live_list/) 경로와 커스텀 도메인(루트) 모두에서 홈으로 가게 처리
+  if (location.pathname.startsWith('/youtube_live_list')) {
+    document.getElementById('homeLink').href = '/youtube_live_list/';
+  }
+</script>
+</body>
+</html>
