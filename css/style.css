@@ -309,11 +309,26 @@ body {
 
 .filter-bar {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.filter-label {
+  font-size: 0.68rem;
+  color: var(--muted);
+  padding-left: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .view-toggle {

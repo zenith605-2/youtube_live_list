@@ -58,29 +58,38 @@
     <select id="countryFilter" hidden>
       <option value="" data-i18n="filter_all">All</option>
     </select>
-    <select id="qualityFilter">
-      <option value="" data-i18n="filter_all">All</option>
-      <option value="hd2160">4K</option>
-      <option value="hd1440">1440p</option>
-      <option value="hd1080">1080p</option>
-      <option value="hd720">720p</option>
-      <option value="large">480p</option>
-      <option value="medium">360p</option>
-      <option value="small">240p</option>
-      <option value="tiny">144p</option>
-    </select>
-    <select id="addedFilter">
-      <option value="" data-i18n="filter_all">All</option>
-      <option value="7" data-i18n="added_week">Past week</option>
-      <option value="30" data-i18n="added_month">Past month</option>
-    </select>
-    <select id="sortSelect">
-      <option value="default" data-i18n="sort_default">Default (by channel)</option>
-      <option value="newest" data-i18n="sort_newest">Newest first</option>
-      <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
-      <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
-      <option value="comments" data-i18n="sort_comments">Most comments</option>
-    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
     <select id="statusFilter" hidden>
       <option value="live" data-i18n="status_live">Live</option>
       <option value="" data-i18n="filter_all">All</option>
