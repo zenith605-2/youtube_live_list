@@ -9,8 +9,86 @@ const accountEmail = document.getElementById('accountEmail');
 const accountNickname = document.getElementById('accountNickname');
 const accountEditNicknameBtn = document.getElementById('accountEditNicknameBtn');
 const accountDeleteBtn = document.getElementById('accountDeleteBtn');
+const accountFavoritesCount = document.getElementById('accountFavoritesCount');
+const exportCsvBtn = document.getElementById('exportCsvBtn');
+const exportTxtBtn = document.getElementById('exportTxtBtn');
 
 let currentUser = null;
+
+async function loadMyFavorites() {
+  const { data: favRows, error: favErr } = await sb
+    .from('favorites')
+    .select('video_id, note')
+    .eq('user_id', currentUser.id);
+  if (favErr || !favRows.length) return [];
+
+  const videoIds = favRows.map(f => f.video_id);
+  const { data: streamRows } = await sb
+    .from('streams')
+    .select('video_id, title, channel_title, thumbnail')
+    .in('video_id', videoIds);
+  const streamMap = new Map((streamRows || []).map(s => [s.video_id, s]));
+
+  return favRows.map(f => {
+    const s = streamMap.get(f.video_id) || {};
+    return {
+      title: s.title || '',
+      channel: s.channel_title || '',
+      url: `https://www.youtube.com/watch?v=${f.video_id}`,
+      thumbnail: s.thumbnail || `https://i.ytimg.com/vi/${f.video_id}/hqdefault.jpg`,
+      note: f.note || '',
+    };
+  });
+}
+
+function downloadFile(filename, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function csvEscape(value) {
+  const str = String(value ?? '');
+  if (/[",\n]/.test(str)) return `"${str.replace(/"/g, '""')}"`;
+  return str;
+}
+
+function buildCsv(items) {
+  const BOM = '﻿'; // Excel이 UTF-8로 정확히 인식하도록 BOM을 앞에 붙인다
+  const header = ['Title', 'Channel', 'YouTube URL', 'Thumbnail URL', 'Note'];
+  const rows = items.map(i => [i.title, i.channel, i.url, i.thumbnail, i.note].map(csvEscape).join(','));
+  return BOM + [header.join(','), ...rows].join('\r\n');
+}
+
+function buildTxt(items) {
+  return items
+    .map(i => `${i.title}\n${t('account_export_channel_label')}: ${i.channel}\n${t('account_export_url_label')}: ${i.url}\n${t('account_export_thumbnail_label')}: ${i.thumbnail}${i.note ? `\n${t('account_export_note_label')}: ${i.note}` : ''}`)
+    .join('\n\n---\n\n');
+}
+
+exportCsvBtn.addEventListener('click', async () => {
+  const items = await loadMyFavorites();
+  if (!items.length) {
+    alert(t('account_export_empty'));
+    return;
+  }
+  downloadFile('favorites.csv', buildCsv(items), 'text/csv;charset=utf-8');
+});
+
+exportTxtBtn.addEventListener('click', async () => {
+  const items = await loadMyFavorites();
+  if (!items.length) {
+    alert(t('account_export_empty'));
+    return;
+  }
+  downloadFile('favorites.txt', buildTxt(items), 'text/plain;charset=utf-8');
+});
 
 async function refresh() {
   applyStaticTranslations();
@@ -24,6 +102,8 @@ async function refresh() {
   accountEmail.textContent = currentUser.email || '';
   const { data } = await sb.from('profiles').select('display_name').eq('id', currentUser.id).maybeSingle();
   accountNickname.textContent = data?.display_name || t('anonymous');
+  const { count } = await sb.from('favorites').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id);
+  accountFavoritesCount.textContent = t('account_favorites_count', { n: count || 0 });
 }
 
 accountEditNicknameBtn.addEventListener('click', async () => {

@@ -236,16 +236,19 @@ function render(list) {
     const addedHtml = s.addedAt ? `<span class="card-added">📌 ${escapeHtml(formatRelativeTime(s.addedAt))}</span>` : '';
     const isRecentlyAdded = s.addedAt && (Date.now() - new Date(s.addedAt).getTime() < 3 * 24 * 3600 * 1000);
 
-    const actionsHtml = currentUser ? `
+    const actionsHtml = `
       <div class="card-actions">
-        ${s.source === 'user' && s.addedBy !== currentUser.id ? `<button type="button" class="upvote-btn" data-video-id="${escapeHtml(s.videoId)}">${t('upvote_button')}</button>` : ''}
-        <button type="button" class="downvote-btn" data-video-id="${escapeHtml(s.videoId)}">${t('downvote_button')}</button>
-        <button type="button" class="favorite-btn ${isFav ? 'active' : ''}" data-video-id="${escapeHtml(s.videoId)}">${isFav ? t('favorite_remove') : t('favorite_add')}</button>
-        ${isFav ? `<button type="button" class="note-btn" data-video-id="${escapeHtml(s.videoId)}">📝</button>` : ''}
-        ${isAdmin && s.approvalStatus === 'pending' ? `<button type="button" class="admin-approve-btn" data-video-id="${escapeHtml(s.videoId)}">${t('approve_button')}</button>` : ''}
-        ${isAdmin ? `<button type="button" class="admin-delete-btn" data-video-id="${escapeHtml(s.videoId)}">${t('admin_delete_button')}</button>` : ''}
+        <button type="button" class="copy-link-btn" data-video-id="${escapeHtml(s.videoId)}">${t('copy_url')}</button>
+        ${currentUser ? `
+          ${s.source === 'user' && s.addedBy !== currentUser.id ? `<button type="button" class="upvote-btn" data-video-id="${escapeHtml(s.videoId)}">${t('upvote_button')}</button>` : ''}
+          <button type="button" class="downvote-btn" data-video-id="${escapeHtml(s.videoId)}">${t('downvote_button')}</button>
+          <button type="button" class="favorite-btn ${isFav ? 'active' : ''}" data-video-id="${escapeHtml(s.videoId)}">${isFav ? t('favorite_remove') : t('favorite_add')}</button>
+          ${isFav ? `<button type="button" class="note-btn" data-video-id="${escapeHtml(s.videoId)}">📝</button>` : ''}
+          ${isAdmin && s.approvalStatus === 'pending' ? `<button type="button" class="admin-approve-btn" data-video-id="${escapeHtml(s.videoId)}">${t('approve_button')}</button>` : ''}
+          ${isAdmin ? `<button type="button" class="admin-delete-btn" data-video-id="${escapeHtml(s.videoId)}">${t('admin_delete_button')}</button>` : ''}
+        ` : ''}
       </div>
-    ` : '';
+    `;
 
     card.innerHTML = `
       <div class="thumb-wrap">
@@ -277,6 +280,9 @@ function render(list) {
 grid.addEventListener('click', async (e) => {
   if (e.target.closest('select')) return; // 카테고리 select 클릭은 모달을 열지 않음
   if (e.target.closest('.admin-select-checkbox') || e.target.closest('.channel-select-all')) return; // 체크박스는 모달을 열지 않음
+
+  const copyLinkBtn = e.target.closest('.copy-link-btn');
+  if (copyLinkBtn) return handleCopyLink(copyLinkBtn);
 
   const upvoteBtn = e.target.closest('.upvote-btn');
   if (upvoteBtn) return handleUpvote(upvoteBtn);
@@ -436,6 +442,24 @@ async function handleAdminApprove(btn) {
   const s = streams.find(x => x.videoId === videoId);
   if (s) s.approvalStatus = 'approved';
   render(currentFiltered());
+}
+
+async function handleCopyLink(btn) {
+  const videoId = btn.dataset.videoId;
+  const url = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch {
+    const tmp = document.createElement('textarea');
+    tmp.value = url;
+    document.body.appendChild(tmp);
+    tmp.select();
+    document.execCommand('copy');
+    tmp.remove();
+  }
+  const original = btn.textContent;
+  btn.textContent = t('copy_done');
+  setTimeout(() => { btn.textContent = original; }, 1500);
 }
 
 async function handleUpvote(btn) {
