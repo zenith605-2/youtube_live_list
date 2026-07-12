@@ -2,7 +2,7 @@ const translations = {
   en: {
     site_title: 'YouTube Live Cams & Footage',
     site_h1: 'YouTube Live Cams & Footage',
-    site_subtitle: 'A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.',
+    site_subtitle: 'A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more — gathered from YouTube every day as a browsable reference for developers, researchers, and curious viewers alike.',
     search_placeholder: 'Search by title or channel...',
     submit_heading: "📮 Know a link we're missing? Submit it here!",
     submit_placeholder: 'Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)',
@@ -179,7 +179,7 @@ const translations = {
   ko: {
     site_title: '유튜브 라이브캠 & 영상 모음',
     site_h1: '유튜브 라이브캠 & 영상 모음',
-    site_subtitle: '라이브캠부터 블랙박스, 야생동물, 도심 영상까지 — 유튜브에서 매일 자동으로 모으는 실사 영상 모음입니다.',
+    site_subtitle: '라이브캠부터 블랙박스, 야생동물, 도심 영상까지 — 유튜브에서 매일 자동으로 모으는 실사 영상 모음이에요. 개발자·연구자를 위한 레퍼런스 자료로도, 그냥 구경하는 용도로도 활용해보세요.',
     search_placeholder: '제목 또는 채널명 검색...',
     submit_heading: '📮 우리가 놓친 링크가 있나요? 여기에 제보해주세요!',
     submit_placeholder: '유튜브 라이브 URL 붙여넣기 (예: https://www.youtube.com/watch?v=...)',
@@ -356,7 +356,7 @@ const translations = {
   ja: {
     site_title: 'YouTubeライブカメラ＆映像コレクション',
     site_h1: 'YouTubeライブカメラ＆映像コレクション',
-    site_subtitle: 'ライブカメラからドライブレコーダー、野生動物、都市の映像まで — YouTubeから毎日自動で集めた実写映像コレクションです。',
+    site_subtitle: 'ライブカメラからドライブレコーダー、野生動物、都市の映像まで — YouTubeから毎日自動で集めた実写映像コレクションです。開発者・研究者のリファレンス資料としても、ただ眺めるのにもどうぞ。',
     search_placeholder: 'タイトルまたはチャンネル名で検索...',
     submit_heading: '📮 見つからないリンクがありますか？ここから投稿してください！',
     submit_placeholder: 'YouTubeライブのURLを貼り付け (例: https://www.youtube.com/watch?v=...)',
@@ -533,7 +533,7 @@ const translations = {
   zh: {
     site_title: 'YouTube直播摄像头与实拍视频合集',
     site_h1: 'YouTube直播摄像头与实拍视频合集',
-    site_subtitle: '从直播摄像头到行车记录仪、野生动物、城市街景视频 — 每天自动从YouTube收集的真实影像合集。',
+    site_subtitle: '从直播摄像头到行车记录仪、野生动物、城市街景视频 — 每天自动从YouTube收集的真实影像合集，可作为开发者与研究者的参考素材，也欢迎随便逛逛。',
     search_placeholder: '按标题或频道名搜索...',
     submit_heading: '📮 有我们遗漏的链接吗？在这里提交吧！',
     submit_placeholder: '粘贴YouTube直播链接 (例如: https://www.youtube.com/watch?v=...)',
@@ -710,7 +710,7 @@ const translations = {
   es: {
     site_title: 'Cámaras en Vivo y Videos de YouTube',
     site_h1: 'Cámaras en Vivo y Videos de YouTube',
-    site_subtitle: 'Una colección de cámaras en vivo y videos reales — tráfico, vida salvaje, cámaras de auto, calles urbanas y más, recopilados de YouTube todos los días.',
+    site_subtitle: 'Una colección de cámaras en vivo y videos reales — tráfico, vida salvaje, cámaras de auto, calles urbanas y más — recopilados de YouTube todos los días como referencia para desarrolladores, investigadores y curiosos por igual.',
     search_placeholder: 'Buscar por título o canal...',
     submit_heading: '📮 ¿Conoces un enlace que nos falta? ¡Envíalo aquí!',
     submit_placeholder: 'Pega una URL de YouTube en vivo (ej: https://www.youtube.com/watch?v=...)',

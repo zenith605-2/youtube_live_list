@@ -17,17 +17,25 @@ body {
 }
 
 .page-layout {
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  grid-template-areas:
+    "header header"
+    "sidebar content";
+  align-items: start;
+}
+
+.site-header {
+  grid-area: header;
 }
 
 .page-content {
-  flex: 1 1 auto;
+  grid-area: content;
   min-width: 0;
 }
 
 .sidebar {
-  flex: 0 0 auto;
+  grid-area: sidebar;
   width: 210px;
   position: sticky;
   top: 0;
@@ -98,7 +106,11 @@ body {
 
 @media (max-width: 800px) {
   .page-layout {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "sidebar"
+      "content";
   }
   .sidebar {
     width: 100%;
