@@ -769,6 +769,7 @@ body {
 
 .card-actions {
   display: flex;
+  flex-wrap: wrap; /* 좁은 그리드 카드에서 버튼이 많아도(관리자 최대 7개) 줄바꿈되어 다 보이게 */
   gap: 8px;
   margin-top: 10px;
 }
@@ -779,7 +780,8 @@ body {
 .favorite-btn,
 .admin-delete-btn,
 .admin-approve-btn {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 70px;
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -787,6 +789,7 @@ body {
   padding: 6px;
   font-size: 0.75rem;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .favorite-btn.active {
