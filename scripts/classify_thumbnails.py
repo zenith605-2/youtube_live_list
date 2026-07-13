@@ -55,6 +55,10 @@ CATEGORY_PROMPTS = {
         "a harbor with boats and ships docked at a marina",
         "a port waterfront with vessels on the water",
     ],
+    "airport": [
+        "an airport runway with airplanes taking off or landing",
+        "airplanes parked at airport terminal gates",
+    ],
     "mountain": [
         "a mountain landscape with peaks or forest hills",
         "a ski slope with snow in the mountains",
