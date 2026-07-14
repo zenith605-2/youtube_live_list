@@ -118,6 +118,16 @@ async function loadCountryStats() {
   }).join('');
 }
 
+function kstDateOf(ts) {
+  return new Date(new Date(ts).getTime() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
+function fmtStay(secs) {
+  if (!secs) return '–';
+  const m = Math.floor(secs / 60), s = secs % 60;
+  return m ? `${m}m ${s}s` : `${s}s`;
+}
+
 async function loadRecentVisitors() {
   const body = document.getElementById('visitorTableBody');
   // RLS 정책상 관리자 토큰으로만 읽힌다 (일반 유저/게스트는 빈 결과)
@@ -127,19 +137,36 @@ async function loadRecentVisitors() {
     .order('created_at', { ascending: false })
     .limit(100);
   if (error) {
-    body.innerHTML = `<tr><td colspan="4">${escapeHtml(error.message)}</td></tr>`;
+    body.innerHTML = `<tr><td colspan="5">${escapeHtml(error.message)}</td></tr>`;
     return;
   }
   if (!data?.length) {
-    body.innerHTML = '<tr><td colspan="4">No visitor records yet.</td></tr>';
+    body.innerHTML = '<tr><td colspan="5">No visitor records yet.</td></tr>';
     return;
   }
+
+  // 같은 방문자의 그날 체류시간 세그먼트를 합산해서 붙인다
+  const keys = [...new Set(data.map(r => r.visitor_key))];
+  const oldest = data[data.length - 1].created_at;
+  const stayByKeyDate = new Map();
+  const { data: durs } = await sb
+    .from('visit_durations')
+    .select('visitor_key, seconds, created_at')
+    .in('visitor_key', keys)
+    .gte('created_at', new Date(new Date(oldest).getTime() - 24 * 3600 * 1000).toISOString())
+    .limit(10000);
+  for (const d of durs || []) {
+    const k = `${d.visitor_key}|${kstDateOf(d.created_at)}`;
+    stayByKeyDate.set(k, (stayByKeyDate.get(k) || 0) + d.seconds);
+  }
+
   body.innerHTML = data.map(r => `
     <tr>
       <td>${new Date(r.created_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
       <td>${escapeHtml(r.country || '–')}</td>
       <td>${escapeHtml(r.ip || '–')}</td>
       <td>${escapeHtml((r.visitor_key || '').slice(0, 8))}</td>
+      <td>${fmtStay(stayByKeyDate.get(`${r.visitor_key}|${kstDateOf(r.created_at)}`))}</td>
     </tr>
   `).join('');
 }
