@@ -1835,11 +1835,18 @@ body {
   font-weight: 600;
   font-size: 0.95rem;
   margin-bottom: 4px;
+  /* 긴 제목이 레이아웃을 밀어내지 않게 2줄 말줄임 */
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .admin-meta {
   font-size: 0.8rem;
   margin-bottom: 6px;
+  overflow-wrap: anywhere;
 }
 
 .admin-info a {
@@ -1873,4 +1880,34 @@ body {
 .admin-actions .toggle-visibility-btn:hover {
   border-color: #4caf50;
   color: #4caf50;
+}
+
+/* 좁은 화면: 행이 감싸지게 하고 버튼은 아래 줄에 가로로 배치 */
+@media (max-width: 600px) {
+  .admin-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .admin-thumb {
+    width: 88px;
+  }
+  .admin-info {
+    flex: 1 1 55%;
+  }
+  .admin-actions {
+    flex: 1 1 100%;
+    flex-direction: row;
+  }
+  .admin-actions button {
+    flex: 1 1 auto;
+  }
+  .favorite-row-thumb {
+    width: 72px;
+  }
+  .favorite-row-title {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
 }
