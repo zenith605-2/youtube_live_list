@@ -1406,6 +1406,8 @@ sb.auth.onAuthStateChange(async (_event, session) => {
   renderAuthArea();
   await refreshQuotaInfo();
   loadCheers();
+  renderSidebar(); // 로그인 여부에 따라 제안 버튼/대기 메뉴가 달라지므로 사이드바도 갱신
+  updateSidebarActiveState();
   render(currentFiltered());
 });
 
