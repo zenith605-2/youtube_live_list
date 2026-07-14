@@ -24,10 +24,11 @@ async function isAdminUser() {
 }
 
 async function loadStats() {
-  const [dailyRes, visitRes, signupRes, streamCountRes, profileCountRes] = await Promise.all([
+  const [dailyRes, visitRes, signupRes, durationRes, streamCountRes, profileCountRes] = await Promise.all([
     sb.from('daily_stats').select('*').order('stat_date', { ascending: false }).limit(DAYS_TO_SHOW),
     sb.from('daily_visit_counts').select('*').order('visit_date', { ascending: false }).limit(DAYS_TO_SHOW),
     sb.from('daily_signup_counts').select('*').order('signup_date', { ascending: false }).limit(DAYS_TO_SHOW),
+    sb.from('daily_duration_stats').select('*').order('stat_date', { ascending: false }).limit(DAYS_TO_SHOW),
     sb.from('streams').select('video_id', { count: 'exact', head: true }),
     sb.from('profiles').select('id', { count: 'exact', head: true }),
   ]);
@@ -35,6 +36,13 @@ async function loadStats() {
   const daily = dailyRes.data || [];
   const visitsByDate = new Map((visitRes.data || []).map(r => [r.visit_date, r.visitors]));
   const signupsByDate = new Map((signupRes.data || []).map(r => [r.signup_date, r.signups]));
+  const durationByDate = new Map((durationRes.data || []).map(r => [r.stat_date, r]));
+
+  const fmtDur = (secs) => {
+    if (secs == null) return '–';
+    const m = Math.floor(secs / 60), s = secs % 60;
+    return m ? `${m}m ${s}s` : `${s}s`;
+  };
 
   // 표에 보여줄 날짜 목록: daily_stats + 방문/가입 기록이 있는 날짜를 합쳐 최근 30일
   const allDates = new Set([
@@ -47,6 +55,7 @@ async function loadStats() {
 
   statsTableBody.innerHTML = dates.map(d => {
     const s = dailyByDate.get(d);
+    const dur = durationByDate.get(d);
     const dash = '<td class="stats-dash">–</td>';
     return `
       <tr>
@@ -54,9 +63,11 @@ async function loadStats() {
         ${s ? `<td>${s.existing_count}</td><td>${s.valid_count}</td><td>${s.offline_count}</td><td>${s.new_count}</td><td>${s.deleted_count}</td>` : dash.repeat(5)}
         <td>${signupsByDate.get(d) ?? 0}</td>
         <td>${visitsByDate.get(d) ?? 0}</td>
+        <td>${fmtDur(dur?.avg_seconds)}</td>
+        <td>${fmtDur(dur?.median_seconds)}</td>
       </tr>
     `;
-  }).join('') || '<tr><td colspan="8">No data yet — the first row appears after the next daily update run.</td></tr>';
+  }).join('') || '<tr><td colspan="10">No data yet — the first row appears after the next daily update run.</td></tr>';
 
   const totalStreams = streamCountRes.count ?? '?';
   const totalUsers = profileCountRes.count ?? '?';

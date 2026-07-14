@@ -1278,7 +1278,12 @@ function renderSidebar() {
       <button type="button" id="sidebarPendingBtn" class="sidebar-group-btn">⏳ ${escapeHtml(t('sidebar_pending'))} <span class="sidebar-count">${pendingCount()}</span></button>
     </div>
   ` : '';
-  sidebar.innerHTML = pendingHtml + SIDEBAR_GROUPS.map(g => `
+  const suggestHtml = currentUser ? `
+    <div class="sidebar-section">
+      <button type="button" id="suggestCategoryBtn" class="sidebar-cat-btn suggest-category-btn">＋ ${escapeHtml(t('suggest_category_button'))}</button>
+    </div>
+  ` : '';
+  sidebar.innerHTML = pendingHtml + suggestHtml + SIDEBAR_GROUPS.map(g => `
     <div class="sidebar-section">
       <button type="button" class="sidebar-group-btn" data-content-type="${g.type}" data-category="">${g.icon} ${escapeHtml(t(g.labelKey))} <span class="sidebar-count">${sidebarCount(g.type, null)}</span></button>
       <ul class="sidebar-sublist">
@@ -1308,7 +1313,18 @@ function updateSidebarActiveState() {
   if (pendingBtn) pendingBtn.classList.toggle('active', showPendingOnly);
 }
 
-sidebar.addEventListener('click', (e) => {
+sidebar.addEventListener('click', async (e) => {
+  if (e.target.closest('#suggestCategoryBtn')) {
+    if (!currentUser) return;
+    const suggestion = prompt(t('suggest_category_prompt'));
+    if (!suggestion || suggestion.trim().length < 2) return;
+    const { error } = await sb.from('category_suggestions').insert({
+      suggestion: suggestion.trim().slice(0, 40),
+      suggested_by: currentUser.id,
+    });
+    alert(error ? t('suggest_failed', { message: error.message }) : t('suggest_thanks'));
+    return;
+  }
   if (e.target.closest('#sidebarPendingBtn')) {
     showPendingOnly = true;
     updateSidebarActiveState();
@@ -1387,6 +1403,7 @@ sb.auth.onAuthStateChange(async (_event, session) => {
   await Promise.all([loadFavorites(), loadUnlockedVideos(), checkAdmin(), loadMyProfile(), loadMyVotes()]);
   renderAuthArea();
   await refreshQuotaInfo();
+  loadCheers();
   render(currentFiltered());
 });
 
@@ -1398,6 +1415,75 @@ langSelect.addEventListener('change', () => {
   refreshQuotaInfo();
   loadStreams();
 });
+
+// ===== 응원 한마디 (게스트/유저 공용) =====
+const cheerList = document.getElementById('cheerList');
+const cheerForm = document.getElementById('cheerForm');
+const cheerInput = document.getElementById('cheerInput');
+
+async function loadCheers() {
+  if (!cheerList) return;
+  const { data, error } = await sb
+    .from('cheers')
+    .select('id, name, content, created_at')
+    .order('created_at', { ascending: false })
+    .limit(30);
+  if (error || !data) return;
+  cheerList.innerHTML = data.map(c => `
+    <span class="cheer-chip" data-cheer-id="${c.id}">
+      <b>${escapeHtml(c.name || t('anonymous'))}</b> ${escapeHtml(c.content)}
+      ${isAdmin ? `<button type="button" class="cheer-delete-btn" data-cheer-id="${c.id}" title="delete">✕</button>` : ''}
+    </span>
+  `).join('') || `<span class="cheer-empty">${escapeHtml(t('cheer_empty'))}</span>`;
+}
+
+cheerForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const content = cheerInput.value.trim();
+  if (!content) return;
+  const name = currentUser ? (myDisplayName || currentUser.user_metadata?.full_name || null) : null;
+  const { error } = await sb.from('cheers').insert({ content, name, user_id: currentUser?.id || null });
+  if (!error) {
+    cheerInput.value = '';
+    loadCheers();
+  }
+});
+
+cheerList?.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.cheer-delete-btn');
+  if (!btn || !isAdmin) return;
+  await sb.from('cheers').delete().eq('id', btn.dataset.cheerId);
+  loadCheers();
+});
+
+// ===== 체류시간 측정 (관리자 통계용) — 탭이 가려지거나 닫힐 때 머문 시간을 기록 =====
+let visitSegmentStart = Date.now();
+
+function sendVisitDuration() {
+  const seconds = Math.round((Date.now() - visitSegmentStart) / 1000);
+  visitSegmentStart = Date.now();
+  if (seconds < 3 || seconds > 43200) return;
+  const visitorKey = localStorage.getItem('visitorKey');
+  if (!visitorKey) return;
+  // pagehide 이후에도 전송되도록 keepalive fetch 사용 (sendBeacon은 인증 헤더를 못 실음)
+  fetch(`${SUPABASE_URL}/rest/v1/visit_durations`, {
+    method: 'POST',
+    keepalive: true,
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify({ visitor_key: visitorKey, seconds }),
+  }).catch(() => {});
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') sendVisitDuration();
+  else visitSegmentStart = Date.now();
+});
+window.addEventListener('pagehide', sendVisitDuration);
 
 async function trackVisit() {
   let visitorKey = localStorage.getItem('visitorKey');
@@ -1433,6 +1519,7 @@ async function init() {
   await refreshQuotaInfo();
   await trackVisit();
   await loadVisitStats();
+  loadCheers();
   await loadStreams();
 }
 

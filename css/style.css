@@ -445,10 +445,97 @@ body {
 }
 
 .category-hint {
-  margin: 0 0 24px;
+  margin: 0 0 14px;
   color: var(--muted);
   font-size: 0.8rem;
   opacity: 0.85;
+}
+
+.cheer-section {
+  max-width: 760px;
+  margin: 0 auto 20px;
+}
+
+.cheer-list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+.cheer-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  max-width: 340px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cheer-chip b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.cheer-empty {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.cheer-delete-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0 2px;
+}
+
+.cheer-form {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.cheer-form input {
+  flex: 1 1 auto;
+  max-width: 420px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  padding: 7px 14px;
+  font-size: 0.82rem;
+}
+
+.cheer-form button {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  padding: 7px 16px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.cheer-form button:hover {
+  border-color: var(--accent);
+}
+
+.suggest-category-btn {
+  color: var(--muted);
+  border: 1px dashed var(--border) !important;
+  border-radius: 6px;
 }
 
 .controls {

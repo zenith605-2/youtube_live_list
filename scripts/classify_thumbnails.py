@@ -59,6 +59,28 @@ CATEGORY_PROMPTS = {
         "an airport runway with airplanes taking off or landing",
         "airplanes parked at airport terminal gates",
     ],
+    "train": [
+        "a train on railway tracks",
+        "a railway station platform with trains",
+    ],
+    "river": [
+        "a river or canal waterfront",
+    ],
+    "plaza": [
+        "an open public square or plaza in a city",
+    ],
+    "park": [
+        "a green park with trees, grass and walking paths",
+    ],
+    "alley": [
+        "a narrow alley between buildings",
+    ],
+    "construction": [
+        "a construction site with cranes and heavy machinery",
+    ],
+    "aerial": [
+        "an aerial view of the ground from a drone or high altitude",
+    ],
     "mountain": [
         "a mountain landscape with peaks or forest hills",
         "a ski slope with snow in the mountains",

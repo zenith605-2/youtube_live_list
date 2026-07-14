@@ -299,9 +299,128 @@ async function refresh() {
   await checkAdmin();
   adminSections.hidden = !isAdmin;
   if (isAdmin) {
-    await Promise.all([loadFlagged(), loadUsers()]);
+    await Promise.all([loadFlagged(), loadUsers(), loadCategoryLog(), loadSuggestions()]);
   }
 }
+
+// ===== 카테고리 변경 이력 + 되돌리기 =====
+const adminCategoryLog = document.getElementById('adminCategoryLog');
+
+async function loadCategoryLog() {
+  const { data, error } = await sb
+    .from('category_changes')
+    .select('*')
+    .order('changed_at', { ascending: false })
+    .limit(50);
+  if (error) {
+    adminCategoryLog.textContent = error.message;
+    return;
+  }
+  if (!data?.length) {
+    adminCategoryLog.textContent = t('admin_catlog_empty');
+    return;
+  }
+  // 영상 제목과 변경자 닉네임을 붙여서 보여준다
+  const videoIds = [...new Set(data.map(r => r.video_id))];
+  const userIds = [...new Set(data.map(r => r.changed_by).filter(Boolean))];
+  const [videosRes, usersRes] = await Promise.all([
+    sb.from('streams').select('video_id, title').in('video_id', videoIds),
+    userIds.length ? sb.from('profiles').select('id, display_name').in('id', userIds) : Promise.resolve({ data: [] }),
+  ]);
+  const titleMap = new Map((videosRes.data || []).map(v => [v.video_id, v.title]));
+  const nameMap = new Map((usersRes.data || []).map(u => [u.id, u.display_name]));
+
+  adminCategoryLog.innerHTML = data.map(r => `
+    <div class="admin-row">
+      <div class="admin-info">
+        <div class="admin-title">${escapeHtml((titleMap.get(r.video_id) || r.video_id).slice(0, 70))}</div>
+        <div class="admin-meta">
+          ${escapeHtml(r.old_category || '(none)')} → <b>${escapeHtml(r.new_category)}</b>
+          · ${escapeHtml(nameMap.get(r.changed_by) || t('anonymous'))}
+          · ${new Date(r.changed_at).toLocaleString()}
+        </div>
+      </div>
+      <div class="admin-actions">
+        ${r.old_category && titleMap.has(r.video_id) ? `<button type="button" class="catlog-revert-btn" data-video-id="${escapeHtml(r.video_id)}" data-old-category="${escapeHtml(r.old_category)}">${escapeHtml(t('admin_catlog_revert'))}</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+adminCategoryLog?.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.catlog-revert-btn');
+  if (!btn) return;
+  btn.disabled = true;
+  // 되돌리기 = 이전 카테고리로 재설정 (이 변경도 이력에 남음)
+  const { error } = await sb.rpc('set_stream_category', {
+    p_video_id: btn.dataset.videoId,
+    p_category: btn.dataset.oldCategory,
+  });
+  if (error) alert(error.message);
+  await loadCategoryLog();
+});
+
+// ===== 카테고리 제안 승인/거절 =====
+const adminSuggestionList = document.getElementById('adminSuggestionList');
+
+async function loadSuggestions() {
+  const { data, error } = await sb
+    .from('category_suggestions')
+    .select('*')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) {
+    adminSuggestionList.textContent = error.message;
+    return;
+  }
+  if (!data?.length) {
+    adminSuggestionList.textContent = t('admin_sugg_empty');
+    return;
+  }
+  adminSuggestionList.innerHTML = data.map(r => `
+    <div class="admin-row">
+      <div class="admin-info">
+        <div class="admin-title">${escapeHtml(r.suggestion)}</div>
+        <div class="admin-meta">${new Date(r.created_at).toLocaleDateString()}</div>
+      </div>
+      <div class="admin-actions">
+        <button type="button" class="sugg-approve-btn" data-sugg-id="${r.id}" data-suggestion="${escapeHtml(r.suggestion)}">${escapeHtml(t('admin_sugg_approve'))}</button>
+        <button type="button" class="sugg-reject-btn" data-sugg-id="${r.id}">${escapeHtml(t('admin_sugg_reject'))}</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+adminSuggestionList?.addEventListener('click', async (e) => {
+  const approveBtn = e.target.closest('.sugg-approve-btn');
+  if (approveBtn) {
+    // 카테고리 내부 키(영문 소문자, 예: night_market)를 정해야 딥링크/분류에 쓸 수 있다
+    const key = prompt(t('admin_sugg_key_prompt'), '');
+    if (key === null) return;
+    if (!/^[a-z][a-z0-9_]{1,20}$/.test(key)) {
+      alert(t('admin_sugg_key_invalid'));
+      return;
+    }
+    const { error } = await sb.rpc('approve_category_suggestion', {
+      p_id: Number(approveBtn.dataset.suggId),
+      p_key: key,
+      p_label: approveBtn.dataset.suggestion,
+      p_sort: 90,
+    });
+    if (error) alert(error.message);
+    await loadSuggestions();
+    return;
+  }
+  const rejectBtn = e.target.closest('.sugg-reject-btn');
+  if (rejectBtn) {
+    const { error } = await sb.from('category_suggestions')
+      .update({ status: 'rejected' })
+      .eq('id', Number(rejectBtn.dataset.suggId));
+    if (error) alert(error.message);
+    await loadSuggestions();
+  }
+});
 
 accountEditNicknameBtn.addEventListener('click', async () => {
   const { data } = await sb.from('profiles').select('display_name').eq('id', currentUser.id).maybeSingle();
