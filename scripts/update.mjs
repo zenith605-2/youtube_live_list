@@ -236,6 +236,20 @@ async function main() {
     return 'other';
   };
 
+  // ===== 일회성 초기화 (2026-07-15 아침 실행에서만 발동) =====
+  // 홍보 시작 전 테스트 데이터 청소: 방문 기록(오늘/누적/국가/체류시간) + 추천/비추천 전부 리셋.
+  // 날짜 가드라 그날 이후엔 절대 재실행되지 않음 — 나중에 이 블록은 지워도 무방.
+  const todayKstStr = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+  if (todayKstStr === '2026-07-15') {
+    console.log('일회성 초기화 실행: 방문 기록 / 추천 / 비추천 리셋');
+    await supabase.from('visit_log').delete().gte('id', 0);
+    await supabase.from('visit_durations').delete().gte('id', 0);
+    await supabase.from('upvotes').delete().gte('video_id', '');
+    await supabase.from('downvotes').delete().gte('video_id', '');
+    await supabase.from('streams').update({ upvote_count: 0, downvote_count: 0 }).gte('video_id', '');
+    console.log('일회성 초기화 완료');
+  }
+
   const { data: existingRows, error: fetchErr } = await supabase.from('streams').select('*');
   if (fetchErr) throw fetchErr;
 
