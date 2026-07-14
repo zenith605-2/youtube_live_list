@@ -160,11 +160,14 @@ async function loadRecentVisitors() {
     stayByKeyDate.set(k, (stayByKeyDate.get(k) || 0) + d.seconds);
   }
 
+  const fmtTime = (ts) => new Date(ts).toLocaleString('ko-KR', {
+    timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
   body.innerHTML = data.map(r => `
     <tr>
-      <td>${new Date(r.created_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
+      <td>${fmtTime(r.created_at)}</td>
       <td>${escapeHtml(r.country || '–')}</td>
-      <td>${escapeHtml(r.ip || '–')}</td>
+      <td class="ip-cell">${escapeHtml(r.ip || '–')}</td>
       <td>${escapeHtml((r.visitor_key || '').slice(0, 8))}</td>
       <td>${fmtStay(stayByKeyDate.get(`${r.visitor_key}|${kstDateOf(r.created_at)}`))}</td>
     </tr>

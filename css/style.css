@@ -1499,6 +1499,25 @@ body {
   font-size: 1.1rem;
 }
 
+.stats-table .ip-cell {
+  word-break: break-all; /* IPv6 같은 긴 주소가 표를 밀어내지 않게 */
+  white-space: normal;
+  max-width: 180px;
+}
+
+@media (max-width: 600px) {
+  .stats-table th,
+  .stats-table td {
+    white-space: normal;
+    word-break: break-word;
+    padding: 5px 6px;
+    font-size: 0.72rem;
+  }
+  .stats-table .ip-cell {
+    max-width: 110px;
+  }
+}
+
 .country-bar-wrap {
   display: flex;
   align-items: center;
