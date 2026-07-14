@@ -80,6 +80,32 @@ async function loadStats() {
   `;
 }
 
+async function loadRecentVisitors() {
+  const body = document.getElementById('visitorTableBody');
+  // RLS 정책상 관리자 토큰으로만 읽힌다 (일반 유저/게스트는 빈 결과)
+  const { data, error } = await sb
+    .from('visit_log')
+    .select('created_at, country, ip, visitor_key')
+    .order('created_at', { ascending: false })
+    .limit(100);
+  if (error) {
+    body.innerHTML = `<tr><td colspan="4">${escapeHtml(error.message)}</td></tr>`;
+    return;
+  }
+  if (!data?.length) {
+    body.innerHTML = '<tr><td colspan="4">No visitor records yet.</td></tr>';
+    return;
+  }
+  body.innerHTML = data.map(r => `
+    <tr>
+      <td>${new Date(r.created_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}</td>
+      <td>${escapeHtml(r.country || '–')}</td>
+      <td>${escapeHtml(r.ip || '–')}</td>
+      <td>${escapeHtml((r.visitor_key || '').slice(0, 8))}</td>
+    </tr>
+  `).join('');
+}
+
 async function init() {
   if (!(await isAdminUser())) {
     statsGate.textContent = 'This page is for administrators only. Please sign in with an admin account on the main site first.';
@@ -87,7 +113,7 @@ async function init() {
   }
   statsGate.hidden = true;
   statsContent.hidden = false;
-  await loadStats();
+  await Promise.all([loadStats(), loadRecentVisitors()]);
 }
 
 init();

@@ -1485,6 +1485,21 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('pagehide', sendVisitDuration);
 
+// 방문자의 IP/국가 조회 (무료 지오IP API, 실패해도 방문 기록은 남긴다)
+async function fetchVisitorGeo() {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 4000);
+  try {
+    const res = await fetch('https://ipwho.is/', { signal: controller.signal });
+    const data = await res.json();
+    if (data && data.success !== false) {
+      return { ip: data.ip || null, country: data.country || null };
+    }
+  } catch { /* 지오 조회 실패는 무시 */ }
+  finally { clearTimeout(timer); }
+  return { ip: null, country: null };
+}
+
 async function trackVisit() {
   let visitorKey = localStorage.getItem('visitorKey');
   if (!visitorKey) {
@@ -1493,7 +1508,8 @@ async function trackVisit() {
   }
   // "오늘"의 기준은 한국 자정 (UTC 기준이면 KST 09:00에 리셋되어 헷갈림)
   const todayKst = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
-  await sb.from('visit_log').insert({ visit_date: todayKst, visitor_key: visitorKey });
+  const geo = await fetchVisitorGeo();
+  await sb.from('visit_log').insert({ visit_date: todayKst, visitor_key: visitorKey, ip: geo.ip, country: geo.country });
   // 같은 날 중복 방문 시 유니크 제약 위반 에러가 나는데, 의도된 동작이라 무시한다.
 }
 

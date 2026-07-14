@@ -41,6 +41,22 @@
       </table>
     </div>
     <p class="stats-note">"Existing/Valid/Offline/New/Deleted" are recorded by the daily 06:00 KST update job (from the day it first runs after this feature was added). Signups and Visitors are counted live from the database.</p>
+
+    <h2 class="stats-subheading">Recent Visitors</h2>
+    <div class="stats-table-wrap">
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Time (KST)</th>
+            <th>Country</th>
+            <th>IP</th>
+            <th>Visitor</th>
+          </tr>
+        </thead>
+        <tbody id="visitorTableBody"></tbody>
+      </table>
+    </div>
+    <p class="stats-note">One row per visitor per day (first visit of the day). IP/country collection is disclosed in the privacy policy; visible to administrators only.</p>
   </div>
 </main>
 

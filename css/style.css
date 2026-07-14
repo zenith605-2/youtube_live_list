@@ -1409,6 +1409,11 @@ body {
   font-size: 0.8rem;
 }
 
+.stats-subheading {
+  margin: 28px 0 10px;
+  font-size: 1.1rem;
+}
+
 .account-section {
   background: var(--card-bg);
   border: 1px solid var(--border);
