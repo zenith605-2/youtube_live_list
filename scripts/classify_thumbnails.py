@@ -108,6 +108,35 @@ CATEGORY_PROMPTS = {
 # 촬영 시점(장르) 기반이라 CLIP이 판별할 수 없는 카테고리 — 현재 카테고리가 이거면 건너뛴다
 PERSPECTIVE_CATEGORIES = {"dashcam", "walk"}
 
+# 조건 태그(일반 영상 전용): 썸네일에서 확실히 구분되는 밤/낮/눈만 CLIP으로 판별.
+# 비(빗줄기)는 한 장의 썸네일로는 신뢰도가 낮아 제목 키워드(update.mjs)에 맡긴다.
+CONDITION_PROMPTS = [
+    ("night", "a photo taken at night, dark scene"),
+    ("day", "a photo taken during the day in bright daylight"),
+    ("snow", "a scene covered in snow"),
+    ("nosnow", "a scene with no snow on the ground"),
+]
+
+
+def detect_condition_tags(model, processor, torch, img):
+    texts = [p for _, p in CONDITION_PROMPTS]
+    inputs = processor(text=texts, images=img, return_tensors="pt", padding=True)
+    with torch.no_grad():
+        out = model(**inputs)
+    probs = out.logits_per_image.softmax(dim=-1)[0].tolist()
+    scores = {name: probs[i] for i, (name, _) in enumerate(CONDITION_PROMPTS)}
+    tags = []
+    nd = scores["night"] + scores["day"]
+    if nd > 0:
+        if scores["night"] / nd >= 0.7:
+            tags.append("night")
+        elif scores["day"] / nd >= 0.7:
+            tags.append("day")
+    sn = scores["snow"] + scores["nosnow"]
+    if sn > 0 and scores["snow"] / sn >= 0.75:
+        tags.append("snow")
+    return tags
+
 
 def fetch_category_keys():
     """DB에 실제로 존재하는 카테고리만 CLIP 후보로 쓴다 (아직 추가 안 된 카테고리 프롬프트는 무시)"""
@@ -121,7 +150,7 @@ def fetch_targets():
     # ai 분류 미체크 + 유저 수정분 제외
     url = (
         f"{SUPABASE_URL}/rest/v1/streams"
-        f"?select=video_id,thumbnail,category,category_source,content_type"
+        f"?select=video_id,thumbnail,category,category_source,content_type,tags"
         f"&ai_checked_at=is.null"
         f"&or=(category_source.is.null,category_source.neq.user)"
         f"&limit={BATCH_LIMIT}"
@@ -194,42 +223,64 @@ def main():
     skipped = 0
     now_iso = datetime.now(timezone.utc).isoformat()
 
+    tagged = 0
+
     for row in rows:
         vid = row["video_id"]
-        # 키워드가 dashcam/walk로 분류한 건 시점 기반 장르라 CLIP이 판단할 수 없음 -> 그대로 둔다
-        if row.get("category") in PERSPECTIVE_CATEGORIES:
-            patch_row(vid, {"ai_checked_at": now_iso})
-            kept += 1
-            continue
+        is_video = (row.get("content_type") or "live") == "video"
+        # 키워드가 dashcam/walk로 분류한 건 시점 기반 장르라 CLIP이 카테고리를 판단하지 않는다
+        # (단, 일반 영상이면 조건 태그 분석은 수행)
+        skip_category = row.get("category") in PERSPECTIVE_CATEGORIES
+
+        payload = {"ai_checked_at": now_iso}
         img = download_image(thumbnail_url(row), fallback=row.get("thumbnail"))
         if img is None:
             # 썸네일 자체를 못 받으면 체크 기록만 남기고 넘어간다
-            patch_row(vid, {"ai_checked_at": now_iso})
+            patch_row(vid, payload)
             skipped += 1
             continue
 
-        inputs = processor(text=prompts, images=img, return_tensors="pt", padding=True)
-        with torch.no_grad():
-            outputs = model(**inputs)
-        probs = outputs.logits_per_image.softmax(dim=-1)[0]
-
-        # 프롬프트별 확률을 카테고리 단위로 합산
-        cat_scores = {}
-        for i, cat in enumerate(prompt_category):
-            cat_scores[cat] = cat_scores.get(cat, 0.0) + probs[i].item()
-        best_cat, best_score = max(cat_scores.items(), key=lambda kv: kv[1])
-
-        payload = {"ai_checked_at": now_iso}
-        if best_score >= CONFIDENCE_THRESHOLD and best_cat != row.get("category"):
-            payload["category"] = best_cat
-            payload["category_source"] = "ai"
-            changed += 1
-            print(f"  {vid}: {row.get('category')} -> {best_cat} ({best_score:.2f})")
-        else:
+        if skip_category:
             kept += 1
+        else:
+            inputs = processor(text=prompts, images=img, return_tensors="pt", padding=True)
+            with torch.no_grad():
+                outputs = model(**inputs)
+            probs = outputs.logits_per_image.softmax(dim=-1)[0]
+
+            # 프롬프트별 확률을 카테고리 단위로 합산
+            cat_scores = {}
+            for i, cat in enumerate(prompt_category):
+                cat_scores[cat] = cat_scores.get(cat, 0.0) + probs[i].item()
+            best_cat, best_score = max(cat_scores.items(), key=lambda kv: kv[1])
+
+            if best_score >= CONFIDENCE_THRESHOLD and best_cat != row.get("category"):
+                payload["category"] = best_cat
+                payload["category_source"] = "ai"
+                changed += 1
+                print(f"  {vid}: {row.get('category')} -> {best_cat} ({best_score:.2f})")
+            else:
+                kept += 1
+
+        # 일반 영상이면 밤/낮/눈 조건 태그 분석 (기존 태그와 충돌하지 않는 것만 추가)
+        if is_video:
+            cond = detect_condition_tags(model, processor, torch, img)
+            existing = row.get("tags") or []
+            addable = []
+            for t in cond:
+                if t == "night" and "day" in existing:
+                    continue
+                if t == "day" and "night" in existing:
+                    continue
+                if t not in existing:
+                    addable.append(t)
+            if addable:
+                payload["tags"] = existing + addable
+                tagged += 1
+
         patch_row(vid, payload)
 
-    print(f"완료: 변경 {changed} / 유지 {kept} / 썸네일없음 {skipped}")
+    print(f"완료: 카테고리 변경 {changed} / 유지 {kept} / 썸네일없음 {skipped} / 태그부여 {tagged}")
 
 
 if __name__ == "__main__":

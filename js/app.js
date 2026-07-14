@@ -58,6 +58,15 @@ let streams = [];
 let currentUser = null;
 let isAdmin = false;
 let showPendingOnly = false; // "대기중" 사이드바 항목을 눌렀을 때만 true
+
+// 조건 태그 (일반 영상 전용) — 카테고리와 별개의 필터 축
+const CONDITION_TAGS = ['night', 'day', 'rain', 'heavy_rain', 'snow', 'heavy_snow', 'accident', 'fire', 'violence'];
+const activeTags = new Set();       // 현재 켜져 있는 태그 필터
+const tagEditingCards = new Set();  // 태그 편집 모드가 열린 카드들
+
+function tagLabel(tag) {
+  return t(`tag_${tag}`);
+}
 let selectedForDelete = new Set(); // 관리자 일괄삭제용 선택된 videoId
 let channelGroupsFullySelected = new Map(); // groupIndex -> channelId ("채널 전체선택"으로 체크된 그룹만)
 let submitterNames = new Map(); // userId -> display_name
@@ -137,6 +146,7 @@ function mapRow(row) {
     approvalStatus: row.approval_status || null,
     offlineSince: row.offline_since || null,
     durationSeconds: row.duration_seconds || null,
+    tags: row.tags || [],
     commentCount: 0,
   };
 }
@@ -165,6 +175,8 @@ function currentFiltered() {
     if (visibility && s.visibility !== visibility) return false;
     if (favoritesOnly && !favorites.has(s.videoId)) return false;
     if (addedCutoff && (!s.addedAt || new Date(s.addedAt).getTime() < addedCutoff)) return false;
+    // 조건 태그 필터: 태그는 일반 영상에만 있으므로 라이브는 자연히 제외됨
+    if (activeTags.size && ![...activeTags].every(tg => s.tags.includes(tg))) return false;
     return true;
   });
 
@@ -324,6 +336,20 @@ function cardInnerHtml(s, groupIndex) {
       ? `<div class="offline-notice">${escapeHtml(t('offline_notice', { days: offlineDaysLeft }))}</div>`
       : '';
 
+    // 조건 태그 (일반 영상 전용): 평소엔 달린 태그만, 편집 모드에선 전체 태그를 토글 칩으로
+    let tagsHtml = '';
+    if (!isLiveType) {
+      const editing = tagEditingCards.has(s.videoId);
+      const shown = editing ? CONDITION_TAGS : s.tags.filter(tg => CONDITION_TAGS.includes(tg));
+      const chips = shown.map(tg =>
+        `<button type="button" class="card-tag ${s.tags.includes(tg) ? 'on' : ''} ${editing ? 'editing' : ''}" data-video-id="${escapeHtml(s.videoId)}" data-tag="${tg}">${escapeHtml(tagLabel(tg))}</button>`
+      ).join('');
+      const editBtn = currentUser
+        ? `<button type="button" class="tag-edit-btn" data-video-id="${escapeHtml(s.videoId)}" title="tags">${editing ? '✔' : '🏷'}</button>`
+        : '';
+      if (chips || editBtn) tagsHtml = `<div class="card-tag-row">${chips}${editBtn}</div>`;
+    }
+
     const actionsHtml = `
       <div class="card-actions">
         <button type="button" class="copy-link-btn" data-video-id="${escapeHtml(s.videoId)}">${t('copy_url')}</button>
@@ -360,6 +386,7 @@ function cardInnerHtml(s, groupIndex) {
         ${countryHtml}
         ${qualityHtml}
         ${categoryHtml}
+        ${tagsHtml}
         ${actionsHtml}
       </div>
     `;
@@ -419,6 +446,44 @@ grid.addEventListener('click', async (e) => {
   if (e.target.closest('select')) return; // 카테고리 select 클릭은 모달을 열지 않음
   if (e.target.closest('.admin-select-checkbox') || e.target.closest('.channel-select-all')) return; // 체크박스는 모달을 열지 않음
   if (e.target.closest('.subscribe-btn')) return; // 구독 링크는 새 탭으로만 열고 모달은 열지 않음
+
+  // 태그 편집 모드 토글 (🏷 / ✔)
+  const tagEditBtn = e.target.closest('.tag-edit-btn');
+  if (tagEditBtn) {
+    const vid = tagEditBtn.dataset.videoId;
+    if (tagEditingCards.has(vid)) tagEditingCards.delete(vid);
+    else tagEditingCards.add(vid);
+    refreshCard(vid);
+    return;
+  }
+
+  // 태그 칩 클릭: 편집 모드면 해당 영상의 태그 토글, 아니면 그 태그로 필터
+  const tagChip = e.target.closest('.card-tag');
+  if (tagChip) {
+    const vid = tagChip.dataset.videoId;
+    const tg = tagChip.dataset.tag;
+    if (tagEditingCards.has(vid) && currentUser) {
+      const s = streams.find(x => x.videoId === vid);
+      if (!s) return;
+      const next = s.tags.includes(tg) ? s.tags.filter(x => x !== tg) : [...s.tags, tg];
+      const prev = s.tags;
+      s.tags = next; // 낙관적 갱신
+      refreshCard(vid);
+      const { error } = await sb.rpc('set_stream_tags', { p_video_id: vid, p_tags: next });
+      if (error) {
+        s.tags = prev;
+        refreshCard(vid);
+        alert(error.message);
+      }
+    } else {
+      if (activeTags.has(tg)) activeTags.delete(tg);
+      else activeTags.add(tg);
+      renderTagFilterBar();
+      syncUrlFromFilters();
+      render(currentFiltered());
+    }
+    return;
+  }
 
   const copyLinkBtn = e.target.closest('.copy-link-btn');
   if (copyLinkBtn) return handleCopyLink(copyLinkBtn);
@@ -1014,6 +1079,7 @@ function syncUrlFromFilters() {
   if (addedFilter.value) p.set('added', addedFilter.value);
   if (sortSelect.value !== 'default') p.set('sort', sortSelect.value);
   if (searchInput.value.trim()) p.set('q', searchInput.value.trim());
+  if (activeTags.size) p.set('tags', [...activeTags].join(','));
   const qs = p.toString();
   history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
 }
@@ -1029,7 +1095,31 @@ function applyFiltersFromUrl() {
   setIfValid(addedFilter, p.get('added'));
   setIfValid(sortSelect, p.get('sort'));
   if (p.get('q')) searchInput.value = p.get('q');
+  for (const tg of (p.get('tags') || '').split(',')) {
+    if (CONDITION_TAGS.includes(tg)) activeTags.add(tg);
+  }
 }
+
+// 조건 태그 필터 칩 렌더링
+const tagFilterBar = document.getElementById('tagFilterBar');
+
+function renderTagFilterBar() {
+  if (!tagFilterBar) return;
+  tagFilterBar.innerHTML = CONDITION_TAGS.map(tg =>
+    `<button type="button" class="tag-chip ${activeTags.has(tg) ? 'active' : ''}" data-tag="${tg}">${escapeHtml(tagLabel(tg))}</button>`
+  ).join('');
+}
+
+tagFilterBar?.addEventListener('click', (e) => {
+  const chip = e.target.closest('.tag-chip');
+  if (!chip) return;
+  const tg = chip.dataset.tag;
+  if (activeTags.has(tg)) activeTags.delete(tg);
+  else activeTags.add(tg);
+  renderTagFilterBar();
+  syncUrlFromFilters();
+  render(currentFiltered());
+});
 
 searchInput.addEventListener('input', () => {
   syncUrlFromFilters();
@@ -1056,6 +1146,8 @@ document.getElementById('clearFiltersBtn').addEventListener('click', () => {
   visibilityFilter.value = 'listed'; // 기본값: 정상 노출만
   favoritesOnlyCheckbox.checked = false;
   showPendingOnly = false;
+  activeTags.clear();
+  renderTagFilterBar();
   syncUrlFromFilters();
   updateSidebarActiveState();
   render(currentFiltered());
@@ -1416,6 +1508,7 @@ langSelect.addEventListener('change', () => {
   applyStaticTranslations();
   renderAuthArea();
   populateCategoryFilter();
+  renderTagFilterBar();
   refreshQuotaInfo();
   loadStreams();
 });
@@ -1534,6 +1627,7 @@ async function init() {
   await loadCategories();
   populateCategoryFilter();
   applyFiltersFromUrl(); // 딥링크(?category=... 등)로 들어온 경우 필터 상태 복원
+  renderTagFilterBar();
   await Promise.all([loadFavorites(), loadUnlockedVideos(), checkAdmin(), loadMyProfile(), loadMyVotes()]);
   renderAuthArea();
   await refreshQuotaInfo();

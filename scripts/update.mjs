@@ -45,6 +45,32 @@ async function fetchJson(url) {
   return res.json();
 }
 
+// 조건 태그(일반 영상 전용): 제목에서 날씨/시간/사건 태그를 뽑는다.
+// 밤/낮/눈은 CLIP 썸네일 분석(classify_thumbnails.py)이 보완하고, 유저가 카드에서 교정 가능.
+const TAG_KEYWORDS = {
+  night: ['night', '밤 ', '야간', '심야', '夜', 'noche', 'nuit'],
+  rain: ['rain', '빗길', '우천', '비오는', '雨', 'lluvia'],
+  heavy_rain: ['heavy rain', 'torrential', '폭우', '호우', '豪雨', '暴雨'],
+  snow: ['snow', '눈길', '눈오는', '雪', 'nieve'],
+  heavy_snow: ['heavy snow', 'blizzard', '폭설', '大雪', '暴雪'],
+  accident: ['accident', 'crash', '사고', '추돌', '충돌', '事故', 'accidente'],
+  fire: ['fire', '화재', '火災', '火灾', 'incendio'],
+  violence: ['fight', 'assault', 'brawl', '싸움', '폭행', '몸싸움', '난투'],
+};
+
+function tagsFromTitle(title) {
+  const haystack = (title || '').toLowerCase();
+  const tags = [];
+  for (const [tag, kws] of Object.entries(TAG_KEYWORDS)) {
+    if (tag === 'fire' && haystack.includes('firework')) continue;
+    if (kws.some(k => haystack.includes(k))) tags.push(tag);
+  }
+  // 폭우/폭설이면 비/눈도 함께 (넓은 필터에 걸리게)
+  if (tags.includes('heavy_rain') && !tags.includes('rain')) tags.push('rain');
+  if (tags.includes('heavy_snow') && !tags.includes('snow')) tags.push('snow');
+  return tags;
+}
+
 // 세로 영상(쇼츠 등) 판별 — videos.list의 player 파트에 maxHeight를 지정하면
 // 실제 영상 비율대로 embedWidth/embedHeight가 내려온다 (oEmbed는 쇼츠에도 16:9를 돌려줘서 못 씀)
 function isVerticalInfo(info) {
@@ -344,6 +370,14 @@ async function main() {
         needsUpdate = true;
       }
     }
+    // 조건 태그가 아직 없는 일반 영상은 제목에서 1회 추출 (유저가 수정한 뒤엔 건드리지 않음)
+    if (contentType === 'video' && (!row.tags || row.tags.length === 0)) {
+      const titleTags = tagsFromTitle(title);
+      if (titleTags.length) {
+        patch.tags = titleTags;
+        needsUpdate = true;
+      }
+    }
     if (needsUpdate) toUpdate.push(patch);
   }
 
@@ -544,6 +578,7 @@ async function main() {
       started_at: c.contentType === 'live' ? (info.liveStreamingDetails?.actualStartTime || null) : null,
       published_at: c.contentType === 'video' ? (info.snippet?.publishedAt || null) : null,
       duration_seconds: c.contentType === 'video' ? parseDurationSeconds(info.contentDetails?.duration) : null,
+      tags: c.contentType === 'video' ? tagsFromTitle(c.title) : [],
     };
   });
 

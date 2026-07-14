@@ -408,6 +408,71 @@ body {
   color: var(--accent);
 }
 
+.tag-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.tag-chip {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.tag-chip:hover {
+  border-color: var(--accent);
+}
+
+.tag-chip.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(255, 59, 59, 0.08);
+}
+
+.card-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.card-tag {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  cursor: pointer;
+}
+
+.card-tag.on {
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.card-tag.editing:not(.on) {
+  opacity: 0.45;
+}
+
+.tag-edit-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  cursor: pointer;
+}
+
 .clear-filters-btn {
   background: transparent;
   border: 1px dashed var(--border);
