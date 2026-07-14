@@ -182,20 +182,40 @@ function currentFiltered() {
 
   switch (sortSelect.value) {
     case 'newest':
-      return filtered.sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0));
+      filtered.sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0));
+      break;
     case 'upvotes':
-      return filtered.sort((a, b) => b.upvoteCount - a.upvoteCount);
+      filtered.sort((a, b) => b.upvoteCount - a.upvoteCount);
+      break;
     case 'downvotes':
-      return filtered.sort((a, b) => b.downvoteCount - a.downvoteCount);
+      filtered.sort((a, b) => b.downvoteCount - a.downvoteCount);
+      break;
     case 'comments':
-      return filtered.sort((a, b) => b.commentCount - a.commentCount);
+      filtered.sort((a, b) => b.commentCount - a.commentCount);
+      break;
     default:
       // 같은 채널의 영상들을 붙여서 보여주기 위해 채널명 기준으로 정렬
-      return filtered.sort((a, b) =>
+      filtered.sort((a, b) =>
         a.channelTitle.localeCompare(b.channelTitle) || a.title.localeCompare(b.title)
       );
   }
+  // 라이브 스냅샷 로드 실패로 "죽은 것 같은" 카드는 어떤 정렬에서든 맨 아래로 (안정 정렬이라 내부 순서 유지)
+  filtered.sort((a, b) => (a.probablyOffline ? 1 : 0) - (b.probablyOffline ? 1 : 0));
+  return filtered;
 }
+
+// 라이브 스냅샷 이미지가 404면 방송이 끊긴 것 — 카드에서 onerror로 호출된다.
+// 전체 재렌더 없이 해당 카드만 맨 뒤로 옮긴다 (재생 중인 다른 카드의 미리보기 유지).
+window.__liveSnapshotError = function (videoId) {
+  const s = streams.find(x => x.videoId === videoId);
+  if (!s || s.probablyOffline) return;
+  s.probablyOffline = true;
+  const card = grid.querySelector(`.card[data-video-id="${CSS.escape(videoId)}"]`);
+  if (card) {
+    card.classList.add('probably-offline');
+    if (!grid.classList.contains('list-view')) grid.appendChild(card); // 리스트뷰는 채널 그룹 유지를 위해 이동 안 함
+  }
+};
 
 // 무한 스크롤: 처음에 RENDER_CHUNK개만 그리고, 하단 센티널이 가까워지면 이어서 그린다
 const RENDER_CHUNK = 60;
@@ -258,7 +278,7 @@ function appendMoreCards() {
 
     const isLocked = VIEW_GATING_ENABLED && isNewStream(s) && !unlockedVideos.has(s.videoId);
     const card = document.createElement('div');
-    card.className = 'card' + (isLocked ? ' locked' : '');
+    card.className = 'card' + (isLocked ? ' locked' : '') + (s.probablyOffline ? ' probably-offline' : '');
     card.dataset.videoId = s.videoId;
     card.dataset.title = s.title;
     card.dataset.channelGroup = String(groupIndex);
@@ -296,13 +316,13 @@ function cardInnerHtml(s, groupIndex) {
             <span class="thumb-label">${t('thumb_official')}</span>
           </div>
           <div class="thumb-half">
-            <img src="${liveSnapshot}" alt="${escapeHtml(s.title)} - ${t('thumb_live')}" loading="lazy" onerror="this.closest('.thumb-half').style.display='none'">
+            <img src="${liveSnapshot}" alt="${escapeHtml(s.title)} - ${t('thumb_live')}" loading="lazy" onerror="this.onerror=null;this.closest('.thumb-half').style.display='none';window.__liveSnapshotError('${s.videoId}')">
             <span class="thumb-label">${t('thumb_live')}</span>
           </div>
         `
         : `
           <div class="thumb-half">
-            <img src="${liveSnapshot}" alt="${escapeHtml(s.title)}" loading="lazy" onerror="this.src='${s.thumbnail}'">
+            <img src="${liveSnapshot}" alt="${escapeHtml(s.title)}" loading="lazy" onerror="this.onerror=null;this.src='${s.thumbnail}';window.__liveSnapshotError('${s.videoId}')">
           </div>
         `;
     } else {

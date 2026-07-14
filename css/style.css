@@ -707,6 +707,10 @@ body {
   border-color: var(--accent);
 }
 
+.card.probably-offline {
+  opacity: 0.55; /* 스냅샷 로드 실패 = 방송이 끊긴 것으로 추정되는 카드 */
+}
+
 .grid.list-view {
   display: flex;
   flex-direction: column;
