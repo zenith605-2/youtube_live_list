@@ -80,6 +80,46 @@ async function loadStats() {
   `;
 }
 
+async function loadCountryStats() {
+  const body = document.getElementById('countryTableBody');
+  const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+  const { data, error } = await sb
+    .from('visit_log')
+    .select('country')
+    .gte('created_at', since)
+    .limit(10000);
+  if (error) {
+    body.innerHTML = `<tr><td colspan="3">${escapeHtml(error.message)}</td></tr>`;
+    return;
+  }
+  if (!data?.length) {
+    body.innerHTML = '<tr><td colspan="3">No visitor records yet.</td></tr>';
+    return;
+  }
+  const counts = new Map();
+  for (const r of data) {
+    const c = r.country || 'Unknown';
+    counts.set(c, (counts.get(c) || 0) + 1);
+  }
+  const total = data.length;
+  const rows = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  body.innerHTML = rows.map(([country, n]) => {
+    const pct = Math.round((n / total) * 1000) / 10;
+    return `
+      <tr>
+        <td>${escapeHtml(country)}</td>
+        <td>${n}</td>
+        <td>
+          <div class="country-bar-wrap">
+            <div class="country-bar" style="width:${pct}%"></div>
+            <span class="country-pct">${pct}%</span>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
 async function loadRecentVisitors() {
   const body = document.getElementById('visitorTableBody');
   // RLS 정책상 관리자 토큰으로만 읽힌다 (일반 유저/게스트는 빈 결과)
@@ -113,7 +153,7 @@ async function init() {
   }
   statsGate.hidden = true;
   statsContent.hidden = false;
-  await Promise.all([loadStats(), loadRecentVisitors()]);
+  await Promise.all([loadStats(), loadRecentVisitors(), loadCountryStats()]);
 }
 
 init();

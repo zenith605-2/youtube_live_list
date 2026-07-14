@@ -1414,6 +1414,27 @@ body {
   font-size: 1.1rem;
 }
 
+.country-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.country-bar {
+  height: 12px;
+  min-width: 2px;
+  background: var(--accent);
+  border-radius: 3px;
+  flex: 0 0 auto;
+  max-width: calc(100% - 48px);
+}
+
+.country-pct {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 .account-section {
   background: var(--card-bg);
   border: 1px solid var(--border);
