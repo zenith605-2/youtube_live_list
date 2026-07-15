@@ -158,6 +158,15 @@ adminUserList.addEventListener('click', async (e) => {
   await loadUsers();
 });
 
+// 조건 태그 라벨: 기본 태그는 i18n 번역, 유저 제안 태그는 condition_tags의 라벨 사용
+let conditionTagLabels = null;
+async function getTagLabelMap() {
+  if (conditionTagLabels) return conditionTagLabels;
+  const { data } = await sb.from('condition_tags').select('key, label');
+  conditionTagLabels = new Map((data || []).map(r => [r.key, r.label]));
+  return conditionTagLabels;
+}
+
 async function loadMyFavorites() {
   const { data: favRows, error: favErr } = await sb
     .from('favorites')
@@ -166,11 +175,19 @@ async function loadMyFavorites() {
   if (favErr || !favRows.length) return [];
 
   const videoIds = favRows.map(f => f.video_id);
-  const { data: streamRows } = await sb
-    .from('streams')
-    .select('video_id, title, channel_title, thumbnail, content_type')
-    .in('video_id', videoIds);
+  const [{ data: streamRows }, tagMap] = await Promise.all([
+    sb.from('streams')
+      .select('video_id, title, channel_title, thumbnail, content_type, tags')
+      .in('video_id', videoIds),
+    getTagLabelMap(),
+  ]);
   const streamMap = new Map((streamRows || []).map(s => [s.video_id, s]));
+
+  const labelOf = (key) => {
+    const i18nKey = `tag_${key}`;
+    const v = t(i18nKey);
+    return v !== i18nKey ? v : (tagMap.get(key) || key);
+  };
 
   return favRows.map(f => {
     const s = streamMap.get(f.video_id) || {};
@@ -182,6 +199,7 @@ async function loadMyFavorites() {
       url: `https://www.youtube.com/watch?v=${f.video_id}`,
       thumbnail: s.thumbnail || `https://i.ytimg.com/vi/${f.video_id}/hqdefault.jpg`,
       note: f.note || '',
+      conditions: (s.tags || []).map(labelOf).join(', '),
     };
   });
 }
@@ -242,23 +260,26 @@ function downloadFile(filename, content, mimeType) {
 
 function buildTxt(items) {
   return items
-    .map((i, idx) => `${idx + 1}. ${i.title}\n${t('account_export_channel_label')}: ${i.channel}\n${t('account_export_url_label')}: ${i.url}\n${t('account_export_thumbnail_label')}: ${i.thumbnail}${i.note ? `\n${t('account_export_note_label')}: ${i.note}` : ''}`)
+    .map((i, idx) => `${idx + 1}. ${i.title}\n${t('account_export_channel_label')}: ${i.channel}${i.conditions ? `\n${t('account_export_conditions_label')}: ${i.conditions}` : ''}\n${t('account_export_url_label')}: ${i.url}\n${t('account_export_thumbnail_label')}: ${i.thumbnail}${i.note ? `\n${t('account_export_note_label')}: ${i.note}` : ''}`)
     .join('\n\n---\n\n');
 }
 
 function buildAndDownloadXlsx(items) {
-  const header = ['No.', 'Title', 'Channel', 'YouTube URL', 'Thumbnail URL', 'Note'];
-  const rows = items.map((i, idx) => [idx + 1, i.title, i.channel, i.url, i.thumbnail, i.note]);
+  const header = ['No.', 'Thumbnail', 'Title', 'Channel', 'Conditions', 'YouTube URL', 'Thumbnail URL', 'Note'];
+  const rows = items.map((i, idx) => [idx + 1, '', i.title, i.channel, i.conditions, i.url, i.thumbnail, i.note]);
   const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
-  // 유튜브/썸네일 URL 칸을 실제 클릭 가능한 링크로 만든다 (이미지 자체는 CORS 때문에 못 넣음)
   rows.forEach((_row, i) => {
     const rowNum = i + 2;
-    const urlCell = `D${rowNum}`;
-    const thumbCell = `E${rowNum}`;
-    if (ws[urlCell]) ws[urlCell].l = { Target: items[i].url };
-    if (ws[thumbCell]) ws[thumbCell].l = { Target: items[i].thumbnail };
+    // 썸네일 칸: =IMAGE() 수식으로 셀 안에 이미지 렌더링 (Microsoft 365/웹 엑셀 기준.
+    // 이미지 바이트를 직접 심는 건 유튜브 이미지 서버의 CORS 제한 때문에 브라우저에선 불가)
+    ws[`B${rowNum}`] = { t: 'n', f: `_xlfn.IMAGE("${items[i].thumbnail.replace(/"/g, '')}")` };
+    // 유튜브/썸네일 URL 칸은 클릭 가능한 링크로
+    if (ws[`F${rowNum}`]) ws[`F${rowNum}`].l = { Target: items[i].url };
+    if (ws[`G${rowNum}`]) ws[`G${rowNum}`].l = { Target: items[i].thumbnail };
   });
-  ws['!cols'] = [{ wch: 5 }, { wch: 50 }, { wch: 25 }, { wch: 45 }, { wch: 45 }, { wch: 30 }];
+  ws['!cols'] = [{ wch: 5 }, { wch: 22 }, { wch: 50 }, { wch: 25 }, { wch: 25 }, { wch: 45 }, { wch: 45 }, { wch: 30 }];
+  // 이미지가 보이도록 데이터 행 높이를 키운다
+  ws['!rows'] = [{ hpx: 20 }, ...rows.map(() => ({ hpx: 80 }))];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Favorites');
   XLSX.writeFile(wb, 'favorites.xlsx');
