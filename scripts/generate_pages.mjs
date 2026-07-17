@@ -3,7 +3,7 @@
 // 다시 만들고 커밋한다. 검색 수요의 대부분이 "live cam 도시/나라" 형태라서,
 // 실제 콘텐츠가 HTML에 박힌 페이지가 있어야 구글이 색인/랭킹할 수 있다.
 import { createClient } from '@supabase/supabase-js';
-import { writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -76,6 +76,13 @@ const PAGE_CSS = `
   .browse-list a { color: #e6e6e6; text-decoration: none; }
   .browse-list a:hover { color: #ff3b3b; }
   .browse-list .count { color: #9aa4b2; font-size: 0.85rem; }
+  .map-wrap { position: relative; margin: 8px 0 4px; }
+  .map-wrap svg { width: 100%; height: auto; display: block; }
+  .map-wrap path { stroke: #0d1117; stroke-width: 0.5; }
+  .map-wrap path[data-href] { cursor: pointer; }
+  .map-wrap path:hover { filter: brightness(1.6); stroke: #ffffff; }
+  .map-tip { position: fixed; z-index: 10; background: rgba(0,0,0,.85); border: 1px solid #2a2f3a; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 0.85rem; pointer-events: none; white-space: nowrap; }
+  .map-note { color: #9aa4b2; font-size: 0.8rem; margin-bottom: 16px; }
   h2 { font-size: 1.15rem; margin: 28px 0 12px; }
   .cta { display: inline-block; margin: 20px 0; background: #ff3b3b; color: #fff; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; }
   footer { border-top: 1px solid #2a2f3a; margin-top: 40px; padding: 20px 24px; color: #9aa4b2; font-size: 0.85rem; }
@@ -219,6 +226,49 @@ async function main() {
   }
   console.log(`카테고리 페이지 ${categoryPages.length}개 생성`);
 
+  // ===== 세계지도 (choropleth) — 영상 수에 따라 색이 진해지고, 호버 툴팁 + 클릭 이동 =====
+  // 지도 경로 데이터: jsvectormap(MIT, Natural Earth 기반)에서 추출한 config/world_map_paths.json
+  const countByCode = new Map();
+  for (const s of visible) {
+    if (s.country) countByCode.set(s.country, (countByCode.get(s.country) || 0) + 1);
+  }
+  const maxCount = Math.max(1, ...countByCode.values());
+  const heatColor = (count) => {
+    if (!count) return '#1e242e';
+    const t = 0.25 + 0.75 * (Math.log(count + 1) / Math.log(maxCount + 1));
+    const mix = (a, b) => Math.round(a + (b - a) * t).toString(16).padStart(2, '0');
+    return `#${mix(0x4a, 0xff)}${mix(0x22, 0x3b)}${mix(0x28, 0x3b)}`;
+  };
+  const slugByCode = new Map(countryPages.map(c => [c.code, c.slug]));
+  const mapPaths = JSON.parse(await readFile(path.join(ROOT, 'config', 'world_map_paths.json'), 'utf-8'));
+  const mapSvgPaths = Object.entries(mapPaths).map(([code, v]) => {
+    const count = countByCode.get(code) || 0;
+    const href = slugByCode.has(code) ? `/country/${slugByCode.get(code)}.html` : (count ? `/?country=${code}` : '');
+    return `<path d="${v.path}" fill="${heatColor(count)}" data-name="${escapeHtml(countryNameOf(code) || v.name)}" data-count="${count}"${href ? ` data-href="${href}"` : ''}></path>`;
+  }).join('');
+  const mapSection = `
+      <div class="map-wrap">
+        <svg viewBox="0 0 900 441" role="img" aria-label="World map of available cams by country">${mapSvgPaths}</svg>
+        <div id="mapTip" class="map-tip" hidden></div>
+      </div>
+      <p class="map-note">Hover a country to see how many cams it has — click to browse them.</p>
+      <script>
+        (function () {
+          var tip = document.getElementById('mapTip');
+          document.querySelectorAll('.map-wrap path').forEach(function (p) {
+            p.addEventListener('mousemove', function (e) {
+              var n = Number(p.dataset.count);
+              tip.textContent = p.dataset.name + ' — ' + (n ? n + (n === 1 ? ' cam' : ' cams') : 'no cams yet');
+              tip.hidden = false;
+              tip.style.left = (e.clientX + 14) + 'px';
+              tip.style.top = (e.clientY + 14) + 'px';
+            });
+            p.addEventListener('mouseleave', function () { tip.hidden = true; });
+            if (p.dataset.href) p.addEventListener('click', function () { location.href = p.dataset.href; });
+          });
+        })();
+      </script>`;
+
   // ===== browse.html (전체 색인 — 크롤러와 사용자 모두의 진입점) =====
   const browseHtml = pageHtml({
     title: 'Browse Live Cams by Country & Category – Camlisted',
@@ -228,6 +278,7 @@ async function main() {
     intro: `${visible.length} live cams and videos, organized by where and what they show. Updated ${today}.`,
     ctaHref: '/',
     bodyHtml: `
+      ${mapSection}
       <h2>By Category</h2>
       <ul class="browse-list">
         ${categoryPages.map(c => `<li><a href="/c/${c.key}.html">${c.icon ? c.icon + ' ' : ''}${escapeHtml(c.label)}</a> <span class="count">(${c.count})</span></li>`).join('')}
