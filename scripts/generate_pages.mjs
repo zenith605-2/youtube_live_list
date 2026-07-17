@@ -141,6 +141,165 @@ function appPage(indexTemplate, { title, description, canonicalPath, h1, presetS
   return html;
 }
 
+
+// 국가 코드 -> 대략적 중심좌표 (지구본 포인트용)
+const COUNTRY_CENTROIDS = {
+  US: [39.8, -98.6], CA: [56.1, -106.3], MX: [23.6, -102.5], BR: [-14.2, -51.9], AR: [-38.4, -63.6],
+  CL: [-35.7, -71.5], PE: [-9.2, -75.0], CO: [4.6, -74.3], CR: [9.7, -83.8], CU: [21.5, -77.8],
+  GB: [54.0, -2.0], IE: [53.4, -8.2], FR: [46.2, 2.2], DE: [51.2, 10.4], NL: [52.1, 5.3],
+  BE: [50.5, 4.5], CH: [46.8, 8.2], AT: [47.5, 14.6], IT: [41.9, 12.6], ES: [40.5, -3.7],
+  PT: [39.4, -8.2], GR: [39.1, 21.8], TR: [39.0, 35.2], RU: [61.5, 105.3], UA: [48.4, 31.2],
+  PL: [51.9, 19.1], CZ: [49.8, 15.5], HU: [47.2, 19.5], RO: [45.9, 24.9], BG: [42.7, 25.5],
+  HR: [45.1, 15.2], RS: [44.0, 21.0], NO: [60.5, 8.5], SE: [60.1, 18.6], FI: [61.9, 25.7],
+  DK: [56.3, 9.5], IS: [64.9, -19.0], IN: [20.6, 79.0], PK: [30.4, 69.3], BD: [23.7, 90.4],
+  LK: [7.9, 80.8], NP: [28.4, 84.1], CN: [35.9, 104.2], TW: [23.7, 121.0], HK: [22.3, 114.2],
+  JP: [36.2, 138.3], KR: [36.5, 127.9], TH: [15.9, 100.9], VN: [14.1, 108.3], PH: [12.9, 121.8],
+  ID: [-0.8, 113.9], MY: [4.2, 101.9], SG: [1.35, 103.8], KH: [12.6, 105.0], LA: [19.9, 102.5],
+  MM: [21.9, 95.9], AU: [-25.3, 133.8], NZ: [-40.9, 174.9], AE: [23.4, 53.8], SA: [23.9, 45.1],
+  IL: [31.0, 34.9], EG: [26.8, 30.8], MA: [31.8, -7.1], KE: [-0.02, 37.9], ZA: [-30.6, 22.9],
+  NA: [-22.9, 18.5], MO: [22.2, 113.5], MT: [35.9, 14.4], LU: [49.8, 6.1], EE: [58.6, 25.0],
+  LV: [56.9, 24.6], LT: [55.2, 23.9], SK: [48.7, 19.7], SI: [46.2, 15.0],
+};
+
+// 3D 지구본 페이지: 나라 포인트를 클릭하면 그 나라의 라이브 캠이 옆 패널에서 바로 재생된다.
+// three.js + globe.gl(MIT, CDN)을 사용하는 별도 페이지 — 앱 본체와 독립적.
+async function writeGlobePage(countByCode, slugByCode, visible, today) {
+  const globeCountries = [];
+  const vidsByCode = {};
+  for (const [code, c] of countByCode) {
+    const cen = COUNTRY_CENTROIDS[code];
+    if (!cen) continue;
+    const total = c.live + c.video;
+    if (!total) continue;
+    globeCountries.push({
+      code, name: countryNameOf(code), lat: cen[0], lng: cen[1],
+      live: c.live, video: c.video,
+      href: slugByCode.has(code) ? `/country/${slugByCode.get(code)}.html` : `/?country=${code}`,
+    });
+    // 나라별 재생 후보: 라이브 우선 최대 30개 (id, 제목, 라이브 여부)
+    const list = visible.filter(s => s.country === code);
+    const lives = list.filter(s => s.content_type === 'live');
+    const pick = (lives.length ? lives : list).slice(0, 30);
+    vidsByCode[code] = pick.map(s => [s.video_id, s.title.slice(0, 70), s.content_type === 'live' ? 1 : 0]);
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Globe – Camlisted Live Cams Around the World</title>
+<meta name="description" content="Spin the globe and drop into live cams around the world — ${visible.length}+ YouTube live cams and videos, updated daily.">
+<link rel="canonical" href="${SITE}/globe.html">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; background: #000; color: #e6e6e6; font-family: system-ui, sans-serif; overflow: hidden; }
+  #globe { position: absolute; inset: 0; }
+  .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(rgba(0,0,0,.8), transparent); flex-wrap: wrap; }
+  .topbar a.back { color: #9aa4b2; text-decoration: none; font-size: 0.9rem; }
+  .topbar a.back:hover { color: #fff; }
+  .topbar h1 { font-size: 1rem; font-weight: 600; color: #fff; }
+  .topbar .hint { color: #9aa4b2; font-size: 0.8rem; }
+  .random-btn { margin-left: auto; background: #ff3b3b; color: #fff; border: 0; border-radius: 999px; padding: 8px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+  .panel { position: fixed; right: 0; top: 0; bottom: 0; width: min(420px, 100%); z-index: 6; background: rgba(13,17,23,.96); border-left: 1px solid #2a2f3a; padding: 16px; display: none; flex-direction: column; gap: 10px; }
+  .panel.open { display: flex; }
+  .panel .close { position: absolute; top: 10px; right: 12px; background: none; border: 0; color: #9aa4b2; font-size: 1.4rem; cursor: pointer; }
+  .panel h2 { font-size: 1.1rem; color: #fff; padding-right: 30px; }
+  .panel .sub { color: #9aa4b2; font-size: 0.85rem; }
+  .panel .player { aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .panel .player iframe { width: 100%; height: 100%; border: 0; }
+  .panel ul { list-style: none; overflow-y: auto; flex: 1; }
+  .panel li { margin-bottom: 6px; }
+  .panel li button { background: none; border: 0; color: #cdd6e0; text-align: left; cursor: pointer; font-size: 0.85rem; padding: 4px 0; }
+  .panel li button:hover { color: #ff3b3b; }
+  .panel li .lv { color: #ff3b3b; font-weight: 700; font-size: 0.7rem; margin-right: 6px; }
+  .panel a.browse-all { color: #ff3b3b; text-decoration: none; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="/browse.html">← Map</a>
+  <h1>🌐 Camlisted Globe</h1>
+  <span class="hint">Drag to spin · click a point to watch</span>
+  <button type="button" class="random-btn" id="randomBtn">🎲 Random cam</button>
+</div>
+<div id="globe"></div>
+<aside class="panel" id="panel">
+  <button type="button" class="close" id="panelClose">×</button>
+  <h2 id="panelTitle"></h2>
+  <div class="sub" id="panelSub"></div>
+  <div class="player" id="player"></div>
+  <ul id="camList"></ul>
+  <a class="browse-all" id="browseAll" href="#">Browse all →</a>
+</aside>
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"><\/script>
+<script src="https://unpkg.com/globe.gl@2.32.0/dist/globe.gl.min.js"><\/script>
+<script>
+  var COUNTRIES = ${JSON.stringify(globeCountries)};
+  var VIDS = ${JSON.stringify(vidsByCode)};
+  var maxTotal = Math.max.apply(null, COUNTRIES.map(function (c) { return c.live + c.video; }));
+
+  var globe = Globe()(document.getElementById('globe'))
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+    .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
+    .pointsData(COUNTRIES)
+    .pointLat('lat').pointLng('lng')
+    .pointColor(function () { return '#ff3b3b'; })
+    .pointAltitude(function (d) { return 0.01 + 0.1 * Math.sqrt((d.live + d.video) / maxTotal); })
+    .pointRadius(function (d) { return 0.4 + 1.1 * Math.sqrt((d.live + d.video) / maxTotal); })
+    .pointLabel(function (d) { return d.name + ' — Live: ' + d.live + ' · Videos: ' + d.video; })
+    .onPointClick(function (d) { openPanel(d); });
+  globe.controls().autoRotate = true;
+  globe.controls().autoRotateSpeed = 0.6;
+  globe.pointOfView({ lat: 20, lng: 10, altitude: 2.2 });
+
+  var panel = document.getElementById('panel');
+  function openPanel(d, autoplayRandom) {
+    panel.classList.add('open');
+    document.getElementById('panelTitle').textContent = d.name;
+    document.getElementById('panelSub').textContent = 'Live: ' + d.live + ' · Videos: ' + d.video;
+    document.getElementById('browseAll').href = d.href;
+    var vids = VIDS[d.code] || [];
+    var list = document.getElementById('camList');
+    list.innerHTML = '';
+    vids.forEach(function (v) {
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.innerHTML = (v[2] ? '<span class="lv">LIVE</span>' : '') + v[1].replace(/</g, '&lt;');
+      b.addEventListener('click', function () { play(v[0]); });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+    if (vids.length) {
+      var idx = autoplayRandom ? Math.floor(Math.random() * vids.length) : 0;
+      play(vids[idx][0]);
+    } else {
+      document.getElementById('player').innerHTML = '';
+    }
+    globe.pointOfView({ lat: d.lat, lng: d.lng, altitude: 1.6 }, 900);
+  }
+  function play(id) {
+    document.getElementById('player').innerHTML =
+      '<iframe src="https://www.youtube.com/embed/' + id + '?autoplay=1&mute=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+  }
+  document.getElementById('panelClose').addEventListener('click', function () {
+    panel.classList.remove('open');
+    document.getElementById('player').innerHTML = '';
+  });
+  document.getElementById('randomBtn').addEventListener('click', function () {
+    var pool = [];
+    COUNTRIES.forEach(function (c) { for (var i = 0; i < c.live + c.video; i++) pool.push(c); });
+    openPanel(pool[Math.floor(Math.random() * pool.length)], true);
+  });
+<\/script>
+</body>
+</html>
+`;
+  await writeFile(path.join(ROOT, 'globe.html'), html);
+  console.log(`globe.html 생성 (국가 ${globeCountries.length}개)`);
+}
+
 function sortForPage(list) {
   // 라이브 먼저, 그 안에서는 추천 많은 순 → 최신 순
   return [...list].sort((a, b) =>
@@ -257,6 +416,7 @@ async function main() {
     return `<path d="${v.path}" fill="${heatColor(total)}" data-code="${code}" data-name="${escapeHtml(countryNameOf(code) || v.name)}" data-live="${c.live}" data-video="${c.video}"${href ? ` data-href="${href}"` : ''}></path>`;
   }).join('');
   const mapSection = `
+      <p style="margin-bottom:10px"><a href="/globe.html" style="color:var(--accent);text-decoration:none;font-weight:600">🌐 3D Globe →</a></p>
       <div class="map-type-filter">Show:
         <button type="button" data-type="all" class="active">All</button>
         <button type="button" data-type="live">🔴 Live</button>
@@ -311,6 +471,9 @@ async function main() {
           });
         })();
       </script>`;
+
+  await writeGlobePage(countByCode, slugByCode, visible, today);
+  sitemapUrls.push({ loc: `${SITE}/globe.html`, priority: '0.7', changefreq: 'daily' });
 
   // ===== browse.html (전체 색인 — 크롤러와 사용자 모두의 진입점) =====
   const browseHtml = pageHtml({
