@@ -1601,6 +1601,7 @@ cheerList?.addEventListener('click', async (e) => {
 let visitSegmentStart = Date.now();
 
 function sendVisitDuration() {
+  if (localStorage.getItem('excludeVisits')) return; // 관리자 기기는 체류시간도 집계 제외
   const seconds = Math.round((Date.now() - visitSegmentStart) / 1000);
   visitSegmentStart = Date.now();
   if (seconds < 3 || seconds > 43200) return;
@@ -1642,6 +1643,10 @@ async function fetchVisitorGeo() {
 }
 
 async function trackVisit() {
+  // 관리자 본인의 방문은 통계에서 제외. 한 번 관리자로 로그인한 기기는 표시를 남겨서
+  // 이후 로그아웃 상태로 둘러볼 때도 집계되지 않는다.
+  if (isAdmin) localStorage.setItem('excludeVisits', '1');
+  if (localStorage.getItem('excludeVisits')) return;
   let visitorKey = localStorage.getItem('visitorKey');
   if (!visitorKey) {
     visitorKey = crypto.randomUUID();
