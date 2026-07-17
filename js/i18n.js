@@ -122,6 +122,7 @@ const translations = {
     suggest_category_button: 'Suggest a category',
     suggest_category_prompt: 'What category should we add?',
     world_map_link: 'World Map',
+    country_unknown: '🌍 Country?',
     suggest_tag_button: 'Suggest a condition tag',
     suggest_tag_prompt: 'What condition tag should we add? (e.g. fog, dusk, crowd)',
     admin_tagsugg_heading: 'Condition Tag Suggestions',
@@ -347,6 +348,7 @@ const translations = {
     suggest_category_button: '카테고리 제안',
     suggest_category_prompt: '어떤 카테고리가 필요하신가요?',
     world_map_link: '세계지도',
+    country_unknown: '🌍 국가?',
     suggest_tag_button: '조건 태그 제안',
     suggest_tag_prompt: '어떤 조건 태그가 필요하신가요? (예: 안개, 노을, 인파)',
     admin_tagsugg_heading: '조건 태그 제안 관리',
@@ -572,6 +574,7 @@ const translations = {
     suggest_category_button: 'カテゴリを提案',
     suggest_category_prompt: 'どんなカテゴリが必要ですか？',
     world_map_link: '世界地図',
+    country_unknown: '🌍 国は?',
     suggest_tag_button: '条件タグを提案',
     suggest_tag_prompt: 'どんな条件タグが必要ですか？（例: 霧、夕暮れ、人混み）',
     admin_tagsugg_heading: '条件タグ提案の管理',
@@ -797,6 +800,7 @@ const translations = {
     suggest_category_button: '建议新分类',
     suggest_category_prompt: '需要什么分类？',
     world_map_link: '世界地图',
+    country_unknown: '🌍 国家?',
     suggest_tag_button: '建议条件标签',
     suggest_tag_prompt: '需要什么条件标签？（例如：雾、黄昏、人群）',
     admin_tagsugg_heading: '条件标签建议管理',
@@ -1022,6 +1026,7 @@ const translations = {
     suggest_category_button: 'Sugerir categoría',
     suggest_category_prompt: '¿Qué categoría deberíamos añadir?',
     world_map_link: 'Mapa mundial',
+    country_unknown: '🌍 ¿País?',
     suggest_tag_button: 'Sugerir etiqueta de condición',
     suggest_tag_prompt: '¿Qué etiqueta de condición deberíamos añadir? (ej. niebla, atardecer)',
     admin_tagsugg_heading: 'Sugerencias de etiquetas',
@@ -1155,7 +1160,8 @@ function t(key, vars) {
 
 function applyStaticTranslations() {
   document.documentElement.lang = currentLang;
-  document.title = t('site_title');
+  // 정적 SEO 페이지(/c/*, /country/*)는 자체 제목을 유지한다
+  if (!window.__presetCountry && !window.__presetCategory) document.title = t('site_title');
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.dataset.i18n);
   });

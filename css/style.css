@@ -936,7 +936,8 @@ body {
   color: var(--muted);
 }
 
-.card-category-select {
+.card-category-select,
+.card-country-select {
   display: block;
   margin-top: 8px;
   width: 100%;

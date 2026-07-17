@@ -1,76 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<base href="/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Train / Railway Live Cams &amp; Videos – Camlisted</title>
 <meta name="description" content="5 live train / railway cams and 0 videos, curated from YouTube and verified daily. Free to watch, no sign-up.">
 <link rel="canonical" href="https://camlisted.com/c/train.html">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
 <meta property="og:title" content="Train / Railway Live Cams &amp; Videos – Camlisted">
 <meta property="og:description" content="5 live train / railway cams and 0 videos, curated from YouTube and verified daily. Free to watch, no sign-up.">
 <meta property="og:url" content="https://camlisted.com/c/train.html">
-<style>
-  :root { color-scheme: dark; }
-  * { box-sizing: border-box; margin: 0; }
-  body { background: #0d1117; color: #e6e6e6; font-family: system-ui, -apple-system, sans-serif; line-height: 1.5; }
-  header { padding: 16px 24px; border-bottom: 1px solid #2a2f3a; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  header a.logo { color: #ff3b3b; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
-  header nav a { color: #9aa4b2; text-decoration: none; margin-right: 14px; font-size: 0.9rem; }
-  header nav a:hover { color: #e6e6e6; }
-  main { max-width: 1100px; margin: 0 auto; padding: 24px; }
-  h1 { font-size: 1.5rem; margin-bottom: 8px; }
-  p.intro { color: #9aa4b2; margin-bottom: 20px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-  .entry { display: block; background: #161b22; border: 1px solid #2a2f3a; border-radius: 10px; overflow: hidden; text-decoration: none; color: inherit; }
-  .entry:hover { border-color: #ff3b3b; }
-  .thumb { position: relative; aspect-ratio: 16/9; background: #000; }
-  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,.75); color: #fff; font-size: 0.7rem; padding: 2px 7px; border-radius: 4px; }
-  .badge.live { background: #d21f3c; }
-  .entry-body { padding: 10px 12px; }
-  .entry-body strong { display: block; font-size: 0.88rem; font-weight: 600; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-  .entry-body span { color: #9aa4b2; font-size: 0.78rem; }
-  .browse-list { columns: 3; column-gap: 32px; }
-  .browse-list li { list-style: none; margin-bottom: 6px; break-inside: avoid; }
-  .browse-list a { color: #e6e6e6; text-decoration: none; }
-  .browse-list a:hover { color: #ff3b3b; }
-  .browse-list .count { color: #9aa4b2; font-size: 0.85rem; }
-  .map-wrap { position: relative; margin: 8px 0 4px; }
-  .map-wrap svg { width: 100%; height: auto; display: block; }
-  .map-wrap path { stroke: #0d1117; stroke-width: 0.5; }
-  .map-wrap path[data-href] { cursor: pointer; }
-  .map-wrap path:hover { filter: brightness(1.6); stroke: #ffffff; }
-  .map-tip { position: fixed; z-index: 10; background: rgba(0,0,0,.85); border: 1px solid #2a2f3a; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 0.85rem; pointer-events: none; white-space: nowrap; }
-  .map-note { color: #9aa4b2; font-size: 0.8rem; margin-bottom: 4px; }
-  .map-legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; color: #9aa4b2; font-size: 0.8rem; margin-bottom: 18px; }
-  .map-legend .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 5px; vertical-align: -2px; }
-  .thumb iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  .preview-toggle { margin: 4px 0 14px; color: #9aa4b2; font-size: 0.85rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .preview-toggle button { background: #161b22; color: #9aa4b2; border: 1px solid #2a2f3a; border-radius: 999px; padding: 4px 12px; cursor: pointer; font-size: 0.8rem; }
-  .preview-toggle button.active { color: #fff; border-color: #ff3b3b; }
-  h2 { font-size: 1.15rem; margin: 28px 0 12px; }
-  .cta { display: inline-block; margin: 20px 0; background: #ff3b3b; color: #fff; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; }
-  footer { border-top: 1px solid #2a2f3a; margin-top: 40px; padding: 20px 24px; color: #9aa4b2; font-size: 0.85rem; }
-  footer a { color: #9aa4b2; margin-right: 14px; }
-  @media (max-width: 700px) { .browse-list { columns: 2; } }
-</style>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header>
-  <a class="logo" href="/">📹 Camlisted</a>
-  <nav><a href="/">Home</a><a href="/browse.html">Browse</a><a href="/about.html">About</a></nav>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html">🗺 World Map</a>
+    · <a href="about.html">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">🚆 Train / Railway Live Cams &amp; Videos</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <select id="contentTypeFilter" hidden>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="live" data-i18n="content_type_live">Live</option>
+      <option value="video" data-i18n="content_type_video">Video</option>
+    </select>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <select id="countryFilter" hidden>
+      <option value="" data-i18n="filter_all">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
 </header>
-<main>
-  <h1>🚆 Train / Railway Live Cams &amp; Videos</h1>
-  <p class="intro">5 live cams and 0 videos in the Train / Railway category, re-verified daily. Click any card to watch on YouTube. Updated 2026-07-17.</p>
-  <a class="cta" href="/?category=train">Open in interactive viewer →</a>
-  
-      <div class="preview-toggle">Preview:
-        <button type="button" data-mode="auto">▶ Auto</button>
-        <button type="button" data-mode="hover">🖱 Hover</button>
-        <button type="button" data-mode="off">Off</button>
-      </div><div class="grid">
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<main id="grid" class="grid">
     <a class="entry" href="https://www.youtube.com/watch?v=Jil1EgWZndY" target="_blank" rel="noopener">
       <div class="thumb" data-vid="Jil1EgWZndY"><img src="https://i.ytimg.com/vi/Jil1EgWZndY/hqdefault_live.jpg" alt="Big Boy in Fostoria, Ohio – Live from Our NKP Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>Big Boy in Fostoria, Ohio – Live from Our NKP Camera</strong><span>Railstream</span></div>
@@ -90,53 +165,57 @@
     <a class="entry" href="https://www.youtube.com/watch?v=3VJXqn2ZI7Y" target="_blank" rel="noopener">
       <div class="thumb" data-vid="3VJXqn2ZI7Y"><img src="https://i.ytimg.com/vi/3VJXqn2ZI7Y/hqdefault_live.jpg" alt="LIVE Rail Cam – Fostoria, Ohio | CSX (ex-B&amp;O) | RailStream" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>LIVE Rail Cam – Fostoria, Ohio | CSX (ex-B&amp;O) | RailStream</strong><span>Railstream</span></div>
-    </a></div>
-      <script>
-        (function () {
-          var KEY = 'staticPreviewMode';
-          var mode = localStorage.getItem(KEY) || 'auto';
-          var thumbs = [].slice.call(document.querySelectorAll('.thumb[data-vid]'));
-          var io = null;
-          function play(t) {
-            if (t.querySelector('iframe')) return;
-            var f = document.createElement('iframe');
-            f.src = 'https://www.youtube.com/embed/' + t.dataset.vid + '?autoplay=1&mute=1&playsinline=1&rel=0';
-            f.allow = 'autoplay; encrypted-media';
-            t.appendChild(f);
-          }
-          function stop(t) { var f = t.querySelector('iframe'); if (f) f.remove(); }
-          function apply() {
-            thumbs.forEach(stop);
-            if (io) { io.disconnect(); io = null; }
-            document.querySelectorAll('.preview-toggle button').forEach(function (b) {
-              b.classList.toggle('active', b.dataset.mode === mode);
-            });
-            if (mode === 'auto') {
-              io = new IntersectionObserver(function (es) {
-                es.forEach(function (e) { e.isIntersecting ? play(e.target) : stop(e.target); });
-              }, { rootMargin: '50px' });
-              thumbs.forEach(function (t) { io.observe(t); });
-            }
-          }
-          thumbs.forEach(function (t) {
-            t.addEventListener('mouseenter', function () { if (mode === 'hover') play(t); });
-            t.addEventListener('mouseleave', function () { if (mode === 'hover') stop(t); });
-          });
-          document.querySelectorAll('.preview-toggle button').forEach(function (b) {
-            b.addEventListener('click', function (e) {
-              e.preventDefault();
-              mode = b.dataset.mode;
-              localStorage.setItem(KEY, mode);
-              apply();
-            });
-          });
-          apply();
-        })();
-      </script>
-</main>
-<footer>
-  <a href="/">Home</a><a href="/browse.html">Browse all</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a>
-  <p>Camlisted is a curated directory of publicly available YouTube live cams and footage, re-verified daily. All videos play on YouTube.</p>
-</footer>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCategory="train";</script>
+<script src="js/app.js"></script>
 </body>
 </html>

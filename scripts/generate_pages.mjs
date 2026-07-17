@@ -144,56 +144,27 @@ function entryCard(s) {
     </a>`;
 }
 
-// 메인 페이지와 같은 미리보기 UX: 화면에 보이면 자동재생 / 마우스 올릴 때만 / 끄기 (기기별 저장)
-const PREVIEW_TOGGLE_HTML = `
-      <div class="preview-toggle">Preview:
-        <button type="button" data-mode="auto">▶ Auto</button>
-        <button type="button" data-mode="hover">🖱 Hover</button>
-        <button type="button" data-mode="off">Off</button>
-      </div>`;
-const PREVIEW_SCRIPT = `
-      <script>
-        (function () {
-          var KEY = 'staticPreviewMode';
-          var mode = localStorage.getItem(KEY) || 'auto';
-          var thumbs = [].slice.call(document.querySelectorAll('.thumb[data-vid]'));
-          var io = null;
-          function play(t) {
-            if (t.querySelector('iframe')) return;
-            var f = document.createElement('iframe');
-            f.src = 'https://www.youtube.com/embed/' + t.dataset.vid + '?autoplay=1&mute=1&playsinline=1&rel=0';
-            f.allow = 'autoplay; encrypted-media';
-            t.appendChild(f);
-          }
-          function stop(t) { var f = t.querySelector('iframe'); if (f) f.remove(); }
-          function apply() {
-            thumbs.forEach(stop);
-            if (io) { io.disconnect(); io = null; }
-            document.querySelectorAll('.preview-toggle button').forEach(function (b) {
-              b.classList.toggle('active', b.dataset.mode === mode);
-            });
-            if (mode === 'auto') {
-              io = new IntersectionObserver(function (es) {
-                es.forEach(function (e) { e.isIntersecting ? play(e.target) : stop(e.target); });
-              }, { rootMargin: '50px' });
-              thumbs.forEach(function (t) { io.observe(t); });
-            }
-          }
-          thumbs.forEach(function (t) {
-            t.addEventListener('mouseenter', function () { if (mode === 'hover') play(t); });
-            t.addEventListener('mouseleave', function () { if (mode === 'hover') stop(t); });
-          });
-          document.querySelectorAll('.preview-toggle button').forEach(function (b) {
-            b.addEventListener('click', function (e) {
-              e.preventDefault();
-              mode = b.dataset.mode;
-              localStorage.setItem(KEY, mode);
-              apply();
-            });
-          });
-          apply();
-        })();
-      </script>`;
+// 국가/카테고리 페이지는 index.html(본 앱)을 템플릿으로 사용한다:
+// - 크롤러: #grid 안에 미리 박아둔 정적 카드 목록을 읽음 (SEO)
+// - 방문자: 앱이 로드되면서 필터(window.__presetCountry/-Category)가 걸린 실제 화면으로 대체됨
+//   → 투표/즐겨찾기/태그·카테고리·국가 수정 등 메인과 완전히 동일한 기능
+function appPage(indexTemplate, { title, description, canonicalPath, h1, presetScript, staticGrid }) {
+  let html = indexTemplate;
+  html = html.replace(/<title[^>]*>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`);
+  html = html.replace(/(<meta name="description" content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
+  html = html.replace(/(<link rel="canonical" href=")[^"]*(")/, `$1${SITE}${canonicalPath}$2`);
+  html = html.replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
+  html = html.replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
+  html = html.replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${SITE}${canonicalPath}$2`);
+  // 하위 폴더에서도 css/js 상대경로가 동작하도록 (반드시 다른 URL보다 먼저 선언되어야 함)
+  html = html.replace('<head>', '<head>\n<base href="/">');
+  // h1을 페이지 주제로 교체 (data-i18n을 떼서 언어 전환 시 일반 제목으로 덮어쓰이지 않게)
+  html = html.replace(/<h1><a href="\.\/" class="site-title-link" data-i18n="site_h1">[^<]*<\/a><\/h1>/,
+    `<h1><a href="./" class="site-title-link">${escapeHtml(h1)}</a></h1>`);
+  html = html.replace('<main id="grid" class="grid">', `<main id="grid" class="grid">${staticGrid}`);
+  html = html.replace('<script src="js/app.js">', `<script>${presetScript}</script>\n<script src="js/app.js">`);
+  return html;
+}
 
 function sortForPage(list) {
   // 라이브 먼저, 그 안에서는 추천 많은 순 → 최신 순
@@ -205,9 +176,10 @@ function sortForPage(list) {
 }
 
 async function main() {
-  const [streams, categoriesRes] = await Promise.all([
+  const [streams, categoriesRes, indexTemplate] = await Promise.all([
     fetchAllRows('streams', 'video_id,title,channel_title,thumbnail,content_type,category,country,approval_status,duration_seconds,upvote_count,added_at'),
     supabase.from('categories').select('key,label_en,icon,sort_order').order('sort_order'),
+    readFile(path.join(ROOT, 'index.html'), 'utf-8'),
   ]);
   if (categoriesRes.error) throw categoriesRes.error;
   const categories = categoriesRes.data || [];
@@ -242,14 +214,13 @@ async function main() {
     const liveCount = list.filter(s => s.content_type === 'live').length;
     const videoCount = list.length - liveCount;
     const entries = sortForPage(list).slice(0, MAX_ENTRIES_PER_PAGE);
-    const html = pageHtml({
+    const html = appPage(indexTemplate, {
       title: `Live Cams & Webcams in ${name} – Camlisted`,
       description: `Watch ${liveCount} live cams and ${videoCount} real-world videos from ${name}: traffic cameras, city streets, harbors, beaches and more. Verified daily.`,
       canonicalPath: `/country/${slug}.html`,
       h1: `Live Cams & Footage in ${name}`,
-      intro: `${liveCount} live cams and ${videoCount} videos from ${name}, re-verified daily. Click any card to watch on YouTube. Updated ${today}.`,
-      ctaHref: `/?country=${encodeURIComponent(code)}`,
-      bodyHtml: `${PREVIEW_TOGGLE_HTML}<div class="grid">${entries.map(entryCard).join('')}</div>${PREVIEW_SCRIPT}`,
+      presetScript: `window.__presetCountry=${JSON.stringify(code)};`,
+      staticGrid: entries.map(entryCard).join(''),
     });
     await writeFile(path.join(ROOT, 'country', `${slug}.html`), html);
     countryPages.push({ code, name, slug, count: list.length });
@@ -268,14 +239,13 @@ async function main() {
     const videoCount = list.length - liveCount;
     const entries = sortForPage(list).slice(0, MAX_ENTRIES_PER_PAGE);
     const label = cat.label_en || cat.key;
-    const html = pageHtml({
+    const html = appPage(indexTemplate, {
       title: `${label} Live Cams & Videos – Camlisted`,
       description: `${liveCount} live ${label.toLowerCase()} cams and ${videoCount} videos, curated from YouTube and verified daily. Free to watch, no sign-up.`,
       canonicalPath: `/c/${cat.key}.html`,
       h1: `${cat.icon ? cat.icon + ' ' : ''}${label} Live Cams & Videos`,
-      intro: `${liveCount} live cams and ${videoCount} videos in the ${label} category, re-verified daily. Click any card to watch on YouTube. Updated ${today}.`,
-      ctaHref: `/?category=${encodeURIComponent(cat.key)}`,
-      bodyHtml: `${PREVIEW_TOGGLE_HTML}<div class="grid">${entries.map(entryCard).join('')}</div>${PREVIEW_SCRIPT}`,
+      presetScript: `window.__presetCategory=${JSON.stringify(cat.key)};`,
+      staticGrid: entries.map(entryCard).join(''),
     });
     await writeFile(path.join(ROOT, 'c', `${cat.key}.html`), html);
     categoryPages.push({ key: cat.key, label, icon: cat.icon, count: list.length });

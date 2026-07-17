@@ -109,6 +109,22 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// 국가 수정 select용 ISO 3166-1 alpha-2 전체 목록 (표시명은 currentLang 기준으로 정렬)
+const ALL_COUNTRY_CODES = 'AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'.split(' ');
+let countryOptionsCache = { lang: null, html: '' };
+function countryOptionsHtml() {
+  if (countryOptionsCache.lang !== currentLang) {
+    const sorted = ALL_COUNTRY_CODES
+      .map(code => [code, countryDisplayName(code)])
+      .sort((a, b) => a[1].localeCompare(b[1], currentLang));
+    countryOptionsCache = {
+      lang: currentLang,
+      html: sorted.map(([code, name]) => `<option value="${code}">${escapeHtml(name)}</option>`).join(''),
+    };
+  }
+  return countryOptionsCache.html;
+}
+
 function countryDisplayName(code) {
   try {
     return new Intl.DisplayNames([currentLang], { type: 'region' }).of(code) || code;
@@ -347,7 +363,12 @@ function cardInnerHtml(s, groupIndex) {
           ${categoriesList.map(c => `<option value="${c.key}" ${(s.category || 'other') === c.key ? 'selected' : ''}>${escapeHtml(categoryLabel(c.key))}</option>`).join('')}
         </select>`
       : (s.category ? `<span class="card-keyword">${escapeHtml(categoryLabel(s.category))}</span>` : '');
-    const countryHtml = s.country ? `<span class="card-keyword">${escapeHtml(countryDisplayName(s.country))}</span>` : '';
+    const countryHtml = currentUser
+      ? `<select class="card-country-select" data-video-id="${escapeHtml(s.videoId)}">
+          <option value="">${escapeHtml(t('country_unknown'))}</option>
+          ${s.country ? countryOptionsHtml().replace(`value="${s.country}"`, `value="${s.country}" selected`) : countryOptionsHtml()}
+        </select>`
+      : (s.country ? `<span class="card-keyword">${escapeHtml(countryDisplayName(s.country))}</span>` : '');
     const qualityHtml = s.maxQuality ? `<span class="card-keyword">${escapeHtml(qualityLabel(s.maxQuality))}</span>` : '';
     const dateHtml = isLiveType
       ? (s.startedAt ? `<span class="card-started">🕐 ${escapeHtml(formatRelativeTime(s.startedAt))}</span>` : '')
@@ -546,6 +567,20 @@ async function tryUnlock(videoId) {
 }
 
 grid.addEventListener('change', async (e) => {
+  const countrySel = e.target.closest('.card-country-select');
+  if (countrySel && currentUser) {
+    const videoId = countrySel.dataset.videoId;
+    const country = countrySel.value || null;
+    const { error } = await sb.rpc('set_stream_country', { p_video_id: videoId, p_country: country });
+    if (error) {
+      alert(error.message);
+    } else {
+      const s = streams.find(x => x.videoId === videoId);
+      if (s) s.country = country;
+      populateCountryFilter();
+    }
+    return;
+  }
   const sel = e.target.closest('.card-category-select');
   if (sel && currentUser) {
     const videoId = sel.dataset.videoId;
@@ -1109,9 +1144,10 @@ function applyFiltersFromUrl() {
     if (value && [...el.options].some(o => o.value === value)) el.value = value;
   };
   setIfValid(contentTypeFilter, p.get('type'));
-  setIfValid(categoryFilter, p.get('category'));
+  // window.__presetCategory / __presetCountry: 정적 SEO 페이지(/c/*, /country/*)가 심어주는 초기 필터
+  setIfValid(categoryFilter, p.get('category') || window.__presetCategory);
   // 국가 옵션은 스트림 로드 후에 채워지므로 값을 보관했다가 populateCountryFilter에서 적용
-  pendingCountryFromUrl = p.get('country') || '';
+  pendingCountryFromUrl = p.get('country') || window.__presetCountry || '';
   setIfValid(qualityFilter, p.get('quality'));
   setIfValid(addedFilter, p.get('added'));
   setIfValid(sortSelect, p.get('sort'));
