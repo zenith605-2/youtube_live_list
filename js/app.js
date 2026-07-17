@@ -126,6 +126,7 @@ function countryOptionsHtml() {
 }
 
 function countryDisplayName(code) {
+  if (code === 'XX') return t('country_other'); // 모음집 등 여러 나라가 섞인 영상용 예약 코드
   try {
     return new Intl.DisplayNames([currentLang], { type: 'region' }).of(code) || code;
   } catch {
@@ -381,7 +382,8 @@ function cardInnerHtml(s, groupIndex) {
     const countryHtml = currentUser
       ? `<select class="card-country-select" data-video-id="${escapeHtml(s.videoId)}">
           <option value="">${escapeHtml(t('country_unknown'))}</option>
-          ${s.country ? countryOptionsHtml().replace(`value="${s.country}"`, `value="${s.country}" selected`) : countryOptionsHtml()}
+          <option value="XX"${s.country === 'XX' ? ' selected' : ''}>${escapeHtml(t('country_other'))}</option>
+          ${s.country && s.country !== 'XX' ? countryOptionsHtml().replace(`value="${s.country}"`, `value="${s.country}" selected`) : countryOptionsHtml()}
         </select>`
       : (s.country ? `<span class="card-keyword">${escapeHtml(countryDisplayName(s.country))}</span>` : '');
     const qualityHtml = s.maxQuality ? `<span class="card-keyword">${escapeHtml(qualityLabel(s.maxQuality))}</span>` : '';

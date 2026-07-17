@@ -43,6 +43,7 @@ function formatDuration(secs) {
 
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
 function countryNameOf(code) {
+  if (code === 'XX') return 'International'; // 여러 나라가 섞인 모음집용 예약 코드
   try { return regionNames.of(code) || code; } catch { return code; }
 }
 function slugify(name) {
