@@ -91,11 +91,12 @@ function tagsFromTitle(title) {
 const TITLE_COUNTRY_RULES = [
   ['US', ['usa', 'new york', 'nyc', 'times square', 'new mexico', 'venice beach', 'los angeles', 'san francisco', 'chicago', 'miami', 'seattle', 'las vegas', 'hawaii', 'florida', 'california', 'texas', 'alaska', 'boston', 'new orleans', 'washington dc', '미국', 'ニューヨーク']],
   ['KR', ['korea', 'seoul', 'busan', 'incheon', 'gangnam', 'jeju', '서울', '부산', '인천', '대구', '대전', '울산', '제주', '경기', '강원', '한국', '韓国', 'ソウル', '釜山']],
-  ['JP', ['japan', 'tokyo', 'osaka', 'kyoto', 'shibuya', 'shinjuku', 'nagoya', 'fukuoka', 'sapporo', 'okinawa', 'akihabara', '일본', '도쿄', '오사카', '日本', '東京', '大阪', '京都', '渋谷', '新宿', '沖縄', '札幌', '福岡']],
+  ['JP', ['japan', 'tokyo', 'osaka', 'kyoto', 'shibuya', 'shinjuku', 'nagoya', 'fukuoka', 'sapporo', 'okinawa', 'akihabara', '일본', '도쿄', '오사카', '日本', '東京', '大阪', '京都', '渋谷', '新宿', '沖縄', '札幌', '福岡', '県', 'ライブカメラ']],
   ['CN', ['beijing', 'shanghai', 'shenzhen', 'guangzhou', 'chongqing', '中国', '北京', '上海', '深圳', '广州', '중국']],
-  ['TW', ['taiwan', 'taipei', '台湾', '台北', '대만']],
+  ['TW', ['taiwan', 'taipei', '台湾', '台灣', '台北', '대만']],
   ['HK', ['hong kong', '香港', '홍콩']],
-  ['TH', ['thailand', 'bangkok', 'pattaya', 'phuket', 'chiang mai', '태국', '방콕', 'タイ']],
+  // 'タイ'는 リアルタイム(리얼타임) 등에 부분일치로 걸리는 오탐이 있어 제외
+  ['TH', ['thailand', 'bangkok', 'pattaya', 'phuket', 'chiang mai', '태국', '방콕']],
   ['VN', ['vietnam', 'hanoi', 'saigon', 'ho chi minh', 'da nang', '베트남', '하노이']],
   ['PH', ['philippines', 'manila', 'cebu', '필리핀']],
   ['ID', ['indonesia', 'jakarta', 'bali', '인도네시아', '발리']],
