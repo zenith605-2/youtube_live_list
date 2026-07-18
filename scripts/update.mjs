@@ -408,9 +408,10 @@ async function main() {
 
     if (!isValidFor(contentType, info)) {
       offlineCount += 1;
-      if (row.status !== 'offline') {
+      if (row.status !== 'offline' || !row.offline_since) {
         // 방금 오프라인으로 전환된 시점만 기록 (계속 오프라인이어도 최초 시점 유지 -> 7일 카운트 기준)
-        toUpdate.push({ video_id: row.video_id, status: 'offline', offline_since: new Date().toISOString() });
+        // offline인데 offline_since가 비어있는 행(컬럼 도입 전 데이터)도 여기서 채워 7일 카운트가 시작되게 한다
+        toUpdate.push({ video_id: row.video_id, status: 'offline', offline_since: row.offline_since || new Date().toISOString() });
       }
       continue;
     }
