@@ -544,6 +544,38 @@ body {
   font-weight: 800;
 }
 
+/* 브랜드 로고 (지구본 + camlisted 워드마크) — 헤더 상단 */
+.site-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  text-decoration: none;
+  margin: 2px 0 6px;
+}
+.brand-globe {
+  width: 42px;
+  height: 42px;
+  flex: none;
+}
+.brand-wordmark {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  color: var(--text);
+}
+.brand-wordmark .wm-cam { color: var(--accent); }
+.brand-pin { animation: brandPinPulse 2.4s ease-in-out infinite; }
+.brand-pin:nth-of-type(2) { animation-delay: 0.8s; }
+.brand-pin:nth-of-type(3) { animation-delay: 1.6s; }
+@keyframes brandPinPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .brand-pin { animation: none; } }
+@media (max-width: 560px) {
+  .brand-globe { width: 34px; height: 34px; }
+  .brand-wordmark { font-size: 24px; }
+}
+
 .site-title-link {
   color: inherit;
   text-decoration: none;
