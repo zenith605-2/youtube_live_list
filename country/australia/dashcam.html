@@ -60,6 +60,21 @@
   <h1><a href="./" class="site-title-link">🚗 Australia · Dashcam Live Cams</a></h1>
   <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
   <p id="memberPerks" class="contribute-line" data-i18n="member_perks">🤝 Built by its users — sign in to submit links, vote, favorite, comment &amp; fix categories</p>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
   <div class="filter-bar">
     <div class="filter-group">
       <span class="filter-label" data-i18n="filter_type">Type</span>
@@ -140,21 +155,6 @@
   <div id="tagFilterBar" class="tag-filter-bar"></div>
   <div class="controls">
     <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
-  </div>
-  <div id="submitSection" class="submit-section" hidden>
-    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
-    <form id="submitForm" class="submit-form">
-      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
-      <select id="submitContentType">
-        <option value="live" data-i18n="content_type_live">Live</option>
-        <option value="video" data-i18n="content_type_video">Video</option>
-      </select>
-      <select id="submitCategory">
-        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
-      </select>
-      <button type="submit" data-i18n="submit_button">Submit</button>
-      <span id="submitStatus" class="submit-status"></span>
-    </form>
   </div>
 </header>
 
