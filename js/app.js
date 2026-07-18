@@ -1014,9 +1014,19 @@ let currentPlayer = null;
 let currentModalVideoId = null;
 let viewportPreviewObserver = null;
 const viewportPreviewTimers = new Map(); // videoId -> pending start timer
+// 한 번에 자동재생할 미리보기 상한. 보통 화면엔 최대 8개가 보이므로 일반 사용자는
+// 영향이 없지만, 초대형/4K 모니터나 축소 상태에서 9개 이상이 한꺼번에 떠서 유튜브
+// 임베드 throttle("나중에 다시 시도")에 걸리는 예외 상황을 막는다.
+const MAX_VIEWPORT_PREVIEWS = 8;
+const visiblePreviewThumbs = new Set(); // 현재 뷰포트에 들어와 있는 thumb-wrap들
+
+function activePreviewCount() {
+  return grid.querySelectorAll('.hover-preview-iframe').length;
+}
 
 function startViewportPreview(thumbWrap, videoId) {
   if (thumbWrap.querySelector('.hover-preview-iframe')) return;
+  if (activePreviewCount() >= MAX_VIEWPORT_PREVIEWS) return; // 상한 도달 → 대기(썸네일 유지)
   const iframe = document.createElement('iframe');
   iframe.className = 'hover-preview-iframe';
   iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1`;
@@ -1027,13 +1037,30 @@ function startViewportPreview(thumbWrap, videoId) {
 
 function stopViewportPreview(thumbWrap) {
   const iframe = thumbWrap.querySelector('.hover-preview-iframe');
-  if (iframe) iframe.remove();
+  if (iframe) {
+    iframe.remove();
+    fillPreviewSlots(); // 빈 슬롯을, 상한 때문에 대기 중이던 카드로 채운다
+  }
+}
+
+// 상한에 걸려 재생 못 한 채 화면에 남아있는 카드들에 빈 슬롯을 위→아래 순으로 채운다
+function fillPreviewSlots() {
+  if (previewMode() !== 'auto') return;
+  const waiting = [...visiblePreviewThumbs]
+    .filter(tw => tw.isConnected && !tw.querySelector('.hover-preview-iframe'))
+    .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+  for (const tw of waiting) {
+    if (activePreviewCount() >= MAX_VIEWPORT_PREVIEWS) break;
+    const card = tw.closest('.card');
+    if (card) startViewportPreview(tw, card.dataset.videoId);
+  }
 }
 
 function clearHoverPreview() {
   if (viewportPreviewObserver) viewportPreviewObserver.disconnect();
   viewportPreviewTimers.forEach(timer => clearTimeout(timer));
   viewportPreviewTimers.clear();
+  visiblePreviewThumbs.clear();
   grid.querySelectorAll('.hover-preview-iframe').forEach(el => el.remove());
 }
 
@@ -1047,9 +1074,11 @@ function setupViewportAutoplay() {
       const videoId = card.dataset.videoId;
       clearTimeout(viewportPreviewTimers.get(videoId));
       if (entry.isIntersecting) {
+        visiblePreviewThumbs.add(thumbWrap);
         // 스크롤 중 잠깐 지나치는 카드마다 iframe을 만들지 않도록 짧은 지연
         viewportPreviewTimers.set(videoId, setTimeout(() => startViewportPreview(thumbWrap, videoId), 400));
       } else {
+        visiblePreviewThumbs.delete(thumbWrap);
         viewportPreviewTimers.delete(videoId);
         stopViewportPreview(thumbWrap);
       }
