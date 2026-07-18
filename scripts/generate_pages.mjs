@@ -196,6 +196,28 @@ const COUNTRY_CENTROIDS = {
   LV: [56.9, 24.6], LT: [55.2, 23.9], SK: [48.7, 19.7], SI: [46.2, 15.0],
 };
 
+// 국가별 대표(수도) IANA 시간대 — 현지 시각 표시용 (브라우저 Intl이 서머타임까지 처리)
+const COUNTRY_TZ = {
+  US: 'America/New_York', CA: 'America/Toronto', MX: 'America/Mexico_City', BR: 'America/Sao_Paulo',
+  AR: 'America/Argentina/Buenos_Aires', CL: 'America/Santiago', PE: 'America/Lima', CO: 'America/Bogota',
+  CR: 'America/Costa_Rica', CU: 'America/Havana', GB: 'Europe/London', IE: 'Europe/Dublin', FR: 'Europe/Paris',
+  DE: 'Europe/Berlin', NL: 'Europe/Amsterdam', BE: 'Europe/Brussels', CH: 'Europe/Zurich', AT: 'Europe/Vienna',
+  IT: 'Europe/Rome', ES: 'Europe/Madrid', PT: 'Europe/Lisbon', GR: 'Europe/Athens', TR: 'Europe/Istanbul',
+  RU: 'Europe/Moscow', UA: 'Europe/Kyiv', PL: 'Europe/Warsaw', CZ: 'Europe/Prague', HU: 'Europe/Budapest',
+  RO: 'Europe/Bucharest', BG: 'Europe/Sofia', HR: 'Europe/Zagreb', RS: 'Europe/Belgrade', NO: 'Europe/Oslo',
+  SE: 'Europe/Stockholm', FI: 'Europe/Helsinki', DK: 'Europe/Copenhagen', IS: 'Atlantic/Reykjavik',
+  IN: 'Asia/Kolkata', PK: 'Asia/Karachi', BD: 'Asia/Dhaka', LK: 'Asia/Colombo', NP: 'Asia/Kathmandu',
+  CN: 'Asia/Shanghai', TW: 'Asia/Taipei', HK: 'Asia/Hong_Kong', JP: 'Asia/Tokyo', KR: 'Asia/Seoul',
+  TH: 'Asia/Bangkok', VN: 'Asia/Ho_Chi_Minh', PH: 'Asia/Manila', ID: 'Asia/Jakarta', MY: 'Asia/Kuala_Lumpur',
+  SG: 'Asia/Singapore', KH: 'Asia/Phnom_Penh', LA: 'Asia/Vientiane', MM: 'Asia/Yangon', AU: 'Australia/Sydney',
+  NZ: 'Pacific/Auckland', AE: 'Asia/Dubai', SA: 'Asia/Riyadh', IL: 'Asia/Jerusalem', EG: 'Africa/Cairo',
+  MA: 'Africa/Casablanca', KE: 'Africa/Nairobi', ZA: 'Africa/Johannesburg', NA: 'Africa/Windhoek',
+  MO: 'Asia/Macau', MT: 'Europe/Malta', LU: 'Europe/Luxembourg', EE: 'Europe/Tallinn', LV: 'Europe/Riga',
+  LT: 'Europe/Vilnius', SK: 'Europe/Bratislava', SI: 'Europe/Ljubljana',
+};
+// 공식 시간대가 여러 개인 나라 (수도 기준 시각 옆에 "~" 표시로 지역마다 다름을 알림)
+const MULTI_TZ_CODES = ['US', 'CA', 'MX', 'BR', 'RU', 'ID', 'AU'];
+
 // 3D 지구본 페이지: 나라 포인트를 클릭하면 그 나라의 라이브 캠이 옆 패널에서 바로 재생된다.
 // three.js + globe.gl(MIT, CDN)을 사용하는 별도 페이지 — 앱 본체와 독립적.
 async function writeGlobePage(countByCode, slugByCode, visible, today) {
@@ -661,6 +683,17 @@ async function main() {
         // 인라인 3D 지구본 + (2D 지도와 공유하는) 국가 패널
         var GC = ${JSON.stringify(globeCountriesInline)};
         var VIDS = ${JSON.stringify(vidsAllByCode)};
+        var TZ = ${JSON.stringify(COUNTRY_TZ)};
+        var MTZ = ${JSON.stringify(MULTI_TZ_CODES)};
+        var selLabelTimer = null;
+        function localTime(code) {
+          var tz = TZ[code];
+          if (!tz) return '';
+          try {
+            var t = new Date().toLocaleTimeString('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit' });
+            return ' \\u00b7 \\ud83d\\udd50 ' + t + (MTZ.indexOf(code) >= 0 ? '~' : '');
+          } catch (e) { return ''; }
+        }
         var maxTotal = Math.max.apply(null, GC.map(function (c) { return c.live + c.video; }));
         var selectedCode = null;
 
@@ -703,7 +736,13 @@ async function main() {
           }
           panel.classList.add('open');
           var gsl = document.getElementById('globeSelLabel');
-          if (gsl) { gsl.textContent = d.name; gsl.hidden = false; }
+          if (gsl) {
+            var paint = function () { gsl.textContent = d.name + localTime(d.code); };
+            paint();
+            gsl.hidden = false;
+            clearInterval(selLabelTimer);
+            selLabelTimer = setInterval(paint, 60000); // 분이 바뀌면 갱신
+          }
           document.getElementById('panelTitle').textContent = d.name;
           var W = window.__L || { live: 'Live', videos: 'Videos' };
           document.getElementById('panelSub').textContent = W.live + ': ' + d.live + ' · ' + W.videos + ': ' + d.video;
@@ -750,6 +789,7 @@ async function main() {
           document.getElementById('player').innerHTML = '';
           var gsl = document.getElementById('globeSelLabel');
           if (gsl) gsl.hidden = true;
+          clearInterval(selLabelTimer);
           selectedCode = null;
           window.__selCode = null;
           globe.pointsData(GC);
