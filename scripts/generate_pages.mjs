@@ -104,6 +104,7 @@ const PAGE_CSS = `
   .panel a.browse-all { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
   .cam-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .cam-meta:empty { display: none; }
+  .cam-info { flex-basis: 100%; color: var(--muted); font-size: 0.78rem; }
   .cam-badge { background: var(--card-bg); border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; font-size: 0.75rem; color: var(--muted); }
   .cam-edit { margin-left: auto; color: var(--accent); text-decoration: none; font-size: 0.8rem; }
   .panel-filter { display: flex; gap: 8px; }
@@ -246,7 +247,7 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
     const lives = list.filter(s => s.content_type === 'live');
     const nonLives = list.filter(s => s.content_type !== 'live');
     const pick = lives.slice(0, 25).concat(nonLives.slice(0, 15)); // 라이브 25 + 일반영상 15 (한쪽이 정원을 다 차지하지 않게)
-    vidsByCode[code] = pick.map(s => [s.video_id, s.title.slice(0, 70), s.content_type === 'live' ? 1 : 0, s.category || '', (s.tags || []).join(',')]);
+    vidsByCode[code] = pick.map(s => [s.video_id, s.title.slice(0, 70), s.content_type === 'live' ? 1 : 0, s.category || '', (s.tags || []).join(','), s.channel_title || '', s.max_quality || '', s.duration_seconds || 0, s.upvote_count || 0, s.downvote_count || 0]);
   }
 
   const html = `<!DOCTYPE html>
@@ -288,6 +289,7 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
   .panel a.browse-all { color: #ff3b3b; text-decoration: none; font-size: 0.9rem; }
   .cam-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .cam-meta:empty { display: none; }
+  .cam-info { flex-basis: 100%; color: #9aa4b2; font-size: 0.78rem; }
   .cam-badge { background: #161b22; border: 1px solid #2a2f3a; border-radius: 999px; padding: 2px 9px; font-size: 0.75rem; color: #9aa4b2; }
   .cam-edit { margin-left: auto; color: #ff3b3b; text-decoration: none; font-size: 0.8rem; }
   .panel-filter { display: flex; gap: 8px; }
@@ -337,6 +339,8 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
   var CONDLABEL = { night: '🌙 Night', day: '☀️ Day', rain: '🌧 Rain', heavy_rain: '⛈ Heavy rain', snow: '❄️ Snow', heavy_snow: '🌨 Heavy snow', accident: '💥 Accident', fire: '🔥 Fire', violence: '🥊 Violence', fog: '🌫 Fog' };
   var UILANG = localStorage.getItem('lang') || 'en';
   var EDITLABEL = ({ en: 'Edit on site', ko: '사이트에서 수정', ja: 'サイトで編集', zh: '在网站编辑', es: 'Editar en el sitio' })[UILANG] || 'Edit on site';
+  var QLABEL = { hd2160: '4K', hd1440: '1440p', hd1080: '1080p', hd720: '720p', large: '480p', medium: '360p', small: '240p', tiny: '144p' };
+  function fmtDur(s) { s = Number(s); if (!s) return ''; var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return h ? h + ':' + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0') : m + ':' + String(x).padStart(2, '0'); }
   window.__vidById = {}; window.__editHref = '/';
   function renderCamMeta(id) {
     var meta = document.getElementById('panelCamMeta');
@@ -344,6 +348,12 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
     var v = window.__vidById[id];
     if (!v) { meta.innerHTML = ''; return; }
     var html = '';
+    var info = [];
+    if (v[5]) info.push(String(v[5]).replace(/</g, '&lt;'));      // 채널
+    if (v[6] && QLABEL[v[6]]) info.push(QLABEL[v[6]]);            // 화질
+    if (v[7]) info.push(fmtDur(v[7]));                            // 길이
+    info.push('\\ud83d\\udc4d ' + (v[8] || 0) + ' \\ud83d\\udc4e ' + (v[9] || 0)); // 추천/비추천
+    html += '<div class="cam-info">' + info.join(' \\u00b7 ') + '</div>';
     var cat = v[3];
     if (cat && CATM[cat]) {
       var label = CATM[cat][UILANG] || CATM[cat].en || cat;
@@ -478,7 +488,7 @@ function sortForPage(list) {
 
 async function main() {
   const [streams, categoriesRes, indexTemplate] = await Promise.all([
-    fetchAllRows('streams', 'video_id,title,channel_title,thumbnail,content_type,category,country,approval_status,status,visibility,duration_seconds,upvote_count,added_at,tags'),
+    fetchAllRows('streams', 'video_id,title,channel_title,thumbnail,content_type,category,country,approval_status,status,visibility,duration_seconds,upvote_count,downvote_count,max_quality,added_at,tags'),
     supabase.from('categories').select('key,label_en,label_ko,label_ja,label_zh,label_es,icon,sort_order').order('sort_order'),
     readFile(path.join(ROOT, 'index.html'), 'utf-8'),
   ]);
@@ -693,7 +703,7 @@ async function main() {
     const lives = list.filter(s => s.content_type === 'live');
     const nonLives = list.filter(s => s.content_type !== 'live');
     const pick = lives.slice(0, 25).concat(nonLives.slice(0, 15)); // 라이브 25 + 일반영상 15 (한쪽이 정원을 다 차지하지 않게)
-    vidsAllByCode[code] = pick.map(s => [s.video_id, s.title.slice(0, 70), s.content_type === 'live' ? 1 : 0, s.category || '', (s.tags || []).join(',')]);
+    vidsAllByCode[code] = pick.map(s => [s.video_id, s.title.slice(0, 70), s.content_type === 'live' ? 1 : 0, s.category || '', (s.tags || []).join(','), s.channel_title || '', s.max_quality || '', s.duration_seconds || 0, s.upvote_count || 0, s.downvote_count || 0]);
     const cen = COUNTRY_CENTROIDS[code];
     if (cen) {
       globeCountriesInline.push({
@@ -759,6 +769,8 @@ async function main() {
         var CONDLABEL = { night: '🌙 Night', day: '☀️ Day', rain: '🌧 Rain', heavy_rain: '⛈ Heavy rain', snow: '❄️ Snow', heavy_snow: '🌨 Heavy snow', accident: '💥 Accident', fire: '🔥 Fire', violence: '🥊 Violence', fog: '🌫 Fog' };
         var UILANG = localStorage.getItem('lang') || 'en';
         var EDITLABEL = ({ en: 'Edit on site', ko: '사이트에서 수정', ja: 'サイトで編集', zh: '在网站编辑', es: 'Editar en el sitio' })[UILANG] || 'Edit on site';
+        var QLABEL = { hd2160: '4K', hd1440: '1440p', hd1080: '1080p', hd720: '720p', large: '480p', medium: '360p', small: '240p', tiny: '144p' };
+        function fmtDur(s) { s = Number(s); if (!s) return ''; var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return h ? h + ':' + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0') : m + ':' + String(x).padStart(2, '0'); }
         window.__vidById = {}; window.__editHref = '/';
         function renderCamMeta(id) {
           var meta = document.getElementById('panelCamMeta');
@@ -766,6 +778,12 @@ async function main() {
           var v = window.__vidById[id];
           if (!v) { meta.innerHTML = ''; return; }
           var html = '';
+          var info = [];
+          if (v[5]) info.push(String(v[5]).replace(/</g, '&lt;'));
+          if (v[6] && QLABEL[v[6]]) info.push(QLABEL[v[6]]);
+          if (v[7]) info.push(fmtDur(v[7]));
+          info.push('\\ud83d\\udc4d ' + (v[8] || 0) + ' \\ud83d\\udc4e ' + (v[9] || 0));
+          html += '<div class="cam-info">' + info.join(' \\u00b7 ') + '</div>';
           var cat = v[3];
           if (cat && CATM[cat]) {
             var label = CATM[cat][UILANG] || CATM[cat].en || cat;
