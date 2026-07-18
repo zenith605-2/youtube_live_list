@@ -107,7 +107,7 @@ const PAGE_CSS = `
   .cam-info { flex-basis: 100%; color: var(--muted); font-size: 0.78rem; }
   .cam-badge { background: var(--card-bg); border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; font-size: 0.75rem; color: var(--muted); }
   .cam-edit { margin-left: auto; color: var(--accent); text-decoration: none; font-size: 0.8rem; }
-  .cam-cat-edit { background: var(--card-bg); border: 1px solid var(--border); border-radius: 999px; color: var(--text); font-size: 0.75rem; padding: 3px 8px; cursor: pointer; }
+  .cam-cat-edit, .cam-country-edit { background: var(--card-bg); border: 1px solid var(--border); border-radius: 999px; color: var(--text); font-size: 0.75rem; padding: 3px 8px; cursor: pointer; max-width: 45%; }
   .cam-cond { background: var(--card-bg); border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.72rem; padding: 2px 8px; cursor: pointer; }
   .cam-cond.on { color: var(--accent); border-color: var(--accent); }
   .panel-filter { display: flex; gap: 8px; }
@@ -295,7 +295,7 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
   .cam-info { flex-basis: 100%; color: #9aa4b2; font-size: 0.78rem; }
   .cam-badge { background: #161b22; border: 1px solid #2a2f3a; border-radius: 999px; padding: 2px 9px; font-size: 0.75rem; color: #9aa4b2; }
   .cam-edit { margin-left: auto; color: #ff3b3b; text-decoration: none; font-size: 0.8rem; }
-  .cam-cat-edit { background: #161b22; border: 1px solid #2a2f3a; border-radius: 999px; color: #e6e6e6; font-size: 0.75rem; padding: 3px 8px; cursor: pointer; }
+  .cam-cat-edit, .cam-country-edit { background: #161b22; border: 1px solid #2a2f3a; border-radius: 999px; color: #e6e6e6; font-size: 0.75rem; padding: 3px 8px; cursor: pointer; max-width: 45%; }
   .cam-cond { background: #161b22; border: 1px solid #2a2f3a; border-radius: 999px; color: #9aa4b2; font-size: 0.72rem; padding: 2px 8px; cursor: pointer; }
   .cam-cond.on { color: #ff3b3b; border-color: #ff3b3b; }
   .panel-filter { display: flex; gap: 8px; }
@@ -348,7 +348,15 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
   var EDITLABEL = ({ en: 'Edit on site', ko: '사이트에서 수정', ja: 'サイトで編集', zh: '在网站编辑', es: 'Editar en el sitio' })[UILANG] || 'Edit on site';
   var QLABEL = { hd2160: '4K', hd1440: '1440p', hd1080: '1080p', hd720: '720p', large: '480p', medium: '360p', small: '240p', tiny: '144p' };
   function fmtDur(s) { s = Number(s); if (!s) return ''; var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return h ? h + ':' + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0') : m + ':' + String(x).padStart(2, '0'); }
-  window.__vidById = {}; window.__editHref = '/';
+  var CC = 'AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'.split(' ');
+  function countryOpts(cur) {
+    var dn; try { dn = new Intl.DisplayNames([UILANG], { type: 'region' }); } catch (e) {}
+    var arr = CC.map(function (c) { return [c, dn ? (dn.of(c) || c) : c]; }).sort(function (a, b) { return a[1].localeCompare(b[1]); });
+    var html = '<option value="">\\ud83c\\udf0d ?</option><option value="XX"' + (cur === 'XX' ? ' selected' : '') + '>International/Mixed</option>';
+    arr.forEach(function (x) { html += '<option value="' + x[0] + '"' + (x[0] === cur ? ' selected' : '') + '>' + x[1] + '</option>'; });
+    return html;
+  }
+  window.__vidById = {}; window.__editHref = '/'; window.__panelCode = '';
   function renderCamMeta(id) {
     var meta = document.getElementById('panelCamMeta');
     if (!meta) return;
@@ -369,6 +377,7 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
         return '<option value="' + k + '"' + (k === cat ? ' selected' : '') + '>' + (CATM[k].icon ? CATM[k].icon + ' ' : '') + (CATM[k][UILANG] || CATM[k].en || k) + '</option>';
       }).join('');
       html += '<select class="cam-cat-edit">' + opts + '</select>';
+      html += '<select class="cam-country-edit">' + countryOpts(window.__panelCode) + '</select>';
       if (v[2] === 0) {
         html += Object.keys(CONDLABEL).map(function (t) {
           return '<button type="button" class="cam-cond' + (tags.indexOf(t) >= 0 ? ' on' : '') + '" data-t="' + t + '">' + CONDLABEL[t] + '</button>';
@@ -378,6 +387,9 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
       meta.querySelector('.cam-cat-edit').addEventListener('change', function () {
         var val = this.value;
         window.__sbc.rpc('set_stream_category', { p_video_id: id, p_category: val }).then(function (r) { if (!r.error) v[3] = val; });
+      });
+      meta.querySelector('.cam-country-edit').addEventListener('change', function () {
+        window.__sbc.rpc('set_stream_country', { p_video_id: id, p_country: this.value || null });
       });
       [].forEach.call(meta.querySelectorAll('.cam-cond'), function (btn) {
         btn.addEventListener('click', function () {
@@ -428,6 +440,7 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
     document.getElementById('browseAll').href = d.href;
     var vids = VIDS[d.code] || [];
     window.__editHref = d.href;
+    window.__panelCode = d.code;
     window.__vidById = {};
     vids.forEach(function (v) { window.__vidById[v[0]] = v; });
     var list = document.getElementById('camList');
@@ -808,7 +821,15 @@ async function main() {
         var EDITLABEL = ({ en: 'Edit on site', ko: '사이트에서 수정', ja: 'サイトで編集', zh: '在网站编辑', es: 'Editar en el sitio' })[UILANG] || 'Edit on site';
         var QLABEL = { hd2160: '4K', hd1440: '1440p', hd1080: '1080p', hd720: '720p', large: '480p', medium: '360p', small: '240p', tiny: '144p' };
         function fmtDur(s) { s = Number(s); if (!s) return ''; var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return h ? h + ':' + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0') : m + ':' + String(x).padStart(2, '0'); }
-        window.__vidById = {}; window.__editHref = '/';
+        var CC = 'AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'.split(' ');
+        function countryOpts(cur) {
+          var dn; try { dn = new Intl.DisplayNames([UILANG], { type: 'region' }); } catch (e) {}
+          var arr = CC.map(function (c) { return [c, dn ? (dn.of(c) || c) : c]; }).sort(function (a, b) { return a[1].localeCompare(b[1]); });
+          var html = '<option value="">\\ud83c\\udf0d ?</option><option value="XX"' + (cur === 'XX' ? ' selected' : '') + '>International/Mixed</option>';
+          arr.forEach(function (x) { html += '<option value="' + x[0] + '"' + (x[0] === cur ? ' selected' : '') + '>' + x[1] + '</option>'; });
+          return html;
+        }
+        window.__vidById = {}; window.__editHref = '/'; window.__panelCode = '';
         function renderCamMeta(id) {
           var meta = document.getElementById('panelCamMeta');
           if (!meta) return;
@@ -828,6 +849,7 @@ async function main() {
               return '<option value="' + k + '"' + (k === cat ? ' selected' : '') + '>' + (CATM[k].icon ? CATM[k].icon + ' ' : '') + (CATM[k][UILANG] || CATM[k].en || k) + '</option>';
             }).join('');
             html += '<select class="cam-cat-edit">' + opts + '</select>';
+            html += '<select class="cam-country-edit">' + countryOpts(window.__panelCode) + '</select>';
             if (v[2] === 0) {
               html += Object.keys(CONDLABEL).map(function (t) {
                 return '<button type="button" class="cam-cond' + (tags.indexOf(t) >= 0 ? ' on' : '') + '" data-t="' + t + '">' + CONDLABEL[t] + '</button>';
@@ -837,6 +859,9 @@ async function main() {
             meta.querySelector('.cam-cat-edit').addEventListener('change', function () {
               var val = this.value;
               window.__sbc.rpc('set_stream_category', { p_video_id: id, p_category: val }).then(function (r) { if (!r.error) v[3] = val; });
+            });
+            meta.querySelector('.cam-country-edit').addEventListener('change', function () {
+              window.__sbc.rpc('set_stream_country', { p_video_id: id, p_country: this.value || null });
             });
             [].forEach.call(meta.querySelectorAll('.cam-cond'), function (btn) {
               btn.addEventListener('click', function () {
@@ -923,6 +948,7 @@ async function main() {
           document.getElementById('browseAll').href = d.href;
           var vids = VIDS[d.code] || [];
           window.__editHref = d.href;
+          window.__panelCode = d.code;
           window.__vidById = {};
           vids.forEach(function (v) { window.__vidById[v[0]] = v; });
           var list = document.getElementById('camList');
