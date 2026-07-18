@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Avenue Live Cams | Camlisted</title>
+<meta name="description" content="35 avenue live cams and videos in Japan, 15 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/japan/avenue.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Japan Avenue Live Cams | Camlisted">
+<meta property="og:description" content="35 avenue live cams and videos in Japan, 15 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/japan/avenue.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">🛣️ Japan · Avenue Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Avenue live cams in Japan — <strong>35</strong> feeds (15 live right now, 20 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “【LIVE】中標津空港線（大通北2丁目交差点） /Nakashibetsu Airport Line Liv…” and “道路カメラ_荒島交差点(荒島町)”. Free to watch, no sign-up — this page zooms in on avenue scenes specifically within Japan.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/japan.html">All Japan cams</a> <a href="/c/avenue.html">Avenue worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=q-7hVkOQm-E" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="q-7hVkOQm-E"><img src="https://i.ytimg.com/vi/q-7hVkOQm-E/hqdefault_live.jpg" alt="【LIVE】中標津空港線（大通北2丁目交差点）　/Nakashibetsu Airport Line Live Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】中標津空港線（大通北2丁目交差点）　/Nakashibetsu Airport Line Live Camera</strong><span>Sys-T Network</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=WTBJfZu2q9M" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="WTBJfZu2q9M"><img src="https://i.ytimg.com/vi/WTBJfZu2q9M/hqdefault_live.jpg" alt="【LIVE】大阪日本橋ライブカメラ　osaka Nipponbashi Livecamera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】大阪日本橋ライブカメラ　osaka Nipponbashi Livecamera</strong><span>防犯カメラ販売・設置工事の防犯110番</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=gnGwhHccEB0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="gnGwhHccEB0"><img src="https://i.ytimg.com/vi/gnGwhHccEB0/hqdefault_live.jpg" alt="ウミネコ商店（外カメラ１）" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>ウミネコ商店（外カメラ１）</strong><span>ウミネコ商店</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=6h36HYcO4k4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="6h36HYcO4k4"><img src="https://i.ytimg.com/vi/6h36HYcO4k4/hqdefault_live.jpg" alt="道路カメラ_荒島交差点(荒島町)" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>道路カメラ_荒島交差点(荒島町)</strong><span>山陰ケーブルビジョン株式会社</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=HgiO9Jsx5WE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="HgiO9Jsx5WE"><img src="https://i.ytimg.com/vi/HgiO9Jsx5WE/hqdefault_live.jpg" alt="高知 　帯屋町商店街　ライブカメラ　Obiyamachi Kochi Japan" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>高知 　帯屋町商店街　ライブカメラ　Obiyamachi Kochi Japan</strong><span>きんかめちゃんねる</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=tMzspbinTzY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="tMzspbinTzY"><img src="https://i.ytimg.com/vi/tMzspbinTzY/hqdefault_live.jpg" alt="道路カメラ_県境交差点(吉佐町)" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>道路カメラ_県境交差点(吉佐町)</strong><span>山陰ケーブルビジョン株式会社</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Zhmmh7l6KEw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Zhmmh7l6KEw"><img src="https://i.ytimg.com/vi/Zhmmh7l6KEw/hqdefault_live.jpg" alt="【LIVE】新宿猫の目線（新宿駅東口） ライブカメラ" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】新宿猫の目線（新宿駅東口） ライブカメラ</strong><span>【公式】クロス新宿ビジョン</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=rPNHFcaZSp8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="rPNHFcaZSp8"><img src="https://i.ytimg.com/vi/rPNHFcaZSp8/hqdefault_live.jpg" alt="鍛冶町通りライブカメラ［ザザシティ浜松］PTZ（パン/チルト/ズーム）" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>鍛冶町通りライブカメラ［ザザシティ浜松］PTZ（パン/チルト/ズーム）</strong><span>ZAZAマガジンチャンネル</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=68DhvzKCVOc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="68DhvzKCVOc"><img src="https://i.ytimg.com/vi/68DhvzKCVOc/hqdefault_live.jpg" alt="オノデンch【秋葉原ライブカメラ　Akihabara live camera】" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>オノデンch【秋葉原ライブカメラ　Akihabara live camera】</strong><span>オノデンch</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=BePkAsZnDjM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="BePkAsZnDjM"><img src="https://i.ytimg.com/vi/BePkAsZnDjM/hqdefault_live.jpg" alt="【LIVE】新宿駅前のライブカメラ 現在の様子は？ Shinjuku, Tokyo JAPAN | TBS NEWS DIG" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】新宿駅前のライブカメラ 現在の様子は？ Shinjuku, Tokyo JAPAN | TBS NEWS DIG</strong><span>TBS NEWS DIG Powered by JNN</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=dfVK7ld38Ys" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="dfVK7ld38Ys"><img src="https://i.ytimg.com/vi/dfVK7ld38Ys/hqdefault_live.jpg" alt="【ライブ】いまの渋谷・スクランブル交差点　ライブカメラ　Shibuya Scramble Crossing - Tokyo, Japan　 Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【ライブ】いまの渋谷・スクランブル交差点　ライブカメラ　Shibuya Scramble Crossing - Tokyo, Japan　 Live Cam</strong><span>FNNプライムオンライン</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=WIYUrH4luck" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="WIYUrH4luck"><img src="https://i.ytimg.com/vi/WIYUrH4luck/hqdefault_live.jpg" alt="🔴【LIVE】ライブカメラ沖縄  宜野湾 大謝名交差点 42X PTZ Okinawa Japan" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴【LIVE】ライブカメラ沖縄  宜野湾 大謝名交差点 42X PTZ Okinawa Japan</strong><span>BANKSY GINOWAN</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=oW2Gb8YoGAg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="oW2Gb8YoGAg"><img src="https://i.ytimg.com/vi/oW2Gb8YoGAg/hqdefault_live.jpg" alt="【LIVE】いまの広島本通交差点／Hiroshima City, Japan. The 2023 G7 Summit was held." loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】いまの広島本通交差点／Hiroshima City, Japan. The 2023 G7 Summit was held.</strong><span>【公式】HOME広島ニュース</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=6dp-bvQ7RWo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="6dp-bvQ7RWo"><img src="https://i.ytimg.com/vi/6dp-bvQ7RWo/hqdefault_live.jpg" alt="【LIVE】2024 Tokyo Shinjuku 新宿 大ガード交差点 Live Ch" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】2024 Tokyo Shinjuku 新宿 大ガード交差点 Live Ch</strong><span>【LIVE】新宿 大ガード交差点 Tokyo Shinjuku Live Ch</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=DjdUEyjx8GM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="DjdUEyjx8GM"><img src="https://i.ytimg.com/vi/DjdUEyjx8GM/hqdefault_live.jpg" alt="【 LIVE 】東京都 新宿 歌舞伎町 24時間 ライブ / Tokyo Shinjuku Kabukicho Live" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【 LIVE 】東京都 新宿 歌舞伎町 24時間 ライブ / Tokyo Shinjuku Kabukicho Live</strong><span>歌舞伎町 ライブ ちゃんねる『 Kabukicho Live Channel 』</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=G6sibWr2-aA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="G6sibWr2-aA"><img src="https://i.ytimg.com/vi/G6sibWr2-aA/hqdefault.jpg" alt="Blizzard and Whiteout in Sapporo in the Evening | January 13, 2026" loading="lazy" width="320" height="180"><span class="badge">2:00:05</span></div>
+      <div class="entry-body"><strong>Blizzard and Whiteout in Sapporo in the Evening | January 13, 2026</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=inUk4ZnsG-A" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="inUk4ZnsG-A"><img src="https://i.ytimg.com/vi/inUk4ZnsG-A/hqdefault.jpg" alt="Heavy snowfall in Sapporo (大雪警報) , lofi radio 12 hours | February 23, 2024" loading="lazy" width="320" height="180"><span class="badge">11:54:58</span></div>
+      <div class="entry-body"><strong>Heavy snowfall in Sapporo (大雪警報) , lofi radio 12 hours | February 23, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=GZPR3UB9dU0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="GZPR3UB9dU0"><img src="https://i.ytimg.com/vi/GZPR3UB9dU0/hqdefault.jpg" alt="Heavy snow in Sapporo, reaching a snow depth of 80 cm | February 21, 2025" loading="lazy" width="320" height="180"><span class="badge">2:00:05</span></div>
+      <div class="entry-body"><strong>Heavy snow in Sapporo, reaching a snow depth of 80 cm | February 21, 2025</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=fopJbM6h2xE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="fopJbM6h2xE"><img src="https://i.ytimg.com/vi/fopJbM6h2xE/hqdefault.jpg" alt="Morning in Sapporo during heavy snow warning, lofi radio 2 hours | January 16, 2024" loading="lazy" width="320" height="180"><span class="badge">2:00:06</span></div>
+      <div class="entry-body"><strong>Morning in Sapporo during heavy snow warning, lofi radio 2 hours | January 16, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=bgr6aBYmt78" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="bgr6aBYmt78"><img src="https://i.ytimg.com/vi/bgr6aBYmt78/hqdefault.jpg" alt="Sapporo in Winter, lofi radio 24 hours | January 23, 2025" loading="lazy" width="320" height="180"><span class="badge">7:51:15</span></div>
+      <div class="entry-body"><strong>Sapporo in Winter, lofi radio 24 hours | January 23, 2025</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=M6vzHTfuTtI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="M6vzHTfuTtI"><img src="https://i.ytimg.com/vi/M6vzHTfuTtI/hqdefault.jpg" alt="Sapporo with snowy scenery, lofi radio 12 hours | February 24, 2024" loading="lazy" width="320" height="180"><span class="badge">11:55:00</span></div>
+      <div class="entry-body"><strong>Sapporo with snowy scenery, lofi radio 12 hours | February 24, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=D0Uku89oQkg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="D0Uku89oQkg"><img src="https://i.ytimg.com/vi/D0Uku89oQkg/hqdefault.jpg" alt="Snowfall in Sapporo on New Year&#39;s Eve | December 31, 2024" loading="lazy" width="320" height="180"><span class="badge">2:00:06</span></div>
+      <div class="entry-body"><strong>Snowfall in Sapporo on New Year&#39;s Eve | December 31, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ji8553V56-4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ji8553V56-4"><img src="https://i.ytimg.com/vi/ji8553V56-4/hqdefault.jpg" alt="Snowfall in November, lofi radio 2 hours | November 18, 2024" loading="lazy" width="320" height="180"><span class="badge">2:00:06</span></div>
+      <div class="entry-body"><strong>Snowfall in November, lofi radio 2 hours | November 18, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=H3PKSvDTCRg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="H3PKSvDTCRg"><img src="https://i.ytimg.com/vi/H3PKSvDTCRg/hqdefault.jpg" alt="Snow in Sapporo in the morning, reaching a snow depth of 90 cm | February 23, 2025" loading="lazy" width="320" height="180"><span class="badge">2:00:05</span></div>
+      <div class="entry-body"><strong>Snow in Sapporo in the morning, reaching a snow depth of 90 cm | February 23, 2025</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ycOjQaap46s" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ycOjQaap46s"><img src="https://i.ytimg.com/vi/ycOjQaap46s/hqdefault.jpg" alt="Snowfall in Sapporo, lofi radio 12 hours | March 7, 2024" loading="lazy" width="320" height="180"><span class="badge">11:54:57</span></div>
+      <div class="entry-body"><strong>Snowfall in Sapporo, lofi radio 12 hours | March 7, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=oVIHMX7vfIc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="oVIHMX7vfIc"><img src="https://i.ytimg.com/vi/oVIHMX7vfIc/hqdefault.jpg" alt="Snowfall in Sapporo, lofi radio 6 hours | March 9, 2024" loading="lazy" width="320" height="180"><span class="badge">5:45:22</span></div>
+      <div class="entry-body"><strong>Snowfall in Sapporo, lofi radio 6 hours | March 9, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=72mcS8_77fc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="72mcS8_77fc"><img src="https://i.ytimg.com/vi/72mcS8_77fc/hqdefault.jpg" alt="Snowfall in Sapporo, lofi radio 12 hours | March 2, 2024" loading="lazy" width="320" height="180"><span class="badge">11:54:56</span></div>
+      <div class="entry-body"><strong>Snowfall in Sapporo, lofi radio 12 hours | March 2, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=SkgjIpoHkwo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="SkgjIpoHkwo"><img src="https://i.ytimg.com/vi/SkgjIpoHkwo/hqdefault.jpg" alt="Snowfall in Sapporo, lofi radio 12 hours | February 26, 2024" loading="lazy" width="320" height="180"><span class="badge">11:54:56</span></div>
+      <div class="entry-body"><strong>Snowfall in Sapporo, lofi radio 12 hours | February 26, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=MZhSn2AvmMo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="MZhSn2AvmMo"><img src="https://i.ytimg.com/vi/MZhSn2AvmMo/hqdefault.jpg" alt="Snowfall in Sapporo, lofi radio 8 hours | March 10, 2024" loading="lazy" width="320" height="180"><span class="badge">7:52:50</span></div>
+      <div class="entry-body"><strong>Snowfall in Sapporo, lofi radio 8 hours | March 10, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=7m0T9bG-8rs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="7m0T9bG-8rs"><img src="https://i.ytimg.com/vi/7m0T9bG-8rs/hqdefault.jpg" alt="Truck Gets Stuck in Sapporo Snowstorm Under Heavy Snow Warning | January 25, 2026" loading="lazy" width="320" height="180"><span class="badge">2:00:05</span></div>
+      <div class="entry-body"><strong>Truck Gets Stuck in Sapporo Snowstorm Under Heavy Snow Warning | January 25, 2026</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=p8bejt4B-dg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="p8bejt4B-dg"><img src="https://i.ytimg.com/vi/p8bejt4B-dg/hqdefault.jpg" alt="🌸Ezoyamazakura cherry blossoms in full bloom in Sapporo | April 26, 2025" loading="lazy" width="320" height="180"><span class="badge">2:00:05</span></div>
+      <div class="entry-body"><strong>🌸Ezoyamazakura cherry blossoms in full bloom in Sapporo | April 26, 2025</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=g9aWh0zI0Bw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="g9aWh0zI0Bw"><img src="https://i.ytimg.com/vi/g9aWh0zI0Bw/hqdefault.jpg" alt="🌸Ezoyamazakura cherry blossoms in full bloom in Sapporo, lofi radio 2 hours | April 26, 2024" loading="lazy" width="320" height="180"><span class="badge">2:00:05</span></div>
+      <div class="entry-body"><strong>🌸Ezoyamazakura cherry blossoms in full bloom in Sapporo, lofi radio 2 hours | April 26, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=5OAXbxqG0-M" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="5OAXbxqG0-M"><img src="https://i.ytimg.com/vi/5OAXbxqG0-M/hqdefault.jpg" alt="Heavy snowfall in Sapporo (大雪警報) , lofi radio 12 hours | February 22, 2024" loading="lazy" width="320" height="180"><span class="badge">11:55:00</span></div>
+      <div class="entry-body"><strong>Heavy snowfall in Sapporo (大雪警報) , lofi radio 12 hours | February 22, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=d8d560Js3wM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="d8d560Js3wM"><img src="https://i.ytimg.com/vi/d8d560Js3wM/hqdefault.jpg" alt="Heavy snowfall in Sapporo (大雪警報) , lofi radio 12 hours | February 11, 2024" loading="lazy" width="320" height="180"><span class="badge">11:54:56</span></div>
+      <div class="entry-body"><strong>Heavy snowfall in Sapporo (大雪警報) , lofi radio 12 hours | February 11, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=bGqTvTMhbqc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="bGqTvTMhbqc"><img src="https://i.ytimg.com/vi/bGqTvTMhbqc/hqdefault.jpg" alt="Snowfall in Sapporo, lofi radio 12 hours | February 23, 2024" loading="lazy" width="320" height="180"><span class="badge">11:54:57</span></div>
+      <div class="entry-body"><strong>Snowfall in Sapporo, lofi radio 12 hours | February 23, 2024</strong><span>Hokkaido Kurashi no Yomimono</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="JP";window.__presetCategory="avenue";</script>
+<script src="js/app.js"></script>
+</body>
+</html>

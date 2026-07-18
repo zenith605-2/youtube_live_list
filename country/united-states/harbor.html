@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United States Harbor Live Cams | Camlisted</title>
+<meta name="description" content="32 harbor live cams and videos in United States, 32 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/united-states/harbor.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="United States Harbor Live Cams | Camlisted">
+<meta property="og:description" content="32 harbor live cams and videos in United States, 32 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/united-states/harbor.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">⚓ United States · Harbor Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Harbor live cams in United States — <strong>32</strong> feeds (32 live right now, 0 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “Hamptons.com - LIVE! 4K Conscience Point Marina, South…” and “🔴 LIVE Cruise Port Key West”. Free to watch, no sign-up — this page zooms in on harbor scenes specifically within United States.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/united-states.html">All United States cams</a> <a href="/c/harbor.html">Harbor worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=YIkt_L2YFPY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="YIkt_L2YFPY"><img src="https://i.ytimg.com/vi/YIkt_L2YFPY/hqdefault_live.jpg" alt="MARINA CAM: Live from the Galveston Yacht Basin and Cruise Terminal 10" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>MARINA CAM: Live from the Galveston Yacht Basin and Cruise Terminal 10</strong><span>Galveston TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Mnj84qrUbXc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Mnj84qrUbXc"><img src="https://i.ytimg.com/vi/Mnj84qrUbXc/hqdefault_live.jpg" alt="CRUISE CAM: Live from the Galveston Cruise Terminals" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CRUISE CAM: Live from the Galveston Cruise Terminals</strong><span>Galveston TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Ilio-LZ-pI0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Ilio-LZ-pI0"><img src="https://i.ytimg.com/vi/Ilio-LZ-pI0/hqdefault_live.jpg" alt="[LIVE] Boot Key Harbor City Marina live webcam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>[LIVE] Boot Key Harbor City Marina live webcam</strong><span>Seek Florida Keys</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=3XJOcSvIM0E" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="3XJOcSvIM0E"><img src="https://i.ytimg.com/vi/3XJOcSvIM0E/hqdefault_live.jpg" alt="[LIVE] Faro Blanco Marina of Suntex" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>[LIVE] Faro Blanco Marina of Suntex</strong><span>Seek Florida Keys</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=awTeFw1hPp4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="awTeFw1hPp4"><img src="https://i.ytimg.com/vi/awTeFw1hPp4/hqdefault_live.jpg" alt="[LIVE] Tarpon Feeding Dock at Robbie&#39;s Marina in Islamorada" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>[LIVE] Tarpon Feeding Dock at Robbie&#39;s Marina in Islamorada</strong><span>Seek Florida Keys</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=2JxAeBCFLJ8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="2JxAeBCFLJ8"><img src="https://i.ytimg.com/vi/2JxAeBCFLJ8/hqdefault_live.jpg" alt="SDRC Mission Bay Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>SDRC Mission Bay Camera</strong><span>San Diego Rowing Club</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=FS9Iz-EJW5Y" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="FS9Iz-EJW5Y"><img src="https://i.ytimg.com/vi/FS9Iz-EJW5Y/hqdefault_live.jpg" alt="LIVE | Alpena, MI | Thunder Bay Marina Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE | Alpena, MI | Thunder Bay Marina Camera</strong><span>Radio Centre</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=G-tlKF32_p4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="G-tlKF32_p4"><img src="https://i.ytimg.com/vi/G-tlKF32_p4/hqdefault_live.jpg" alt="Live South Beach Camera - City of South Haven on Lake Michigan" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live South Beach Camera - City of South Haven on Lake Michigan</strong><span>City of South Haven</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Y5ypYTZs-7o" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Y5ypYTZs-7o"><img src="https://i.ytimg.com/vi/Y5ypYTZs-7o/hqdefault_live.jpg" alt="Key West Bight Marina Live WebCam - Key West, Florida Keys" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Key West Bight Marina Live WebCam - Key West, Florida Keys</strong><span>FloridaKeysTV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=pJFDQ_wP4mk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="pJFDQ_wP4mk"><img src="https://i.ytimg.com/vi/pJFDQ_wP4mk/hqdefault_live.jpg" alt="Live Stream — McLear’s Cottage Colony &amp; Campground, Black Lake, NY" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Stream — McLear’s Cottage Colony &amp; Campground, Black Lake, NY</strong><span>nny․live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=61pi8UjLOlo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="61pi8UjLOlo"><img src="https://i.ytimg.com/vi/61pi8UjLOlo/hqdefault_live.jpg" alt="Lake Hood Seaplane Base, Anchorage, Alaska, USA | StreamTime LIVE" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Lake Hood Seaplane Base, Anchorage, Alaska, USA | StreamTime LIVE</strong><span>StreamTime Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=S8afSTXKkdw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="S8afSTXKkdw"><img src="https://i.ytimg.com/vi/S8afSTXKkdw/hqdefault_live.jpg" alt="Vilano Boat Ramp LIVE 24/7 | St. Augustine, Florida" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Vilano Boat Ramp LIVE 24/7 | St. Augustine, Florida</strong><span>St. Augustine Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=fYsEy6RFskY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="fYsEy6RFskY"><img src="https://i.ytimg.com/vi/fYsEy6RFskY/hqdefault_live.jpg" alt="🔴 LIVE CAM: D&#39;Iberville, Mississippi from Scarlet Pearl Casino Resort" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE CAM: D&#39;Iberville, Mississippi from Scarlet Pearl Casino Resort</strong><span>FOX10 News</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Kckw310hYgA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Kckw310hYgA"><img src="https://i.ytimg.com/vi/Kckw310hYgA/hqdefault_live.jpg" alt="Dauphin Island Sea Lab 🔴 LIVE CAM" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Dauphin Island Sea Lab 🔴 LIVE CAM</strong><span>FOX10 News</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=TLoMqn5wkng" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="TLoMqn5wkng"><img src="https://i.ytimg.com/vi/TLoMqn5wkng/hqdefault_live.jpg" alt="Hamptons.com - LIVE! 4K Conscience Point Marina, Southampton, New York" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com - LIVE! 4K Conscience Point Marina, Southampton, New York</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=bBNay8b8Q74" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="bBNay8b8Q74"><img src="https://i.ytimg.com/vi/bBNay8b8Q74/hqdefault_live.jpg" alt="Hamptons.com - LIVE! Long Wharf, Sag Harbor, New York (HARBOR CAM)" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com - LIVE! Long Wharf, Sag Harbor, New York (HARBOR CAM)</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=RH9wCBhxkxM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="RH9wCBhxkxM"><img src="https://i.ytimg.com/vi/RH9wCBhxkxM/hqdefault_live.jpg" alt="Bar Harbor, Maine - North View - Bar Harbor Inn" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Bar Harbor, Maine - North View - Bar Harbor Inn</strong><span>Boston and Maine Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=AwP_Q6IGwFs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="AwP_Q6IGwFs"><img src="https://i.ytimg.com/vi/AwP_Q6IGwFs/hqdefault_live.jpg" alt="Port Huron, Michigan USA | StreamTime LIVE" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Port Huron, Michigan USA | StreamTime LIVE</strong><span>StreamTime Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=8Rw-tZTeBjU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="8Rw-tZTeBjU"><img src="https://i.ytimg.com/vi/8Rw-tZTeBjU/hqdefault_live.jpg" alt="🔴 LIVE Cruise Port Key West" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE Cruise Port Key West</strong><span>BLC Streams</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=iHJbTrQSZys" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="iHJbTrQSZys"><img src="https://i.ytimg.com/vi/iHJbTrQSZys/hqdefault_live.jpg" alt="LIVE - Key West Harbor Webcam from PTZtv." loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE - Key West Harbor Webcam from PTZtv.</strong><span>PTZtv</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=edz0ux7JClE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="edz0ux7JClE"><img src="https://i.ytimg.com/vi/edz0ux7JClE/hqdefault_live.jpg" alt="San Diego Web Cam Live (Rotating/Switched Feed) 4K" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>San Diego Web Cam Live (Rotating/Switched Feed) 4K</strong><span>San Diego Web Cam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=l7b5RFAkKhY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="l7b5RFAkKhY"><img src="https://i.ytimg.com/vi/l7b5RFAkKhY/hqdefault_live.jpg" alt="LIVE CAMERA: New York City Harbor, Brooklyn, New York | StreamTime LIVE" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE CAMERA: New York City Harbor, Brooklyn, New York | StreamTime LIVE</strong><span>StreamTime Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=HfgIFGbdGJ0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="HfgIFGbdGJ0"><img src="https://i.ytimg.com/vi/HfgIFGbdGJ0/hqdefault_live.jpg" alt="The World Live - Original Version | earthTV®" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>The World Live - Original Version | earthTV®</strong><span>earthTV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=8ShFKuTCmhQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="8ShFKuTCmhQ"><img src="https://i.ytimg.com/vi/8ShFKuTCmhQ/hqdefault_live.jpg" alt="Islamorada Charter Boats Live WebCam - Islamorada Florida Keys" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Islamorada Charter Boats Live WebCam - Islamorada Florida Keys</strong><span>FloridaKeysTV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=y0XPkjM9-P4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="y0XPkjM9-P4"><img src="https://i.ytimg.com/vi/y0XPkjM9-P4/hqdefault_live.jpg" alt="LIVE - Scenic Cameras - Florida, Bahamas, Caribbean Islands and more. Even Alaska!" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE - Scenic Cameras - Florida, Bahamas, Caribbean Islands and more. Even Alaska!</strong><span>PTZtv</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=OteVW3af3BU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="OteVW3af3BU"><img src="https://i.ytimg.com/vi/OteVW3af3BU/hqdefault_live.jpg" alt="Bar Harbor, Maine - West View - Bar Harbor Inn" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Bar Harbor, Maine - West View - Bar Harbor Inn</strong><span>Boston and Maine Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=HPS48TMmNag" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="HPS48TMmNag"><img src="https://i.ytimg.com/vi/HPS48TMmNag/hqdefault_live.jpg" alt="Duluth Canal Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Duluth Canal Cam</strong><span>Duluth Harbor Cam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=pr2p_uvmXh8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="pr2p_uvmXh8"><img src="https://i.ytimg.com/vi/pr2p_uvmXh8/hqdefault_live.jpg" alt="Port of Friday Harbor Live Stream" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Port of Friday Harbor Live Stream</strong><span>Port of Friday Harbor</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=5-ClAzUV2UA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="5-ClAzUV2UA"><img src="https://i.ytimg.com/vi/5-ClAzUV2UA/hqdefault_live.jpg" alt="🟢 GOMV.COM Woods Hole Harbor &amp; MV Ferry Live Webcam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🟢 GOMV.COM Woods Hole Harbor &amp; MV Ferry Live Webcam</strong><span>Go Martha&#39;s Vineyard</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=TE6N2eDrsR0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="TE6N2eDrsR0"><img src="https://i.ytimg.com/vi/TE6N2eDrsR0/hqdefault_live.jpg" alt="🟢 GOMV.COM Woods Hole Ferry Dock &amp; Harbor Webcam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🟢 GOMV.COM Woods Hole Ferry Dock &amp; Harbor Webcam</strong><span>Go Martha&#39;s Vineyard</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=4UzQd1dVPlo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="4UzQd1dVPlo"><img src="https://i.ytimg.com/vi/4UzQd1dVPlo/hqdefault_live.jpg" alt="LIVE DoubleTree by Hilton Grand Hotel Biscayne Bay | Miami Traffic Cam | Miami Skyline View 4K" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE DoubleTree by Hilton Grand Hotel Biscayne Bay | Miami Traffic Cam | Miami Skyline View 4K</strong><span>Ozolio Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=VA5zde5zPGk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="VA5zde5zPGk"><img src="https://i.ytimg.com/vi/VA5zde5zPGk/hqdefault_live.jpg" alt="Detroit River Live Cam from the Dossin Museum, Detroit, Michigan USA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Detroit River Live Cam from the Dossin Museum, Detroit, Michigan USA</strong><span>BoatNerd</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="US";window.__presetCategory="harbor";</script>
+<script src="js/app.js"></script>
+</body>
+</html>

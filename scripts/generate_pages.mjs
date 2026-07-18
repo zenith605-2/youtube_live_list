@@ -171,7 +171,46 @@ function entryCard(s) {
 // - 크롤러: #grid 안에 미리 박아둔 정적 카드 목록을 읽음 (SEO)
 // - 방문자: 앱이 로드되면서 필터(window.__presetCountry/-Category)가 걸린 실제 화면으로 대체됨
 //   → 투표/즐겨찾기/태그·카테고리·국가 수정 등 메인과 완전히 동일한 기능
-function appPage(indexTemplate, { title, description, canonicalPath, h1, presetScript, staticGrid }) {
+// ----- SEO 본문 텍스트 헬퍼 (페이지마다 실제 데이터로 유니크한 글을 만들어 순위·AdSense 독자콘텐츠에 기여) -----
+function truncTitle(t) {
+  const s = (t || '').replace(/\s+/g, ' ').trim();
+  return s.length > 55 ? s.slice(0, 54) + '…' : s;
+}
+function topLabels(list, keyFn, labelFn, n) {
+  const counts = new Map();
+  for (const s of list) {
+    const k = keyFn(s);
+    if (!k) continue;
+    counts.set(k, (counts.get(k) || 0) + 1);
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([k]) => labelFn(k)).filter(Boolean);
+}
+function humanList(arr) {
+  const a = arr.filter(Boolean);
+  if (a.length <= 1) return a.join('');
+  if (a.length === 2) return `${a[0]} and ${a[1]}`;
+  return `${a.slice(0, -1).join(', ')}, and ${a[a.length - 1]}`;
+}
+function exampleTitles(list, n) {
+  const seen = new Set(); const out = [];
+  for (const s of list) {
+    const t = truncTitle(s.title);
+    if (!t || seen.has(t)) continue;
+    seen.add(t); out.push(`“${escapeHtml(t)}”`);
+    if (out.length >= n) break;
+  }
+  return out;
+}
+function introSection(paras, linkRows = []) {
+  const ps = paras.filter(Boolean).map(p => `<p>${p}</p>`).join('');
+  return `<section class="seo-intro">${ps}${linkRows.filter(Boolean).join('')}</section>\n`;
+}
+function linkRow(label, links) {
+  if (!links.length) return '';
+  return `<nav class="seo-links"><span class="seo-links-label">${escapeHtml(label)}:</span> ${links.join(' ')}</nav>`;
+}
+
+function appPage(indexTemplate, { title, description, canonicalPath, h1, presetScript, staticGrid, intro = '' }) {
   let html = indexTemplate;
   html = html.replace(/<title[^>]*>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`);
   html = html.replace(/(<meta name="description" content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
@@ -184,7 +223,7 @@ function appPage(indexTemplate, { title, description, canonicalPath, h1, presetS
   // h1을 페이지 주제로 교체 (data-i18n을 떼서 언어 전환 시 일반 제목으로 덮어쓰이지 않게)
   html = html.replace(/<h1><a href="\.\/" class="site-title-link" data-i18n="site_h1">[^<]*<\/a><\/h1>/,
     `<h1><a href="./" class="site-title-link">${escapeHtml(h1)}</a></h1>`);
-  html = html.replace('<main id="grid" class="grid">', `<main id="grid" class="grid">${staticGrid}`);
+  html = html.replace('<main id="grid" class="grid">', `${intro}<main id="grid" class="grid">${staticGrid}`);
   html = html.replace('<script src="js/app.js">', `<script>${presetScript}</script>\n<script src="js/app.js">`);
   return html;
 }
@@ -581,28 +620,77 @@ async function main() {
     { loc: `${SITE}/terms.html`, priority: '0.3', changefreq: 'yearly' },
   ];
 
-  // ===== 국가별 페이지 =====
+  // 카테고리 라벨/아이콘 조회용
+  const catLabelByKey = new Map(categories.map(c => [c.key, c.label_en || c.key]));
+  const catIconByKey = new Map(categories.map(c => [c.key, c.icon || '']));
+
+  // 그룹핑: 국가별 / 카테고리별 / (국가×카테고리) 조합별
   const byCountry = new Map();
+  const byCombo = new Map(); // `${code}::${catkey}` -> list
   for (const s of visible) {
-    if (!s.country) continue;
-    if (!byCountry.has(s.country)) byCountry.set(s.country, []);
-    byCountry.get(s.country).push(s);
+    if (s.country) {
+      if (!byCountry.has(s.country)) byCountry.set(s.country, []);
+      byCountry.get(s.country).push(s);
+    }
+    if (s.country && s.category && s.category !== 'other') {
+      const ck = `${s.country}::${s.category}`;
+      if (!byCombo.has(ck)) byCombo.set(ck, []);
+      byCombo.get(ck).push(s);
+    }
   }
+
+  // 페이지를 만들 국가 확정 (슬러그 미리 계산 — 조합 페이지 링크에 필요)
+  const countrySlugByCode = new Map();
+  for (const [code, list] of byCountry) {
+    if (list.length >= MIN_COUNTRY_ENTRIES) countrySlugByCode.set(code, slugify(countryNameOf(code)));
+  }
+
+  // 조합(국가×카테고리) 페이지 대상 확정: 충분한 캠이 있고 국가 페이지가 존재하는 조합만 (롱테일 검색어 겨냥)
+  const COMBO_MIN = 5;
+  const combos = [];
+  const combosByCountry = new Map();
+  const combosByCategory = new Map();
+  for (const [ck, list] of byCombo) {
+    if (list.length < COMBO_MIN) continue;
+    const [code, catkey] = ck.split('::');
+    if (!countrySlugByCode.has(code)) continue;
+    const cb = { code, catkey, list, name: countryNameOf(code), slug: countrySlugByCode.get(code),
+      label: catLabelByKey.get(catkey) || catkey, icon: catIconByKey.get(catkey) || '' };
+    combos.push(cb);
+    if (!combosByCountry.has(code)) combosByCountry.set(code, []);
+    combosByCountry.get(code).push(cb);
+    if (!combosByCategory.has(catkey)) combosByCategory.set(catkey, []);
+    combosByCategory.get(catkey).push(cb);
+  }
+  for (const arr of combosByCountry.values()) arr.sort((a, b) => b.list.length - a.list.length);
+  for (const arr of combosByCategory.values()) arr.sort((a, b) => b.list.length - a.list.length);
+
+  // ===== 국가별 페이지 =====
   const countryPages = [];
   for (const [code, list] of byCountry) {
-    if (list.length < MIN_COUNTRY_ENTRIES) continue;
+    if (!countrySlugByCode.has(code)) continue;
     const name = countryNameOf(code);
-    const slug = slugify(name);
+    const slug = countrySlugByCode.get(code);
     const liveCount = list.filter(s => s.content_type === 'live').length;
     const videoCount = list.length - liveCount;
     const entries = sortForPage(list).slice(0, MAX_ENTRIES_PER_PAGE);
+    const topCats = topLabels(list, s => s.category, k => catLabelByKey.get(k), 4);
+    const ex = exampleTitles(list, 2);
+    const p1 = `Camlisted tracks <strong>${list.length}</strong> live cams and real-world videos from ${escapeHtml(name)} — ${liveCount} streaming live right now and ${videoCount} recorded clips. They span ${humanList(topCats) || 'a range of everyday scenes'} and more, every feed pulled from public YouTube streams and re-checked daily so dead links fall away on their own.`;
+    const p2 = ex.length
+      ? `Current highlights include ${humanList(ex)}. It's all free to watch with no account — filter by category, video quality, or live status, or open the map to explore ${escapeHtml(name)} by location.`
+      : `Everything is free to watch with no account — filter by category, quality, or live status.`;
+    const comboLinks = (combosByCountry.get(code) || []).slice(0, 12)
+      .map(cb => `<a href="/country/${cb.slug}/${cb.catkey}.html">${cb.icon ? cb.icon + ' ' : ''}${escapeHtml(cb.label)}</a>`);
+    const intro = introSection([p1, p2], [linkRow(`Categories in ${name}`, comboLinks)]);
     const html = appPage(indexTemplate, {
-      title: `Live Cams & Webcams in ${name} – Camlisted`,
-      description: `Watch ${liveCount} live cams and ${videoCount} real-world videos from ${name}: traffic cameras, city streets, harbors, beaches and more. Verified daily.`,
+      title: `${name} Live Cams & Webcams — Watch Free | Camlisted`,
+      description: `${liveCount} live cams and ${videoCount} videos from ${name}${topCats.length ? ' — ' + topCats.slice(0, 3).join(', ').toLowerCase() : ''}. Free, no sign-up, verified daily.`,
       canonicalPath: `/country/${slug}.html`,
       h1: `Live Cams & Footage in ${name}`,
       presetScript: `window.__presetCountry=${JSON.stringify(code)};`,
       staticGrid: entries.map(entryCard).join(''),
+      intro,
     });
     await writeFile(path.join(ROOT, 'country', `${slug}.html`), html);
     countryPages.push({ code, name, slug, count: list.length });
@@ -621,13 +709,24 @@ async function main() {
     const videoCount = list.length - liveCount;
     const entries = sortForPage(list).slice(0, MAX_ENTRIES_PER_PAGE);
     const label = cat.label_en || cat.key;
+    const lower = label.toLowerCase();
+    const topCountries = topLabels(list, s => s.country, code => countryNameOf(code), 4);
+    const ex = exampleTitles(list, 2);
+    const p1 = `Browse <strong>${list.length}</strong> ${lower} live cams and videos gathered from around the world — ${liveCount} live and ${videoCount} recorded. Coverage is strongest in ${humanList(topCountries) || 'many countries'}, with fresh public YouTube feeds added and verified every day.`;
+    const p2 = ex.length
+      ? `Right now you can watch ${humanList(ex)}, among others. No sign-up needed — sort by most-upvoted or newest, or narrow to a single country below.`
+      : `No sign-up needed — sort by most-upvoted or newest, and jump straight to any country.`;
+    const comboLinks = (combosByCategory.get(cat.key) || []).slice(0, 15)
+      .map(cb => `<a href="/country/${cb.slug}/${cb.catkey}.html">${escapeHtml(cb.name)}</a>`);
+    const intro = introSection([p1, p2], [linkRow(`${label} cams by country`, comboLinks)]);
     const html = appPage(indexTemplate, {
-      title: `${label} Live Cams & Videos – Camlisted`,
-      description: `${liveCount} live ${label.toLowerCase()} cams and ${videoCount} videos, curated from YouTube and verified daily. Free to watch, no sign-up.`,
+      title: `${label} Live Cams — Free 24/7 Webcams | Camlisted`,
+      description: `${liveCount} live ${lower} cams and ${videoCount} videos${topCountries.length ? ' from ' + topCountries.slice(0, 3).join(', ') : ''}. Curated from YouTube, verified daily, free to watch.`,
       canonicalPath: `/c/${cat.key}.html`,
       h1: `${cat.icon ? cat.icon + ' ' : ''}${label} Live Cams & Videos`,
       presetScript: `window.__presetCategory=${JSON.stringify(cat.key)};`,
       staticGrid: entries.map(entryCard).join(''),
+      intro,
     });
     await writeFile(path.join(ROOT, 'c', `${cat.key}.html`), html);
     categoryPages.push({
@@ -637,6 +736,38 @@ async function main() {
     sitemapUrls.push({ loc: `${SITE}/c/${cat.key}.html`, priority: '0.8', changefreq: 'daily' });
   }
   console.log(`카테고리 페이지 ${categoryPages.length}개 생성`);
+
+  // ===== 국가 × 카테고리 조합 페이지 (롱테일 SEO: "Japan street live cams" 류) =====
+  const comboCountrySlugs = new Set(combos.map(cb => cb.slug));
+  for (const slug of comboCountrySlugs) await mkdir(path.join(ROOT, 'country', slug), { recursive: true });
+  for (const cb of combos) {
+    const liveCount = cb.list.filter(s => s.content_type === 'live').length;
+    const videoCount = cb.list.length - liveCount;
+    const entries = sortForPage(cb.list).slice(0, MAX_ENTRIES_PER_PAGE);
+    const ex = exampleTitles(cb.list, 2);
+    const lower = cb.label.toLowerCase();
+    const p1 = `${cb.label} live cams in ${escapeHtml(cb.name)} — <strong>${cb.list.length}</strong> feeds (${liveCount} live right now, ${videoCount} recorded), curated from public YouTube streams and re-checked daily.`;
+    const p2 = ex.length
+      ? `Examples include ${humanList(ex)}. Free to watch, no sign-up — this page zooms in on ${lower} scenes specifically within ${escapeHtml(cb.name)}.`
+      : `Free to watch, no sign-up — a focused view of ${lower} scenes within ${escapeHtml(cb.name)}.`;
+    const backLinks = [
+      `<a href="/country/${cb.slug}.html">All ${escapeHtml(cb.name)} cams</a>`,
+      `<a href="/c/${cb.catkey}.html">${escapeHtml(cb.label)} worldwide</a>`,
+    ];
+    const intro = introSection([p1, p2], [linkRow('See also', backLinks)]);
+    const html = appPage(indexTemplate, {
+      title: `${cb.name} ${cb.label} Live Cams | Camlisted`,
+      description: `${cb.list.length} ${lower} live cams and videos in ${cb.name}, ${liveCount} live now. Free to watch, verified daily on Camlisted.`,
+      canonicalPath: `/country/${cb.slug}/${cb.catkey}.html`,
+      h1: `${cb.icon ? cb.icon + ' ' : ''}${cb.name} · ${cb.label} Live Cams`,
+      presetScript: `window.__presetCountry=${JSON.stringify(cb.code)};window.__presetCategory=${JSON.stringify(cb.catkey)};`,
+      staticGrid: entries.map(entryCard).join(''),
+      intro,
+    });
+    await writeFile(path.join(ROOT, 'country', cb.slug, `${cb.catkey}.html`), html);
+    sitemapUrls.push({ loc: `${SITE}/country/${cb.slug}/${cb.catkey}.html`, priority: '0.6', changefreq: 'weekly' });
+  }
+  console.log(`조합 페이지 ${combos.length}개 생성`);
 
   // ===== 세계지도 (choropleth) — 영상 수에 따라 색이 진해지고, 호버 툴팁 + 클릭 이동 =====
   // 지도 경로 데이터: jsvectormap(MIT, Natural Earth 기반)에서 추출한 config/world_map_paths.json

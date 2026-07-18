@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indonesia Traffic Live Cams | Camlisted</title>
+<meta name="description" content="61 traffic live cams and videos in Indonesia, 61 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/indonesia/traffic.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Indonesia Traffic Live Cams | Camlisted">
+<meta property="og:description" content="61 traffic live cams and videos in Indonesia, 61 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/indonesia/traffic.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">🚦 Indonesia · Traffic Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Traffic live cams in Indonesia — <strong>61</strong> feeds (61 live right now, 0 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “LIVE CCTV Jalur Puncak Agrowisata Gunung Mas | Arah Pu…” and “LIVE PEMANTAUAN CCTV TPR PANTAI JJLS 1”. Free to watch, no sign-up — this page zooms in on traffic scenes specifically within Indonesia.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/indonesia.html">All Indonesia cams</a> <a href="/c/traffic.html">Traffic worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=IZsy24Kp1Is" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="IZsy24Kp1Is"><img src="https://i.ytimg.com/vi/IZsy24Kp1Is/hqdefault_live.jpg" alt="LIVE CCTV Jalur Puncak Agrowisata Gunung Mas | Arah Puncak Pass 24 Jam — by Cemerlang CCTV" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE CCTV Jalur Puncak Agrowisata Gunung Mas | Arah Puncak Pass 24 Jam — by Cemerlang CCTV</strong><span>Pakuan Network</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=qNQMsASjQWc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="qNQMsASjQWc"><img src="https://i.ytimg.com/vi/qNQMsASjQWc/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV TPR PANTAI JJLS 1" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV TPR PANTAI JJLS 1</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=V_5I8AlPuWA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="V_5I8AlPuWA"><img src="https://i.ytimg.com/vi/V_5I8AlPuWA/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV S3 PETOYAN 2" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV S3 PETOYAN 2</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=yFFab-zqrRs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="yFFab-zqrRs"><img src="https://i.ytimg.com/vi/yFFab-zqrRs/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS KALURAHAN GETAS" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS KALURAHAN GETAS</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=DUdnL0rbdGQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="DUdnL0rbdGQ"><img src="https://i.ytimg.com/vi/DUdnL0rbdGQ/hqdefault_live.jpg" alt="APACE - 22070" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 22070</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Aag2czzmGOU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Aag2czzmGOU"><img src="https://i.ytimg.com/vi/Aag2czzmGOU/hqdefault_live.jpg" alt="CCTV PAKELAN" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV PAKELAN</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=06AKsAIjr4Q" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="06AKsAIjr4Q"><img src="https://i.ytimg.com/vi/06AKsAIjr4Q/hqdefault_live.jpg" alt="🔴Live View Kamera CCTV Perempatan Masjid AL Iman RT 18 Dsn Pranan Kulon, Kec Salaman." loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Live View Kamera CCTV Perempatan Masjid AL Iman RT 18 Dsn Pranan Kulon, Kec Salaman.</strong><span>FadlanNet Central Data</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=_nwNaAz22J4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="_nwNaAz22J4"><img src="https://i.ytimg.com/vi/_nwNaAz22J4/hqdefault_live.jpg" alt="CCTV KUJON" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV KUJON</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=XhmQkH-8_qw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="XhmQkH-8_qw"><img src="https://i.ytimg.com/vi/XhmQkH-8_qw/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS BUNDERAN SIYONO" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS BUNDERAN SIYONO</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=IKKNIL9YxxM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="IKKNIL9YxxM"><img src="https://i.ytimg.com/vi/IKKNIL9YxxM/hqdefault_live.jpg" alt="APACE - 2401412" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 2401412</strong><span>APACE III</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=z5l9VDSeeho" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="z5l9VDSeeho"><img src="https://i.ytimg.com/vi/z5l9VDSeeho/hqdefault_live.jpg" alt="CCTV SEMEN" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV SEMEN</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=kwRXpwaHGA0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="kwRXpwaHGA0"><img src="https://i.ytimg.com/vi/kwRXpwaHGA0/hqdefault_live.jpg" alt="APACE - 24036" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 24036</strong><span>APACE III</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=eBH6o7E417k" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="eBH6o7E417k"><img src="https://i.ytimg.com/vi/eBH6o7E417k/hqdefault_live.jpg" alt="CCTV SAYANGAN" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV SAYANGAN</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=95noWRC4UJw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="95noWRC4UJw"><img src="https://i.ytimg.com/vi/95noWRC4UJw/hqdefault_live.jpg" alt="APACE - 22006" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 22006</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=t1ePHFFe8RI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="t1ePHFFe8RI"><img src="https://i.ytimg.com/vi/t1ePHFFe8RI/hqdefault_live.jpg" alt="CCTV BLONDO" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV BLONDO</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=YSmclVZTkAs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="YSmclVZTkAs"><img src="https://i.ytimg.com/vi/YSmclVZTkAs/hqdefault_live.jpg" alt="LIVE CCTV Jalur Puncak Agrowisata Gunung Mas | Arah Gadog 24 Jam — by Cemerlang CCTV" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE CCTV Jalur Puncak Agrowisata Gunung Mas | Arah Gadog 24 Jam — by Cemerlang CCTV</strong><span>Pakuan Network</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=42whIGagOwE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="42whIGagOwE"><img src="https://i.ytimg.com/vi/42whIGagOwE/hqdefault_live.jpg" alt="APACE - 26001" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 26001</strong><span>APACE III</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=LZi6HKFHO-Y" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="LZi6HKFHO-Y"><img src="https://i.ytimg.com/vi/LZi6HKFHO-Y/hqdefault_live.jpg" alt="APACE - 24090" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 24090</strong><span>APACE III</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=YyCjzb0kWfY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="YyCjzb0kWfY"><img src="https://i.ytimg.com/vi/YyCjzb0kWfY/hqdefault_live.jpg" alt="APACE - 26015" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 26015</strong><span>APACE III</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=hKFgiwq2B8c" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="hKFgiwq2B8c"><img src="https://i.ytimg.com/vi/hKFgiwq2B8c/hqdefault_live.jpg" alt="CCTV SECANG" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV SECANG</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=QeVNCwSNxl0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="QeVNCwSNxl0"><img src="https://i.ytimg.com/vi/QeVNCwSNxl0/hqdefault_live.jpg" alt="APACE - 24072" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 24072</strong><span>APACE III</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=i9aQbdm6LEE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="i9aQbdm6LEE"><img src="https://i.ytimg.com/vi/i9aQbdm6LEE/hqdefault_live.jpg" alt="APACE - 22037" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 22037</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=HSW1aGV1g_o" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="HSW1aGV1g_o"><img src="https://i.ytimg.com/vi/HSW1aGV1g_o/hqdefault_live.jpg" alt="APACE - 17012" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 17012</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=OG_dZKycgs4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="OG_dZKycgs4"><img src="https://i.ytimg.com/vi/OG_dZKycgs4/hqdefault_live.jpg" alt="APACE - 2400717" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 2400717</strong><span>APACE III</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=HKtDPw-tpCA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="HKtDPw-tpCA"><img src="https://i.ytimg.com/vi/HKtDPw-tpCA/hqdefault_live.jpg" alt="APACE - 22078" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 22078</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=qUBf-ldw1lQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="qUBf-ldw1lQ"><img src="https://i.ytimg.com/vi/qUBf-ldw1lQ/hqdefault_live.jpg" alt="APACE - 21002" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 21002</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=S1O-f7lMCx8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="S1O-f7lMCx8"><img src="https://i.ytimg.com/vi/S1O-f7lMCx8/hqdefault_live.jpg" alt="APACE - 22038" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 22038</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=PajFCUnKwXo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="PajFCUnKwXo"><img src="https://i.ytimg.com/vi/PajFCUnKwXo/hqdefault_live.jpg" alt="CCTV TUGU IRENG" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV TUGU IRENG</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=DrpuFXIgW4k" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="DrpuFXIgW4k"><img src="https://i.ytimg.com/vi/DrpuFXIgW4k/hqdefault_live.jpg" alt="APACE - 17015" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 17015</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=UkRw3SUHZTc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="UkRw3SUHZTc"><img src="https://i.ytimg.com/vi/UkRw3SUHZTc/hqdefault_live.jpg" alt="CCTV PALBAPANG" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV PALBAPANG</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=yEZ1YS6EhS4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="yEZ1YS6EhS4"><img src="https://i.ytimg.com/vi/yEZ1YS6EhS4/hqdefault_live.jpg" alt="CCTV SALAMAN" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>CCTV SALAMAN</strong><span>Dinas Perhubungan Kabupaten Magelang</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=WtwqvHWdlJU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="WtwqvHWdlJU"><img src="https://i.ytimg.com/vi/WtwqvHWdlJU/hqdefault_live.jpg" alt="PEMANTAUAN CCTV LALULINTAS SD TROWONO 1" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>PEMANTAUAN CCTV LALULINTAS SD TROWONO 1</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=g9I7Nq9LezE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="g9I7Nq9LezE"><img src="https://i.ytimg.com/vi/g9I7Nq9LezE/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG 4 RSUD WONOSARI - PTZ" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG 4 RSUD WONOSARI - PTZ</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Op3mK4TEV4M" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Op3mK4TEV4M"><img src="https://i.ytimg.com/vi/Op3mK4TEV4M/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG 3 SIYONO VIDEOTRON" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG 3 SIYONO VIDEOTRON</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=tXjy9IKi8sE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="tXjy9IKi8sE"><img src="https://i.ytimg.com/vi/tXjy9IKi8sE/hqdefault_live.jpg" alt="APACE - 22009" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 22009</strong><span>APACE I</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=38iz5WrcT8o" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="38iz5WrcT8o"><img src="https://i.ytimg.com/vi/38iz5WrcT8o/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS JJLS PLANJAN FIX" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS JJLS PLANJAN FIX</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=uW351scprt4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="uW351scprt4"><img src="https://i.ytimg.com/vi/uW351scprt4/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG EMPAT KARANGMOJO UTARA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG EMPAT KARANGMOJO UTARA</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=JUTc9wX7KHY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="JUTc9wX7KHY"><img src="https://i.ytimg.com/vi/JUTc9wX7KHY/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG TIGA NGAWEN UTARA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG TIGA NGAWEN UTARA</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=bNTWLtbNWHg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="bNTWLtbNWHg"><img src="https://i.ytimg.com/vi/bNTWLtbNWHg/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LAPANGAN KESATRIAN" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LAPANGAN KESATRIAN</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=iQ5xSuXgLqE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="iQ5xSuXgLqE"><img src="https://i.ytimg.com/vi/iQ5xSuXgLqE/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG TIGA BUNDER" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG TIGA BUNDER</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=UtHqoSIKaqY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="UtHqoSIKaqY"><img src="https://i.ytimg.com/vi/UtHqoSIKaqY/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SD N KARANGREJEK 2" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SD N KARANGREJEK 2</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=HCEaPhg9Vmk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="HCEaPhg9Vmk"><img src="https://i.ytimg.com/vi/HCEaPhg9Vmk/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG EMPAT MUNGGI BARAT" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG EMPAT MUNGGI BARAT</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=G9Cr-zH3y8M" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="G9Cr-zH3y8M"><img src="https://i.ytimg.com/vi/G9Cr-zH3y8M/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG EMPAT TEGALSARI BARAT" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG EMPAT TEGALSARI BARAT</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=RFn1jgeA_2U" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="RFn1jgeA_2U"><img src="https://i.ytimg.com/vi/RFn1jgeA_2U/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG TIGA AMIGO" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG TIGA AMIGO</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=fUAqyZHNERw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="fUAqyZHNERw"><img src="https://i.ytimg.com/vi/fUAqyZHNERw/hqdefault_live.jpg" alt="LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG TIGA PASAR PLAYEN PTZ" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE PEMANTAUAN CCTV LALULINTAS SIMPANG TIGA PASAR PLAYEN PTZ</strong><span>Kominfo Gunungkidul</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ctEbhydaOcQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ctEbhydaOcQ"><img src="https://i.ytimg.com/vi/ctEbhydaOcQ/hqdefault_live.jpg" alt="🔴 LIVE CCTV LALU LINTAS BARANANGSIANG BOGOR | PANTAU SECARA REAL-TIME BY PADJAJARAN CCTV" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE CCTV LALU LINTAS BARANANGSIANG BOGOR | PANTAU SECARA REAL-TIME BY PADJAJARAN CCTV</strong><span>Pakuan Network</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=FkwkTlpMcrU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="FkwkTlpMcrU"><img src="https://i.ytimg.com/vi/FkwkTlpMcrU/hqdefault_live.jpg" alt="APACE - 24078" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>APACE - 24078</strong><span>APACE III</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=AQd-p5hFtQo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="AQd-p5hFtQo"><img src="https://i.ytimg.com/vi/AQd-p5hFtQo/hqdefault_live.jpg" alt="🔴 LIVE CCTV Jalur Puncak Cisarua Real Time 24 Jam | Depan Polsek Cisarua | Cemerlang CCTV" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE CCTV Jalur Puncak Cisarua Real Time 24 Jam | Depan Polsek Cisarua | Cemerlang CCTV</strong><span>Pakuan Network</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=JJ3MWNYVCU4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="JJ3MWNYVCU4"><img src="https://i.ytimg.com/vi/JJ3MWNYVCU4/hqdefault_live.jpg" alt="🔴 LIVE CCTV Simpang Gadog – Pantauan Lalu Lintas Real Time | by Cemerlang CCTV" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE CCTV Simpang Gadog – Pantauan Lalu Lintas Real Time | by Cemerlang CCTV</strong><span>Pakuan Network</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=A2Lgrc0B4Rw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="A2Lgrc0B4Rw"><img src="https://i.ytimg.com/vi/A2Lgrc0B4Rw/hqdefault_live.jpg" alt="🔴[LIVE CCTV] PERTIGAAN JEMBATAN KRACAAN DEMAK [01] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] PERTIGAAN JEMBATAN KRACAAN DEMAK [01] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=GHuRrOnW2MQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="GHuRrOnW2MQ"><img src="https://i.ytimg.com/vi/GHuRrOnW2MQ/hqdefault_live.jpg" alt="🔴[LIVE CCTV] PERTIGAAN DEPAN KABUPATEN DEMAK [2] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] PERTIGAAN DEPAN KABUPATEN DEMAK [2] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=uM1gksCoh8I" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="uM1gksCoh8I"><img src="https://i.ytimg.com/vi/uM1gksCoh8I/hqdefault_live.jpg" alt="🔴[LIVE CCTV] TRAFFIC LIGHT JL. SULTAN FATAH BOGORAME DEMAK [01] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] TRAFFIC LIGHT JL. SULTAN FATAH BOGORAME DEMAK [01] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Oo8pSXi0R6U" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Oo8pSXi0R6U"><img src="https://i.ytimg.com/vi/Oo8pSXi0R6U/hqdefault_live.jpg" alt="🔴[LIVE CCTV] JL. PANTURA SAYUNG DEMAK [01] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] JL. PANTURA SAYUNG DEMAK [01] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ghJg364QRkQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ghJg364QRkQ"><img src="https://i.ytimg.com/vi/ghJg364QRkQ/hqdefault_live.jpg" alt="🔴[LIVE CCTV] MARGO UTOMO - OPTIC TUGU" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] MARGO UTOMO - OPTIC TUGU</strong><span>CCTV Pemerintah Kota Yogyakarta</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=1v52cQ1qJBA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="1v52cQ1qJBA"><img src="https://i.ytimg.com/vi/1v52cQ1qJBA/hqdefault_live.jpg" alt="🔴[LIVE CCTV] SIMPANG TUGU" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] SIMPANG TUGU</strong><span>CCTV Pemerintah Kota Yogyakarta</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=FCuHGm6VMHs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="FCuHGm6VMHs"><img src="https://i.ytimg.com/vi/FCuHGm6VMHs/hqdefault_live.jpg" alt="🔴[LIVE CCTV] SIMPANG BOROBUDUR PLAZA V. UTARA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] SIMPANG BOROBUDUR PLAZA V. UTARA</strong><span>CCTV Pemerintah Kota Yogyakarta</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=H9YpOXcJO_s" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="H9YpOXcJO_s"><img src="https://i.ytimg.com/vi/H9YpOXcJO_s/hqdefault_live.jpg" alt="🔴[LIVE CCTV] TRAFFIC LIGHT JL. LINGKAR BOTOREJO DEMAK [02] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] TRAFFIC LIGHT JL. LINGKAR BOTOREJO DEMAK [02] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=axG6-jsmVqI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="axG6-jsmVqI"><img src="https://i.ytimg.com/vi/axG6-jsmVqI/hqdefault_live.jpg" alt="🔴[LIVE CCTV] U-TURN LOIRENG SAYUNG [2] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] U-TURN LOIRENG SAYUNG [2] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=2bvOgSbbQPE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="2bvOgSbbQPE"><img src="https://i.ytimg.com/vi/2bvOgSbbQPE/hqdefault_live.jpg" alt="🔴[LIVE CCTV] TRAFFIC LIGHT JL. PANTURA JEBOR DEMAK [01] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] TRAFFIC LIGHT JL. PANTURA JEBOR DEMAK [01] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=XoqlfevtBaE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="XoqlfevtBaE"><img src="https://i.ytimg.com/vi/XoqlfevtBaE/hqdefault_live.jpg" alt="🔴[LIVE CCTV] U-TURN LOIRENG SAYUNG [1] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] U-TURN LOIRENG SAYUNG [1] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=SUhOdlj8aW8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="SUhOdlj8aW8"><img src="https://i.ytimg.com/vi/SUhOdlj8aW8/hqdefault_live.jpg" alt="🔴[LIVE CCTV] PERTIGAAN DEPAN KABUPATEN DEMAK [1] by DISHUB KAB. DEMAK" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴[LIVE CCTV] PERTIGAAN DEPAN KABUPATEN DEMAK [1] by DISHUB KAB. DEMAK</strong><span>CCTV DISHUB KAB. DEMAK</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="ID";window.__presetCategory="traffic";</script>
+<script src="js/app.js"></script>
+</body>
+</html>

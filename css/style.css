@@ -695,6 +695,35 @@ body {
   margin: 0 auto;
 }
 
+/* SEO 랜딩 페이지 본문 소개글 (국가/카테고리/조합 페이지) — 검색·AdSense 독자콘텐츠용 */
+.seo-intro {
+  max-width: 1400px;
+  margin: 4px auto 0;
+  padding: 4px 24px 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.seo-intro p { margin: 6px 0; }
+.seo-intro strong { color: var(--text); }
+.seo-links {
+  margin: 8px 0 2px;
+  font-size: 0.82rem;
+  line-height: 1.9;
+}
+.seo-links-label { color: var(--muted); margin-right: 4px; }
+.seo-links a {
+  display: inline-block;
+  padding: 2px 9px;
+  margin: 0 3px 3px 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.seo-links a:hover { border-color: var(--accent); color: var(--accent); }
+
 .approve-all-btn {
   display: block;
   margin: 10px 24px 0;

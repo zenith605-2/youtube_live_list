@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United States Coast / Seaside Live Cams | Camlisted</title>
+<meta name="description" content="9 coast / seaside live cams and videos in United States, 9 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/united-states/coast.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="United States Coast / Seaside Live Cams | Camlisted">
+<meta property="og:description" content="9 coast / seaside live cams and videos in United States, 9 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/united-states/coast.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">🌊 United States · Coast / Seaside Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Coast / Seaside live cams in United States — <strong>9</strong> feeds (9 live right now, 0 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “Live Outer Banks, NC Webcam from Twiddy &amp; Company” and “LIVE | Traverse City, MI | West Bay Camera”. Free to watch, no sign-up — this page zooms in on coast / seaside scenes specifically within United States.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/united-states.html">All United States cams</a> <a href="/c/coast.html">Coast / Seaside worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=Vs0eliTSu-A" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Vs0eliTSu-A"><img src="https://i.ytimg.com/vi/Vs0eliTSu-A/hqdefault_live.jpg" alt="[LIVE] La Trattoria Oceanside Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>[LIVE] La Trattoria Oceanside Cam</strong><span>Seek Florida Keys</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=LJ5dbOYQw5A" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="LJ5dbOYQw5A"><img src="https://i.ytimg.com/vi/LJ5dbOYQw5A/hqdefault_live.jpg" alt="Seaside Heights Beach Cam and Surf Report" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Seaside Heights Beach Cam and Surf Report</strong><span>NJ Beach Cams</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=2ETj1sUmEmU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="2ETj1sUmEmU"><img src="https://i.ytimg.com/vi/2ETj1sUmEmU/hqdefault_live.jpg" alt="LIVE | Traverse City, MI | West Bay Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE | Traverse City, MI | West Bay Camera</strong><span>Radio Centre</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=WEhuDqlxHmM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="WEhuDqlxHmM"><img src="https://i.ytimg.com/vi/WEhuDqlxHmM/hqdefault_live.jpg" alt="Live Outer Banks, NC Webcam from Twiddy &amp; Company" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Outer Banks, NC Webcam from Twiddy &amp; Company</strong><span>Twiddy &amp; Company Vacation Rentals</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cWR8KGKftUw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cWR8KGKftUw"><img src="https://i.ytimg.com/vi/cWR8KGKftUw/hqdefault_live.jpg" alt="EarthCam Live:  Statue of Liberty" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>EarthCam Live:  Statue of Liberty</strong><span>EarthCam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=V7sUbjD_e3I" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="V7sUbjD_e3I"><img src="https://i.ytimg.com/vi/V7sUbjD_e3I/hqdefault_live.jpg" alt="The Edge Hotel Clearwater Beach" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>The Edge Hotel Clearwater Beach</strong><span>Clearwater Beach Live Cams</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=AiNCbGzabVo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="AiNCbGzabVo"><img src="https://i.ytimg.com/vi/AiNCbGzabVo/hqdefault_live.jpg" alt="Live Cameras Around the World - Music, Timelapse, Travel" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Cameras Around the World - Music, Timelapse, Travel</strong><span>Boston and Maine Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=hm9iAviOZ20" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="hm9iAviOZ20"><img src="https://i.ytimg.com/vi/hm9iAviOZ20/hqdefault_live.jpg" alt="Surfline TV | LIVE Surf Cams 24/7" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Surfline TV | LIVE Surf Cams 24/7</strong><span>Surfline</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=49WtyN1V1ZQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="49WtyN1V1ZQ"><img src="https://i.ytimg.com/vi/49WtyN1V1ZQ/hqdefault_live.jpg" alt="Boston Harbor, Massachusetts - Live - Hyatt Regency Boston Harbor" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Boston Harbor, Massachusetts - Live - Hyatt Regency Boston Harbor</strong><span>Boston and Maine Live</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="US";window.__presetCategory="coast";</script>
+<script src="js/app.js"></script>
+</body>
+</html>

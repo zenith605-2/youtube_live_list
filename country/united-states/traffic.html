@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United States Traffic Live Cams | Camlisted</title>
+<meta name="description" content="52 traffic live cams and videos in United States, 52 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/united-states/traffic.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="United States Traffic Live Cams | Camlisted">
+<meta property="og:description" content="52 traffic live cams and videos in United States, 52 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/united-states/traffic.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">🚦 United States · Traffic Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Traffic live cams in United States — <strong>52</strong> feeds (52 live right now, 0 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “Boston, MA Live Cam - Boston Common at Boylston St.” and “Galveston, Texas | 24/7 Live Beach Camera”. Free to watch, no sign-up — this page zooms in on traffic scenes specifically within United States.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/united-states.html">All United States cams</a> <a href="/c/traffic.html">Traffic worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=MjJOcjyeOBc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="MjJOcjyeOBc"><img src="https://i.ytimg.com/vi/MjJOcjyeOBc/hqdefault_live.jpg" alt="Main Street East" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Main Street East</strong><span>Cottage Grove Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cZJM0Sg6dy4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cZJM0Sg6dy4"><img src="https://i.ytimg.com/vi/cZJM0Sg6dy4/hqdefault_live.jpg" alt="🟢 Barbican St Andrew LIVE 24/7 – Kingston Jamaica Street Cam 🇯🇲" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🟢 Barbican St Andrew LIVE 24/7 – Kingston Jamaica Street Cam 🇯🇲</strong><span>See Jamaica </span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=sWF5RQ_OzpM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="sWF5RQ_OzpM"><img src="https://i.ytimg.com/vi/sWF5RQ_OzpM/hqdefault_live.jpg" alt="Boston, MA Live Cam - Boston Common at Boylston St." loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Boston, MA Live Cam - Boston Common at Boylston St.</strong><span>Boston and Maine Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=9mMnqO1UuIU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="9mMnqO1UuIU"><img src="https://i.ytimg.com/vi/9mMnqO1UuIU/hqdefault_live.jpg" alt="EarthCam Live: Philadelphia, PA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>EarthCam Live: Philadelphia, PA</strong><span>EarthCam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=8-V9uEqFLwE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="8-V9uEqFLwE"><img src="https://i.ytimg.com/vi/8-V9uEqFLwE/hqdefault_live.jpg" alt="LIVE | Traverse City, MI | Downtown Camera |" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE | Traverse City, MI | Downtown Camera |</strong><span>Radio Centre</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=OB-HApxnVzk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="OB-HApxnVzk"><img src="https://i.ytimg.com/vi/OB-HApxnVzk/hqdefault_live.jpg" alt="LIVE: Mackinac Bridge hazy conditions from Canadian wildfire smoke" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE: Mackinac Bridge hazy conditions from Canadian wildfire smoke</strong><span>WWMT-TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=tDFokEet4Ys" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="tDFokEet4Ys"><img src="https://i.ytimg.com/vi/tDFokEet4Ys/hqdefault_live.jpg" alt="Hopkins@LBJ" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hopkins@LBJ</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=czcqVgHG3y0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="czcqVgHG3y0"><img src="https://i.ytimg.com/vi/czcqVgHG3y0/hqdefault_live.jpg" alt="Village of Tilton 5th Street" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Village of Tilton 5th Street</strong><span>Village of Tilton Traffic Camera</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=vaDjY-5Ymxc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="vaDjY-5Ymxc"><img src="https://i.ytimg.com/vi/vaDjY-5Ymxc/hqdefault_live.jpg" alt="Live Stream — Public Square, Watertown NY" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Stream — Public Square, Watertown NY</strong><span>nny․live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Zz9hMrxl20I" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Zz9hMrxl20I"><img src="https://i.ytimg.com/vi/Zz9hMrxl20I/hqdefault_live.jpg" alt="Live Stream — Public Square, Watertown NY — Jake Johnson Properties" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Stream — Public Square, Watertown NY — Jake Johnson Properties</strong><span>nny․live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=MUQJubAnBmI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="MUQJubAnBmI"><img src="https://i.ytimg.com/vi/MUQJubAnBmI/hqdefault_live.jpg" alt="SH123@Broadway" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>SH123@Broadway</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=4Uwmss-8J5I" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="4Uwmss-8J5I"><img src="https://i.ytimg.com/vi/4Uwmss-8J5I/hqdefault_live.jpg" alt="IH 35 @ Wonder World Drive" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>IH 35 @ Wonder World Drive</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=wMsY4Sj9ljg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="wMsY4Sj9ljg"><img src="https://i.ytimg.com/vi/wMsY4Sj9ljg/hqdefault_live.jpg" alt="Sessom @ Comanche" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Sessom @ Comanche</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=qRYILPnsOns" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="qRYILPnsOns"><img src="https://i.ytimg.com/vi/qRYILPnsOns/hqdefault_live.jpg" alt="Hopkins@Charles Austin" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hopkins@Charles Austin</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=MYNXvJGw0NE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="MYNXvJGw0NE"><img src="https://i.ytimg.com/vi/MYNXvJGw0NE/hqdefault_live.jpg" alt="Aquarena Springs Drive @ Post Road" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Aquarena Springs Drive @ Post Road</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=S_o0_F9BiuY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="S_o0_F9BiuY"><img src="https://i.ytimg.com/vi/S_o0_F9BiuY/hqdefault_live.jpg" alt="Aquarena Springs Drive @ Sessom Drive" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Aquarena Springs Drive @ Sessom Drive</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=bYd6ChdCblg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="bYd6ChdCblg"><img src="https://i.ytimg.com/vi/bYd6ChdCblg/hqdefault_live.jpg" alt="Aquarena Springs @Thorpe" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Aquarena Springs @Thorpe</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=0hhjsyXRHGA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="0hhjsyXRHGA"><img src="https://i.ytimg.com/vi/0hhjsyXRHGA/hqdefault_live.jpg" alt="Post @ Uhland" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Post @ Uhland</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Qj6osxu6XVI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Qj6osxu6XVI"><img src="https://i.ytimg.com/vi/Qj6osxu6XVI/hqdefault_live.jpg" alt="Hopkins Street @ Moore Street" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hopkins Street @ Moore Street</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=fiUqVsMR8z4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="fiUqVsMR8z4"><img src="https://i.ytimg.com/vi/fiUqVsMR8z4/hqdefault_live.jpg" alt="Aquarena Spring @ Charles Austin" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Aquarena Spring @ Charles Austin</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=8NrddOWEf1k" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="8NrddOWEf1k"><img src="https://i.ytimg.com/vi/8NrddOWEf1k/hqdefault_live.jpg" alt="Wonder World Drive @ Hunter Road" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Wonder World Drive @ Hunter Road</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=_rmUXOHSf0w" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="_rmUXOHSf0w"><img src="https://i.ytimg.com/vi/_rmUXOHSf0w/hqdefault_live.jpg" alt="EarthCam Live:  Allegiant Stadium (Las Vegas, NV)" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>EarthCam Live:  Allegiant Stadium (Las Vegas, NV)</strong><span>EarthCam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=6OoxjzKP4N4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="6OoxjzKP4N4"><img src="https://i.ytimg.com/vi/6OoxjzKP4N4/hqdefault_live.jpg" alt="🟢 GOMV.COM Chilmark / Menemsha Beach Parking Webcam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🟢 GOMV.COM Chilmark / Menemsha Beach Parking Webcam</strong><span>Go Martha&#39;s Vineyard</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=0ZzPWoeZzuI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="0ZzPWoeZzuI"><img src="https://i.ytimg.com/vi/0ZzPWoeZzuI/hqdefault_live.jpg" alt="EarthCam Live:  Midway Airport (Chicago, IL)" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>EarthCam Live:  Midway Airport (Chicago, IL)</strong><span>EarthCam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=HkHhXsWci7Q" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="HkHhXsWci7Q"><img src="https://i.ytimg.com/vi/HkHhXsWci7Q/hqdefault_live.jpg" alt="Galveston, Texas | 24/7 Live Beach Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Galveston, Texas | 24/7 Live Beach Camera</strong><span>ABC13 Houston</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=CHd0z44hTQc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="CHd0z44hTQc"><img src="https://i.ytimg.com/vi/CHd0z44hTQc/hqdefault_live.jpg" alt="🟢 GOMV.COM Vineyard Haven Downtown Live Webcam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🟢 GOMV.COM Vineyard Haven Downtown Live Webcam</strong><span>Go Martha&#39;s Vineyard</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=gu0Ow9UqaF0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="gu0Ow9UqaF0"><img src="https://i.ytimg.com/vi/gu0Ow9UqaF0/hqdefault_live.jpg" alt="N Main Traffic Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>N Main Traffic Camera</strong><span>Ashland Fiber Network</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=R2jNOtYEwdI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="R2jNOtYEwdI"><img src="https://i.ytimg.com/vi/R2jNOtYEwdI/hqdefault_live.jpg" alt="New York Live Webcam - Manhattan Upper East Side" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>New York Live Webcam - Manhattan Upper East Side</strong><span>Tripwebcam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=G8RIAgPxaMc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="G8RIAgPxaMc"><img src="https://i.ytimg.com/vi/G8RIAgPxaMc/hqdefault_live.jpg" alt="San Francisco Live Camera | 24/7 Stream" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>San Francisco Live Camera | 24/7 Stream</strong><span>ABC7 News Bay Area</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=AShvF9ILGkc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="AShvF9ILGkc"><img src="https://i.ytimg.com/vi/AShvF9ILGkc/hqdefault_live.jpg" alt="City of Orange Plaza Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>City of Orange Plaza Camera</strong><span>City of Orange, CA</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cJg57DfzptM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cJg57DfzptM"><img src="https://i.ytimg.com/vi/cJg57DfzptM/hqdefault_live.jpg" alt="Columbia Hotel Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Columbia Hotel Camera</strong><span>Ashland Fiber Network</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=QkBL9SJI8iM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="QkBL9SJI8iM"><img src="https://i.ytimg.com/vi/QkBL9SJI8iM/hqdefault_live.jpg" alt="🔴 LIVE CAM: Bankhead Tunnel in Downtown Mobile, AL" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE CAM: Bankhead Tunnel in Downtown Mobile, AL</strong><span>FOX10 News</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=rjASdnpfONo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="rjASdnpfONo"><img src="https://i.ytimg.com/vi/rjASdnpfONo/hqdefault_live.jpg" alt="🔴 LIVE CAM: Downtown Mobile, AL from The Admiral Hotel" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE CAM: Downtown Mobile, AL from The Admiral Hotel</strong><span>FOX10 News</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=iQPgyQYfVjQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="iQPgyQYfVjQ"><img src="https://i.ytimg.com/vi/iQPgyQYfVjQ/hqdefault_live.jpg" alt="🔴 LIVE CAM: USS Alabama Battleship in Mobile, AL" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE CAM: USS Alabama Battleship in Mobile, AL</strong><span>FOX10 News</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=vGLm--kTC50" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="vGLm--kTC50"><img src="https://i.ytimg.com/vi/vGLm--kTC50/hqdefault_live.jpg" alt="Hamptons.com - LIVE! Sag Harbor Bay, Sag Harbor, New York (BAY CAM)" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com - LIVE! Sag Harbor Bay, Sag Harbor, New York (BAY CAM)</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=l1A96hXsrCU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="l1A96hXsrCU"><img src="https://i.ytimg.com/vi/l1A96hXsrCU/hqdefault_live.jpg" alt="Hamptons.com - LIVE! Windmill Bay &amp; Beach, Sag Harbor, New York | K Pasa Restaurant" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com - LIVE! Windmill Bay &amp; Beach, Sag Harbor, New York | K Pasa Restaurant</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=d2cbKO5KJn4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="d2cbKO5KJn4"><img src="https://i.ytimg.com/vi/d2cbKO5KJn4/hqdefault_live.jpg" alt="LIVE Columbia SC Traffic Cam + Police Scanner | I-26, I-20, I-77" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE Columbia SC Traffic Cam + Police Scanner | I-26, I-20, I-77</strong><span>I-26 Live Cam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=43asiOxjHN4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="43asiOxjHN4"><img src="https://i.ytimg.com/vi/43asiOxjHN4/hqdefault_live.jpg" alt="🔴 LIVE Miami Traffic" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE Miami Traffic</strong><span>Florida Traffic</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Jwna-J3L0NM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Jwna-J3L0NM"><img src="https://i.ytimg.com/vi/Jwna-J3L0NM/hqdefault_live.jpg" alt="Hermosa Beach Good Stuff Strand Cam. Live Camera Stream from Southern California" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hermosa Beach Good Stuff Strand Cam. Live Camera Stream from Southern California</strong><span>Good Stuff Restaurants</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=9SLt3AT0rXk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="9SLt3AT0rXk"><img src="https://i.ytimg.com/vi/9SLt3AT0rXk/hqdefault_live.jpg" alt="Trains in the Street at La Grange, Kentucky, USA | LIVE Train Camera (PTZ)" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Trains in the Street at La Grange, Kentucky, USA | LIVE Train Camera (PTZ)</strong><span>Virtual Railfan</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Su5cUQq8dAY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Su5cUQq8dAY"><img src="https://i.ytimg.com/vi/Su5cUQq8dAY/hqdefault_live.jpg" alt="Sharx Security Demo Live Cam: rotary traffic circle Derry NH USA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Sharx Security Demo Live Cam: rotary traffic circle Derry NH USA</strong><span>Sharx Demo</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=sTF-6_xinUU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="sTF-6_xinUU"><img src="https://i.ytimg.com/vi/sTF-6_xinUU/hqdefault_live.jpg" alt="⭕Live Traffic Camera Feed, Car Spotting, and Police Scanner - Fresno, California" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>⭕Live Traffic Camera Feed, Car Spotting, and Police Scanner - Fresno, California</strong><span>Friant Roulette</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=CXYr04BWvmc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="CXYr04BWvmc"><img src="https://i.ytimg.com/vi/CXYr04BWvmc/hqdefault_live.jpg" alt="San Francisco-Oakland Bay Bridge Live Camera | 24/7 Stream" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>San Francisco-Oakland Bay Bridge Live Camera | 24/7 Stream</strong><span>ABC7 News Bay Area</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=k3ZpqfybsQE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="k3ZpqfybsQE"><img src="https://i.ytimg.com/vi/k3ZpqfybsQE/hqdefault_live.jpg" alt="Hwy 109  @ I-40 WB Ramp" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hwy 109  @ I-40 WB Ramp</strong><span>City of Lebanon, TN -Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=1EiC9bvVGnk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="1EiC9bvVGnk"><img src="https://i.ytimg.com/vi/1EiC9bvVGnk/hqdefault_live.jpg" alt="Jackson Hole Town Square Live Webcam Stream – See the Action Now" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Jackson Hole Town Square Live Webcam Stream – See the Action Now</strong><span>See Jackson Hole</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=auWahQLydIk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="auWahQLydIk"><img src="https://i.ytimg.com/vi/auWahQLydIk/hqdefault_live.jpg" alt="Village of Tilton Rt1 &amp; Ramp Road" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Village of Tilton Rt1 &amp; Ramp Road</strong><span>Village of Tilton Traffic Camera</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=eAdWk0Vg64A" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="eAdWk0Vg64A"><img src="https://i.ytimg.com/vi/eAdWk0Vg64A/hqdefault_live.jpg" alt="Live Traffic @ 741 &amp; Lytle South" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Traffic @ 741 &amp; Lytle South</strong><span>City of Springboro Live Traffic</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=xdWLJzOlMUI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="xdWLJzOlMUI"><img src="https://i.ytimg.com/vi/xdWLJzOlMUI/hqdefault_live.jpg" alt="Hopkins_Thorpe" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hopkins_Thorpe</strong><span>San Marcos, TX Traffic Cameras</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=2juLrCH5w9U" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="2juLrCH5w9U"><img src="https://i.ytimg.com/vi/2juLrCH5w9U/hqdefault_live.jpg" alt="Live Traffic @ 741 &amp; 73" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Traffic @ 741 &amp; 73</strong><span>City of Springboro Live Traffic</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=g5BS95j2rmM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="g5BS95j2rmM"><img src="https://i.ytimg.com/vi/g5BS95j2rmM/hqdefault_live.jpg" alt="LIVE 4K South Beach, Miami Beach  24/7 Street Cam on Collins Ave" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE 4K South Beach, Miami Beach  24/7 Street Cam on Collins Ave</strong><span>ZeroEight</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=dzylsC0KcOE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="dzylsC0KcOE"><img src="https://i.ytimg.com/vi/dzylsC0KcOE/hqdefault_live.jpg" alt="Live HD Stream - Courtyard by Marriott South Padre Island Live Beach Webcam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live HD Stream - Courtyard by Marriott South Padre Island Live Beach Webcam</strong><span>South Padre Island</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=DgJlC8WemnE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="DgJlC8WemnE"><img src="https://i.ytimg.com/vi/DgJlC8WemnE/hqdefault_live.jpg" alt="Traffic Camera Trailer" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Traffic Camera Trailer</strong><span>City of Lebanon, TN -Traffic Cameras</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="US";window.__presetCategory="traffic";</script>
+<script src="js/app.js"></script>
+</body>
+</html>

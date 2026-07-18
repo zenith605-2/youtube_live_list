@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United States Beach Live Cams | Camlisted</title>
+<meta name="description" content="51 beach live cams and videos in United States, 44 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/united-states/beach.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="United States Beach Live Cams | Camlisted">
+<meta property="og:description" content="51 beach live cams and videos in United States, 44 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/united-states/beach.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">🏖️ United States · Beach Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Beach live cams in United States — <strong>51</strong> feeds (44 live right now, 7 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “🔴Fort Zachary Taylor Beach - Key West, Florida - Live…” and “🔴Sandestin Beach - Sandestin, Florida - Live Cam”. Free to watch, no sign-up — this page zooms in on beach scenes specifically within United States.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/united-states.html">All United States cams</a> <a href="/c/beach.html">Beach worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=r9PwbZwEFas" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="r9PwbZwEFas"><img src="https://i.ytimg.com/vi/r9PwbZwEFas/hqdefault_live.jpg" alt="SURF CAM: Live from the Galveston Seawall" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>SURF CAM: Live from the Galveston Seawall</strong><span>Galveston TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=IaN4p1SpLZY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="IaN4p1SpLZY"><img src="https://i.ytimg.com/vi/IaN4p1SpLZY/hqdefault_live.jpg" alt="LIVE Myrtle Beach Cam | Grand Shores Resort Oceanfront | South Carolina Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE Myrtle Beach Cam | Grand Shores Resort Oceanfront | South Carolina Cam</strong><span>Ozolio Plus</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=MnBqd6bB4Jw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="MnBqd6bB4Jw"><img src="https://i.ytimg.com/vi/MnBqd6bB4Jw/hqdefault_live.jpg" alt="Seaside Inn, Kennebunk Beach, Maine US - LIVE" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Seaside Inn, Kennebunk Beach, Maine US - LIVE</strong><span>Boston and Maine Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Eeot7XjGPfg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Eeot7XjGPfg"><img src="https://i.ytimg.com/vi/Eeot7XjGPfg/hqdefault_live.jpg" alt="City of Seaside" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>City of Seaside</strong><span>KOIN 6</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=xNZBPxx8ykg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="xNZBPxx8ykg"><img src="https://i.ytimg.com/vi/xNZBPxx8ykg/hqdefault_live.jpg" alt="DUNE ALLEN BEACH, FLORIDA VUE ON 30A" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>DUNE ALLEN BEACH, FLORIDA VUE ON 30A</strong><span>30A</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=TyX02EtQcYI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="TyX02EtQcYI"><img src="https://i.ytimg.com/vi/TyX02EtQcYI/hqdefault_live.jpg" alt="Whales Tail Webcam Seascape FL" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Whales Tail Webcam Seascape FL</strong><span>ENCO Electronic Systems</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=tbQqobLDCSg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="tbQqobLDCSg"><img src="https://i.ytimg.com/vi/tbQqobLDCSg/hqdefault_live.jpg" alt="Webcam Live Lerici Venere Azzurra (SP) - Panorama dall&#39;Hotel Florida Lerici" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Webcam Live Lerici Venere Azzurra (SP) - Panorama dall&#39;Hotel Florida Lerici</strong><span>Paesaggi Digitali</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=tBEIYdw1HeM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="tBEIYdw1HeM"><img src="https://i.ytimg.com/vi/tBEIYdw1HeM/hqdefault_live.jpg" alt="Manhattan Beach Cam and Surf Report" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Manhattan Beach Cam and Surf Report</strong><span>The Surfers View</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=SYwqExLFZbs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="SYwqExLFZbs"><img src="https://i.ytimg.com/vi/SYwqExLFZbs/hqdefault_live.jpg" alt="NORTH BEACH - Seaside Heights, New Jersey | Jersey Shore Beach Cam LIVE 4K (Boardwalk Hotel Charlee)" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>NORTH BEACH - Seaside Heights, New Jersey | Jersey Shore Beach Cam LIVE 4K (Boardwalk Hotel Charlee)</strong><span>Charlee’s Chill Meditation Radio</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=iWCeBAxRCBo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="iWCeBAxRCBo"><img src="https://i.ytimg.com/vi/iWCeBAxRCBo/hqdefault_live.jpg" alt="🔴 Live Now: 24/7 Hawaii Humpback Whale Marine Sanctuary in Maui, Hawaii in 4K Ultra HD" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 Live Now: 24/7 Hawaii Humpback Whale Marine Sanctuary in Maui, Hawaii in 4K Ultra HD</strong><span>afarTV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=1cKGvTltZDE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="1cKGvTltZDE"><img src="https://i.ytimg.com/vi/1cKGvTltZDE/hqdefault_live.jpg" alt="Loreto, Baja California Sur en vivo" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Loreto, Baja California Sur en vivo</strong><span>Webcams de México TV / Canal 7</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=POijZWZ1qwc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="POijZWZ1qwc"><img src="https://i.ytimg.com/vi/POijZWZ1qwc/hqdefault_live.jpg" alt="Cabo San Lucas, Baja California Sur En Vivo | Vista Playa El Médano" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Cabo San Lucas, Baja California Sur En Vivo | Vista Playa El Médano</strong><span>WebcamsDeMexico Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=O8uzDVdShYE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="O8uzDVdShYE"><img src="https://i.ytimg.com/vi/O8uzDVdShYE/hqdefault_live.jpg" alt="🔴Fort Zachary Taylor Beach - Key West, Florida - Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Fort Zachary Taylor Beach - Key West, Florida - Live Cam</strong><span>Florida Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=oHS8n6eVBVE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="oHS8n6eVBVE"><img src="https://i.ytimg.com/vi/oHS8n6eVBVE/hqdefault_live.jpg" alt="🔴Sandestin Beach - Sandestin, Florida - Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Sandestin Beach - Sandestin, Florida - Live Cam</strong><span>Florida Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=dZvGsrQJ8Ig" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="dZvGsrQJ8Ig"><img src="https://i.ytimg.com/vi/dZvGsrQJ8Ig/hqdefault_live.jpg" alt="🔴Lauderdale-by-the-Sea Beach - Fort Lauderdale, Florida - Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Lauderdale-by-the-Sea Beach - Fort Lauderdale, Florida - Live Cam</strong><span>Florida Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ZsbOBakkTFo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ZsbOBakkTFo"><img src="https://i.ytimg.com/vi/ZsbOBakkTFo/hqdefault_live.jpg" alt="🔴Sharky&#39;s Beachfront Restaurant - Panama City Beach,  Florida - Cam 2" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Sharky&#39;s Beachfront Restaurant - Panama City Beach,  Florida - Cam 2</strong><span>Florida Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=EYs8y8gOwf0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="EYs8y8gOwf0"><img src="https://i.ytimg.com/vi/EYs8y8gOwf0/hqdefault_live.jpg" alt="🔴Sharky&#39;s Beachfront Restaurant - Panama City Beach,  Florida - Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Sharky&#39;s Beachfront Restaurant - Panama City Beach,  Florida - Live Cam</strong><span>Florida Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=zclpD3QKEK4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="zclpD3QKEK4"><img src="https://i.ytimg.com/vi/zclpD3QKEK4/hqdefault_live.jpg" alt="🔴Pompano Beach, Florida - Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Pompano Beach, Florida - Live Cam</strong><span>Florida Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=kuqSymepVTk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="kuqSymepVTk"><img src="https://i.ytimg.com/vi/kuqSymepVTk/hqdefault_live.jpg" alt="🔴Key Biscayne Beach Cam - Florida - Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Key Biscayne Beach Cam - Florida - Live Cam</strong><span>Florida Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=hIeFPNHfuoY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="hIeFPNHfuoY"><img src="https://i.ytimg.com/vi/hIeFPNHfuoY/hqdefault_live.jpg" alt="Surf Camera - Deerfield Beach, Florida USA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Surf Camera - Deerfield Beach, Florida USA</strong><span>Deerfield Beach Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Xy2sgld2m8E" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Xy2sgld2m8E"><img src="https://i.ytimg.com/vi/Xy2sgld2m8E/hqdefault_live.jpg" alt="Sharp Park Beach, Pacifica CA 4K Live" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Sharp Park Beach, Pacifica CA 4K Live</strong><span>Chamberlin Nature</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=yLJCR5TlHoI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="yLJCR5TlHoI"><img src="https://i.ytimg.com/vi/yLJCR5TlHoI/hqdefault_live.jpg" alt="Pacifica Pier and Beach, Pacifica CA 4k Live" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Pacifica Pier and Beach, Pacifica CA 4k Live</strong><span>Chamberlin Nature</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=p1IbYzNwWDQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="p1IbYzNwWDQ"><img src="https://i.ytimg.com/vi/p1IbYzNwWDQ/hqdefault_live.jpg" alt="Hamptons.com - LIVE! Foster Memorial Beach, Sag Harbor, New York - Wind Surfers" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com - LIVE! Foster Memorial Beach, Sag Harbor, New York - Wind Surfers</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=IO_10C_VNTM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="IO_10C_VNTM"><img src="https://i.ytimg.com/vi/IO_10C_VNTM/hqdefault_live.jpg" alt="Hamptons.com LIVE! SAGG MAIN BEACH, Sagaponack, New York" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com LIVE! SAGG MAIN BEACH, Sagaponack, New York</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=vNSlOyebvP0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="vNSlOyebvP0"><img src="https://i.ytimg.com/vi/vNSlOyebvP0/hqdefault_live.jpg" alt="Hamptons.com - LIVE! 4K West Scott Cameron Beach, Bridgehampton, New York" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com - LIVE! 4K West Scott Cameron Beach, Bridgehampton, New York</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=4cDBr4IZznY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="4cDBr4IZznY"><img src="https://i.ytimg.com/vi/4cDBr4IZznY/hqdefault_live.jpg" alt="Hamptons.com - LIVE! Coopers Beach, Southampton Village, New York - Rated #2 Beach In the Country !" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com - LIVE! Coopers Beach, Southampton Village, New York - Rated #2 Beach In the Country !</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=zreXOQN2bDo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="zreXOQN2bDo"><img src="https://i.ytimg.com/vi/zreXOQN2bDo/hqdefault_live.jpg" alt="The Wedge - East Views" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>The Wedge - East Views</strong><span>Ocean City Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=4Z4xe1iYdBE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="4Z4xe1iYdBE"><img src="https://i.ytimg.com/vi/4Z4xe1iYdBE/hqdefault_live.jpg" alt="🌴LIVE🌴 FLORIDA&#39;S MOST BEAUTIFUL BEACH CAMS — 07/11/2026" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🌴LIVE🌴 FLORIDA&#39;S MOST BEAUTIFUL BEACH CAMS — 07/11/2026</strong><span>Florida Beach Channel</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=9H3wYyORA8Q" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="9H3wYyORA8Q"><img src="https://i.ytimg.com/vi/9H3wYyORA8Q/hqdefault_live.jpg" alt="Ocean City MD Beach Cam | Live Sunrise View from Carousel Hotel – Sand, Surf &amp; Shade" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Ocean City MD Beach Cam | Live Sunrise View from Carousel Hotel – Sand, Surf &amp; Shade</strong><span>Ocean City Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=rOduIyuwpM0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="rOduIyuwpM0"><img src="https://i.ytimg.com/vi/rOduIyuwpM0/hqdefault_live.jpg" alt="Jacksonville Beach Fishing Pier / Overview Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Jacksonville Beach Fishing Pier / Overview Live Cam</strong><span>911 Surf Report</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=25JQQZFy0Ps" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="25JQQZFy0Ps"><img src="https://i.ytimg.com/vi/25JQQZFy0Ps/hqdefault_live.jpg" alt="OC Pier Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>OC Pier Cam</strong><span>Ocean City Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=hjVPrUbIhNs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="hjVPrUbIhNs"><img src="https://i.ytimg.com/vi/hjVPrUbIhNs/hqdefault_live.jpg" alt="Ocean City, MD Boardwalk &amp; Beach Cam: Plim Plaza Hotel Real-Time Views" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Ocean City, MD Boardwalk &amp; Beach Cam: Plim Plaza Hotel Real-Time Views</strong><span>Ocean City Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=XLB7Y5JYSHQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="XLB7Y5JYSHQ"><img src="https://i.ytimg.com/vi/XLB7Y5JYSHQ/hqdefault_live.jpg" alt="Views from the Americana Hotel along wth Boardwalk in Ocean City, MD" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Views from the Americana Hotel along wth Boardwalk in Ocean City, MD</strong><span>Ocean City Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=1PLqzPwXP0c" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="1PLqzPwXP0c"><img src="https://i.ytimg.com/vi/1PLqzPwXP0c/hqdefault_live.jpg" alt="Live - Sport Camera - Deerfield Beach, Florida USA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live - Sport Camera - Deerfield Beach, Florida USA</strong><span>Deerfield Beach Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=gX7c8hzR17Y" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="gX7c8hzR17Y"><img src="https://i.ytimg.com/vi/gX7c8hzR17Y/hqdefault_live.jpg" alt="LIVE Maui Beach Cam | Napili Kai Beach Resort | Maui Live Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>LIVE Maui Beach Cam | Napili Kai Beach Resort | Maui Live Cam</strong><span>Ozolio Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=YXji6UQ0bwY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="YXji6UQ0bwY"><img src="https://i.ytimg.com/vi/YXji6UQ0bwY/hqdefault_live.jpg" alt="Live From Sheraton Maui Resort &amp; Spa | Maui Beach Webcam | Kaanapali Beach Hawaii" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live From Sheraton Maui Resort &amp; Spa | Maui Beach Webcam | Kaanapali Beach Hawaii</strong><span>Ozolio Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=2jgXAQTOAlw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="2jgXAQTOAlw"><img src="https://i.ytimg.com/vi/2jgXAQTOAlw/hqdefault_live.jpg" alt="Live Camera Axis Q6075-E" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Camera Axis Q6075-E</strong><span>Clearwater Beach Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cvP_F-c2Upw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cvP_F-c2Upw"><img src="https://i.ytimg.com/vi/cvP_F-c2Upw/hqdefault_live.jpg" alt="The Rooftop Bar | Oceanside, CA | San Diego Web Cam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>The Rooftop Bar | Oceanside, CA | San Diego Web Cam</strong><span>San Diego Web Cam</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=yLU8DNeXXmc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="yLU8DNeXXmc"><img src="https://i.ytimg.com/vi/yLU8DNeXXmc/hqdefault_live.jpg" alt="Hamptons.com - LIVE! 4K Main Beach, East Hampton Village, New York - Hamptons Surf Report" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hamptons.com - LIVE! 4K Main Beach, East Hampton Village, New York - Hamptons Surf Report</strong><span>Hamptons. com</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cWRSJ3EGuuo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cWRSJ3EGuuo"><img src="https://i.ytimg.com/vi/cWRSJ3EGuuo/hqdefault_live.jpg" alt="Wailea Beach Resort LIVE | Maui Hawaii Beach Cam | Hawaii Resort Beach Webcam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Wailea Beach Resort LIVE | Maui Hawaii Beach Cam | Hawaii Resort Beach Webcam</strong><span>Ozolio Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=G1zgkkguCyc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="G1zgkkguCyc"><img src="https://i.ytimg.com/vi/G1zgkkguCyc/hqdefault_live.jpg" alt="Maui LIVE Cam | Fairmont Kea Lani Resort Cam | Hawaii Beach View" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Maui LIVE Cam | Fairmont Kea Lani Resort Cam | Hawaii Beach View</strong><span>Ozolio Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=rdeoEeJ00xA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="rdeoEeJ00xA"><img src="https://i.ytimg.com/vi/rdeoEeJ00xA/hqdefault_live.jpg" alt="Beach Camera" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Beach Camera</strong><span>Deerfield Beach Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=catvjIWNrZg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="catvjIWNrZg"><img src="https://i.ytimg.com/vi/catvjIWNrZg/hqdefault_live.jpg" alt="York Harbor Beach, Maine USA" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>York Harbor Beach, Maine USA</strong><span>Boston and Maine Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=V_I168MM-ik" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="V_I168MM-ik"><img src="https://i.ytimg.com/vi/V_I168MM-ik/hqdefault_live.jpg" alt="Soggy Dollar Bar LIVE Webcam on White Bay, Jost Van Dyke, BVI" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Soggy Dollar Bar LIVE Webcam on White Bay, Jost Van Dyke, BVI</strong><span>Soggy Dollar</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=pUa25A9U4Js" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="pUa25A9U4Js"><img src="https://i.ytimg.com/vi/pUa25A9U4Js/hqdefault.jpg" alt="📻 Elbo Room Beach Radio LIVE | 4K Florida Beach Cam 🌴" loading="lazy" width="320" height="180"><span class="badge">3:51:01</span></div>
+      <div class="entry-body"><strong>📻 Elbo Room Beach Radio LIVE | 4K Florida Beach Cam 🌴</strong><span>Elbo Room (Home of ElboTV)</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=z6ITppWJULM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="z6ITppWJULM"><img src="https://i.ytimg.com/vi/z6ITppWJULM/hqdefault.jpg" alt="📻 Elbo Room Beach Radio LIVE | 4K Florida Beach Cam 🌴" loading="lazy" width="320" height="180"><span class="badge">35:54</span></div>
+      <div class="entry-body"><strong>📻 Elbo Room Beach Radio LIVE | 4K Florida Beach Cam 🌴</strong><span>Elbo Room (Home of ElboTV)</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=3YJpPI17iVI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="3YJpPI17iVI"><img src="https://i.ytimg.com/vi/3YJpPI17iVI/hqdefault.jpg" alt="Elbo Room Sunrise Timelapse | Jul 11, 2026 at 05:15 AM | Sunrise to Golden Hour Fort Lauderdale" loading="lazy" width="320" height="180"><span class="badge">1:31</span></div>
+      <div class="entry-body"><strong>Elbo Room Sunrise Timelapse | Jul 11, 2026 at 05:15 AM | Sunrise to Golden Hour Fort Lauderdale</strong><span>Elbo Room (Home of ElboTV)</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=wfuOI636ge0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="wfuOI636ge0"><img src="https://i.ytimg.com/vi/wfuOI636ge0/hqdefault.jpg" alt="📻 Elbo Room Beach Radio LIVE | 4K Florida Beach Cam 🌴" loading="lazy" width="320" height="180"><span class="badge">4:28:30</span></div>
+      <div class="entry-body"><strong>📻 Elbo Room Beach Radio LIVE | 4K Florida Beach Cam 🌴</strong><span>Elbo Room (Home of ElboTV)</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=VldadSwQum0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="VldadSwQum0"><img src="https://i.ytimg.com/vi/VldadSwQum0/hqdefault.jpg" alt="Elbo Room Sunrise Timelapse | Jul 12, 2026 at 05:15 AM | Sunrise to Golden Hour Fort Lauderdale" loading="lazy" width="320" height="180"><span class="badge">1:31</span></div>
+      <div class="entry-body"><strong>Elbo Room Sunrise Timelapse | Jul 12, 2026 at 05:15 AM | Sunrise to Golden Hour Fort Lauderdale</strong><span>Elbo Room (Home of ElboTV)</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=3f05EhSiQTw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="3f05EhSiQTw"><img src="https://i.ytimg.com/vi/3f05EhSiQTw/hqdefault.jpg" alt="📻 Elbo Room Beach Radio LIVE | 4K Florida Beach Cam 🌴" loading="lazy" width="320" height="180"><span class="badge">4:13:28</span></div>
+      <div class="entry-body"><strong>📻 Elbo Room Beach Radio LIVE | 4K Florida Beach Cam 🌴</strong><span>Elbo Room (Home of ElboTV)</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cnkAwW5rm2Y" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cnkAwW5rm2Y"><img src="https://i.ytimg.com/vi/cnkAwW5rm2Y/hqdefault.jpg" alt="Elbo Room Sunrise Timelapse | Jul 10, 2026 at 05:15 AM | Sunrise to Golden Hour Fort Lauderdale" loading="lazy" width="320" height="180"><span class="badge">1:31</span></div>
+      <div class="entry-body"><strong>Elbo Room Sunrise Timelapse | Jul 10, 2026 at 05:15 AM | Sunrise to Golden Hour Fort Lauderdale</strong><span>Elbo Room (Home of ElboTV)</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="US";window.__presetCategory="beach";</script>
+<script src="js/app.js"></script>
+</body>
+</html>

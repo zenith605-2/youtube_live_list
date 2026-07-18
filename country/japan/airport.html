@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Airport Live Cams | Camlisted</title>
+<meta name="description" content="22 airport live cams and videos in Japan, 22 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/japan/airport.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Japan Airport Live Cams | Camlisted">
+<meta property="og:description" content="22 airport live cams and videos in Japan, 22 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/japan/airport.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">✈️ Japan · Airport Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Airport live cams in Japan — <strong>22</strong> feeds (22 live right now, 0 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “🔴LIVE 羽田空港 ライブ配信中｜24時間 リアルタイム航空機マップ Tokyo Haneda HND” and “【LIVE】広島空港ライブカメラ Live Camera @Hiroshima Airport HIJ/RJ…”. Free to watch, no sign-up — this page zooms in on airport scenes specifically within Japan.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/japan.html">All Japan cams</a> <a href="/c/airport.html">Airport worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=Sh0V9_9H6oE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Sh0V9_9H6oE"><img src="https://i.ytimg.com/vi/Sh0V9_9H6oE/hqdefault_live.jpg" alt="🔴LIVE 羽田空港 ライブ配信中｜24時間 リアルタイム航空機マップ Tokyo Haneda HND" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴LIVE 羽田空港 ライブ配信中｜24時間 リアルタイム航空機マップ Tokyo Haneda HND</strong><span>Airports Live</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=KWarKq_pvTM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="KWarKq_pvTM"><img src="https://i.ytimg.com/vi/KWarKq_pvTM/hqdefault_live.jpg" alt="【LIVE】広島空港ライブカメラ Live Camera @Hiroshima Airport HIJ/RJOA【RCC NEWS DIG】" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】広島空港ライブカメラ Live Camera @Hiroshima Airport HIJ/RJOA【RCC NEWS DIG】</strong><span>RCC NEWS DIG Powered by JNN</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=GmPv1G6KV34" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="GmPv1G6KV34"><img src="https://i.ytimg.com/vi/GmPv1G6KV34/hqdefault_live.jpg" alt="花巻空港（西側エプロン）ライブ映像" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>花巻空港（西側エプロン）ライブ映像</strong><span>花巻空港事務所</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=NokinTfqIaM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="NokinTfqIaM"><img src="https://i.ytimg.com/vi/NokinTfqIaM/hqdefault_live.jpg" alt="【ライブカメラ】山口宇部空港ライブカメラ(Yamaguchi Ube Airport Live) テレビ西日本　Live配信" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【ライブカメラ】山口宇部空港ライブカメラ(Yamaguchi Ube Airport Live) テレビ西日本　Live配信</strong><span>福岡TNC ニュース</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cTD7nITGhE0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cTD7nITGhE0"><img src="https://i.ytimg.com/vi/cTD7nITGhE0/hqdefault_live.jpg" alt="【LIVE】✈️福岡空港ライブカメラ Fukuoka Airport Live Camera 24/7" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】✈️福岡空港ライブカメラ Fukuoka Airport Live Camera 24/7</strong><span>福岡空港ライブカメラ</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=XHnrgK4sEDE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="XHnrgK4sEDE"><img src="https://i.ytimg.com/vi/XHnrgK4sEDE/hqdefault_live.jpg" alt="いわて花巻空港ライブ映像" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>いわて花巻空港ライブ映像</strong><span>いわて花巻空港</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=8tYaLQhojZk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="8tYaLQhojZk"><img src="https://i.ytimg.com/vi/8tYaLQhojZk/hqdefault_live.jpg" alt="【LIVE】広島空港ライブカメラ Live Camera @Hiroshima Airport HIJ/RJOA【RCC NEWS DIG】" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】広島空港ライブカメラ Live Camera @Hiroshima Airport HIJ/RJOA【RCC NEWS DIG】</strong><span>RCC NEWS DIG Powered by JNN</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=G-BnuwxaAmQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="G-BnuwxaAmQ"><img src="https://i.ytimg.com/vi/G-BnuwxaAmQ/hqdefault_live.jpg" alt="🇯🇵🛬 ITM SKY CAM🛫 (大阪・伊丹空港✈️航空ライブカメラ) OSAKA AIRPORT LIVE CAM🎥" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🇯🇵🛬 ITM SKY CAM🛫 (大阪・伊丹空港✈️航空ライブカメラ) OSAKA AIRPORT LIVE CAM🎥</strong><span>ITM SKY CAM</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=CNIT7lJ36x8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="CNIT7lJ36x8"><img src="https://i.ytimg.com/vi/CNIT7lJ36x8/hqdefault_live.jpg" alt="【24時間配信中】現在の山形空港" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【24時間配信中】現在の山形空港</strong><span>YBC NEWS</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=3w4zEyFamuA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="3w4zEyFamuA"><img src="https://i.ytimg.com/vi/3w4zEyFamuA/hqdefault_live.jpg" alt="【Live】Tokyo International Airport ,Haneda Plane Spotting (NipponTV News24)  IATA: HND, ICAO: RJTT" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【Live】Tokyo International Airport ,Haneda Plane Spotting (NipponTV News24)  IATA: HND, ICAO: RJTT</strong><span>Nippon Television News Japan</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=CzgSFUAbE9s" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="CzgSFUAbE9s"><img src="https://i.ytimg.com/vi/CzgSFUAbE9s/hqdefault_live.jpg" alt="【ライブカメラ】福岡空港ライブカメラ/山口宇部空港ライブカメラ(Fukuoka Airport Live/Yamaguchi Ube Airport Live) テレビ西日本　Live配信" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【ライブカメラ】福岡空港ライブカメラ/山口宇部空港ライブカメラ(Fukuoka Airport Live/Yamaguchi Ube Airport Live) テレビ西日本　Live配信</strong><span>福岡TNC ニュース</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=OuCbntsMsWY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="OuCbntsMsWY"><img src="https://i.ytimg.com/vi/OuCbntsMsWY/hqdefault_live.jpg" alt="【LIVE】成田空港ライブカメラ　A滑走路(南側）＠朝日新聞成田支局  LIVE at Narita International airport" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】成田空港ライブカメラ　A滑走路(南側）＠朝日新聞成田支局  LIVE at Narita International airport</strong><span>朝日新聞LIVE</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=WRfOLF9plnU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="WRfOLF9plnU"><img src="https://i.ytimg.com/vi/WRfOLF9plnU/hqdefault_live.jpg" alt="【ライブ】羽田空港第2ターミナルを24時間配信中！  HANEDA,Tokyo International Airport Terminal2【LIVE】ANN/テレ朝" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【ライブ】羽田空港第2ターミナルを24時間配信中！  HANEDA,Tokyo International Airport Terminal2【LIVE】ANN/テレ朝</strong><span>ANNnewsCH</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=CVp0bl7ROSM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="CVp0bl7ROSM"><img src="https://i.ytimg.com/vi/CVp0bl7ROSM/hqdefault_live.jpg" alt="【福島空港24時間ライブカメラ】KFB福島放送 情報カメラ/Live streaming from Fukushima Airport" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【福島空港24時間ライブカメラ】KFB福島放送 情報カメラ/Live streaming from Fukushima Airport</strong><span>【福島放送公式】 ときまるTV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=L9OqeSJgzKA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="L9OqeSJgzKA"><img src="https://i.ytimg.com/vi/L9OqeSJgzKA/hqdefault_live.jpg" alt="松山空港ライブカメラ【EBC】" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>松山空港ライブカメラ【EBC】</strong><span>テレビ愛媛【公式】</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=qwKh-LOkomQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="qwKh-LOkomQ"><img src="https://i.ytimg.com/vi/qwKh-LOkomQ/hqdefault_live.jpg" alt="【LIVE】大阪国際空港（伊丹空港）ライブカメラ　＠朝日新聞社格納庫" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】大阪国際空港（伊丹空港）ライブカメラ　＠朝日新聞社格納庫</strong><span>朝日新聞LIVE</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=_o2Ejpmets8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="_o2Ejpmets8"><img src="https://i.ytimg.com/vi/_o2Ejpmets8/hqdefault_live.jpg" alt="【LIVE】東京国際空港（羽田空港）ライブカメラ＠朝日新聞社格納庫" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】東京国際空港（羽田空港）ライブカメラ＠朝日新聞社格納庫</strong><span>朝日新聞LIVE</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=G7djnZQ-OPc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="G7djnZQ-OPc"><img src="https://i.ytimg.com/vi/G7djnZQ-OPc/hqdefault_live.jpg" alt="【LIVE】東京国際空港（羽田空港）ライブカメラ＠朝日新聞社格納庫　第２" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】東京国際空港（羽田空港）ライブカメラ＠朝日新聞社格納庫　第２</strong><span>朝日新聞LIVE</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=0ytmbJ6mn70" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="0ytmbJ6mn70"><img src="https://i.ytimg.com/vi/0ytmbJ6mn70/hqdefault_live.jpg" alt="【LIVE】東京国際空港（羽田空港）ライブカメラ＠朝日新聞社格納庫　第3" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】東京国際空港（羽田空港）ライブカメラ＠朝日新聞社格納庫　第3</strong><span>朝日新聞LIVE</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ZIHxOzhFFUc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ZIHxOzhFFUc"><img src="https://i.ytimg.com/vi/ZIHxOzhFFUc/hqdefault_live.jpg" alt="【LIVE】成田空港ライブカメラ　A滑走路（中央）＠朝日新聞成田支局  LIVE at Narita International airport" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【LIVE】成田空港ライブカメラ　A滑走路（中央）＠朝日新聞成田支局  LIVE at Narita International airport</strong><span>朝日新聞LIVE</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=pcA1VW0n7JU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="pcA1VW0n7JU"><img src="https://i.ytimg.com/vi/pcA1VW0n7JU/hqdefault_live.jpg" alt="青森空港 ライブ配信" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>青森空港 ライブ配信</strong><span>ABA青森朝日放送</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=dYpspgeXSaQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="dYpspgeXSaQ"><img src="https://i.ytimg.com/vi/dYpspgeXSaQ/hqdefault_live.jpg" alt="【ライブ】 羽田空港 第2ターミナルのライブカメラ 現在の様子は？Haneda Airport&#39;s Terminal 2| TBS NEWS DIG" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>【ライブ】 羽田空港 第2ターミナルのライブカメラ 現在の様子は？Haneda Airport&#39;s Terminal 2| TBS NEWS DIG</strong><span>TBS NEWS DIG Powered by JNN</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="JP";window.__presetCategory="airport";</script>
+<script src="js/app.js"></script>
+</body>
+</html>

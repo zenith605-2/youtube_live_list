@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>South Korea Walking Tour Live Cams | Camlisted</title>
+<meta name="description" content="28 walking tour live cams and videos in South Korea, 6 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/south-korea/walk.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="South Korea Walking Tour Live Cams | Camlisted">
+<meta property="og:description" content="28 walking tour live cams and videos in South Korea, 6 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/south-korea/walk.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">👣 South Korea · Walking Tour Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Walking Tour live cams in South Korea — <strong>28</strong> feeds (6 live right now, 22 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “퇴근길 강남거리 걷기/ virtual walk tour - 4K seoul korea…” and “🎬 Seoul Summer Streets 광화문, 청계천 | Exploring Crowded F…”. Free to watch, no sign-up — this page zooms in on walking tour scenes specifically within South Korea.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/south-korea.html">All South Korea cams</a> <a href="/c/walk.html">Walking Tour worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=yTe-61w9hmk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="yTe-61w9hmk"><img src="https://i.ytimg.com/vi/yTe-61w9hmk/hqdefault_live.jpg" alt="Korean Culture TV5 🔴 Itaewon Youth Night Walk | Korean Nightlife" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Korean Culture TV5 🔴 Itaewon Youth Night Walk | Korean Nightlife</strong><span>Watchers Club</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=0YDJw6qXzts" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="0YDJw6qXzts"><img src="https://i.ytimg.com/vi/0YDJw6qXzts/hqdefault_live.jpg" alt="Hongdae Night Street Walk Seoul | Cozy Seoul City Walk Korea" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Hongdae Night Street Walk Seoul | Cozy Seoul City Walk Korea</strong><span>Watchers Club</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=VRI4QRKGEk4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="VRI4QRKGEk4"><img src="https://i.ytimg.com/vi/VRI4QRKGEk4/hqdefault_live.jpg" alt="Itaewon Night Street Walk Seoul | Explore Korean Nightlife | Seoul Travel Vlog" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Itaewon Night Street Walk Seoul | Explore Korean Nightlife | Seoul Travel Vlog</strong><span>Watchers Club</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=GQ5DHpkNXpo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="GQ5DHpkNXpo"><img src="https://i.ytimg.com/vi/GQ5DHpkNXpo/hqdefault_live.jpg" alt="[REAL TIME 🔴 July 19th Sunday] 4PM Seoul Sunday street walking tour, Korea travel" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>[REAL TIME 🔴 July 19th Sunday] 4PM Seoul Sunday street walking tour, Korea travel</strong><span>Watchers Club</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=a3q2dPG3lVI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="a3q2dPG3lVI"><img src="https://i.ytimg.com/vi/a3q2dPG3lVI/hqdefault_live.jpg" alt="Live Korea 2026 🔴 Korean nightlife Hongdae[홍대] Fantastic Seoul walk | New year walking tour" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>Live Korea 2026 🔴 Korean nightlife Hongdae[홍대] Fantastic Seoul walk | New year walking tour</strong><span>Watchers Club</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=3p2ZVNPPyd4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="3p2ZVNPPyd4"><img src="https://i.ytimg.com/vi/3p2ZVNPPyd4/hqdefault_live.jpg" alt="🔴 LIVE Busan Night Walk | Seomyeon Street Food Street | Busan City Walk" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴 LIVE Busan Night Walk | Seomyeon Street Food Street | Busan City Walk</strong><span>Watchers Club</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Hh6IDdNYNGs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Hh6IDdNYNGs"><img src="https://i.ytimg.com/vi/Hh6IDdNYNGs/hqdefault.jpg" alt="Seoul Walking Tour 4K | Summer in Seongsu Cafe Street &amp; Seoul Forest | Trendy City Walk | 여름 성수동 거리" loading="lazy" width="320" height="180"><span class="badge">51:24</span></div>
+      <div class="entry-body"><strong>Seoul Walking Tour 4K | Summer in Seongsu Cafe Street &amp; Seoul Forest | Trendy City Walk | 여름 성수동 거리</strong><span>Seoul Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ZDwUGymDhdw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ZDwUGymDhdw"><img src="https://i.ytimg.com/vi/ZDwUGymDhdw/hqdefault.jpg" alt="4K 장마 시작 폭우 내리는 익선동 거리, 잡념을 없애는 빗소리, 비 오는 종로 골목길 걷기 | 힐링, 명상, 집중 빗소리 ASMR 중간 광고 제거" loading="lazy" width="320" height="180"><span class="badge">41:08</span></div>
+      <div class="entry-body"><strong>4K 장마 시작 폭우 내리는 익선동 거리, 잡념을 없애는 빗소리, 비 오는 종로 골목길 걷기 | 힐링, 명상, 집중 빗소리 ASMR 중간 광고 제거</strong><span>Walking On</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=OSwyX2xAEXY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="OSwyX2xAEXY"><img src="https://i.ytimg.com/vi/OSwyX2xAEXY/hqdefault.jpg" alt="[4K HDR] 낙원의 현대적 해석 인천 영종도 파라다이스시티 걷기 | Walking Tour" loading="lazy" width="320" height="180"><span class="badge">22:50</span></div>
+      <div class="entry-body"><strong>[4K HDR] 낙원의 현대적 해석 인천 영종도 파라다이스시티 걷기 | Walking Tour</strong><span>산책사진가</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=rgncgcn03K8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="rgncgcn03K8"><img src="https://i.ytimg.com/vi/rgncgcn03K8/hqdefault.jpg" alt="퇴근길  강남거리 걷기/ virtual walk tour - 4K seoul korea 서울 코리아" loading="lazy" width="320" height="180"><span class="badge">21:43</span></div>
+      <div class="entry-body"><strong>퇴근길  강남거리 걷기/ virtual walk tour - 4K seoul korea 서울 코리아</strong><span>korea trip walk </span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ElOAfA82bfs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ElOAfA82bfs"><img src="https://i.ytimg.com/vi/ElOAfA82bfs/hqdefault.jpg" alt="[4K]가을에 물든 경복궁 돌담길 걷기 🍁 | Autumn Walk from Gyeongbokgung to Anguk Station, Seoul" loading="lazy" width="320" height="180"><span class="badge">35:54</span></div>
+      <div class="entry-body"><strong>[4K]가을에 물든 경복궁 돌담길 걷기 🍁 | Autumn Walk from Gyeongbokgung to Anguk Station, Seoul</strong><span>Seoul Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=LP8uUkOIG7o" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="LP8uUkOIG7o"><img src="https://i.ytimg.com/vi/LP8uUkOIG7o/hqdefault.jpg" alt="[4K HDR] 화창한 토요일 가볍게 걷기/경기도 남양주시 다산신도시 수변공원" loading="lazy" width="320" height="180"><span class="badge">16:18</span></div>
+      <div class="entry-body"><strong>[4K HDR] 화창한 토요일 가볍게 걷기/경기도 남양주시 다산신도시 수변공원</strong><span>korea trip walk </span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=UI4s0BKIHl4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="UI4s0BKIHl4"><img src="https://i.ytimg.com/vi/UI4s0BKIHl4/hqdefault.jpg" alt="[4K]남산타워에서 명동까지 걷기 🇰🇷 | Namsan Tower to Myeongdong Walking Tour Seoul" loading="lazy" width="320" height="180"><span class="badge">1:04:16</span></div>
+      <div class="entry-body"><strong>[4K]남산타워에서 명동까지 걷기 🇰🇷 | Namsan Tower to Myeongdong Walking Tour Seoul</strong><span>Seoul Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=PhLl642RpjA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="PhLl642RpjA"><img src="https://i.ytimg.com/vi/PhLl642RpjA/hqdefault.jpg" alt="[4K HDR] 가을의 덕수궁 돌담길 그리고 고종의 길 걷기 | Walking Tour" loading="lazy" width="320" height="180"><span class="badge">24:25</span></div>
+      <div class="entry-body"><strong>[4K HDR] 가을의 덕수궁 돌담길 그리고 고종의 길 걷기 | Walking Tour</strong><span>산책사진가</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ejyV2uxwYeU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ejyV2uxwYeU"><img src="https://i.ytimg.com/vi/ejyV2uxwYeU/hqdefault.jpg" alt="아름다운 초여름 한남동 카페 거리 골목길 구석구석 워킹투어. 부촌 뒷골목과 대사관 길까지. 서울 여행, 4K Seoul Korea Travel Walk." loading="lazy" width="320" height="180"><span class="badge">1:15:09</span></div>
+      <div class="entry-body"><strong>아름다운 초여름 한남동 카페 거리 골목길 구석구석 워킹투어. 부촌 뒷골목과 대사관 길까지. 서울 여행, 4K Seoul Korea Travel Walk.</strong><span>서울여행워커 Seoul Travel Walker</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Fd_iHE887jw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Fd_iHE887jw"><img src="https://i.ytimg.com/vi/Fd_iHE887jw/hqdefault.jpg" alt="[4K] SEOUL GANGNAM 서울 강남역 거리 걷기, 토요일 오후 3시, 봄기운이 감도는 주말 거리에는 사람들로 가득했어요 😲😲" loading="lazy" width="320" height="180"><span class="badge">1:01:26</span></div>
+      <div class="entry-body"><strong>[4K] SEOUL GANGNAM 서울 강남역 거리 걷기, 토요일 오후 3시, 봄기운이 감도는 주말 거리에는 사람들로 가득했어요 😲😲</strong><span>Walking On</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=udrZR3-7xcs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="udrZR3-7xcs"><img src="https://i.ytimg.com/vi/udrZR3-7xcs/hqdefault.jpg" alt="비 내리는 서울 종로와 을지로, 빗소리 들으며 걷기 | Rainy Walk in Jongno &amp; Euljiro, Seoul 4K | Seoul Walking Tour" loading="lazy" width="320" height="180"><span class="badge">47:07</span></div>
+      <div class="entry-body"><strong>비 내리는 서울 종로와 을지로, 빗소리 들으며 걷기 | Rainy Walk in Jongno &amp; Euljiro, Seoul 4K | Seoul Walking Tour</strong><span>Seoul Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=i-k-tAGUpc4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="i-k-tAGUpc4"><img src="https://i.ytimg.com/vi/i-k-tAGUpc4/hqdefault.jpg" alt="한국에서 가장 핫한 성수동, 건대 산책 l 서울 워킹투어 l 4K HDR" loading="lazy" width="320" height="180"><span class="badge">1:01:32</span></div>
+      <div class="entry-body"><strong>한국에서 가장 핫한 성수동, 건대 산책 l 서울 워킹투어 l 4K HDR</strong><span>Jmh Walker</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=qkLfxNmAF50" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="qkLfxNmAF50"><img src="https://i.ytimg.com/vi/qkLfxNmAF50/hqdefault.jpg" alt="[4K]서울 청계천에서 을지로까지 걷기 | 도심 속 여유로운 산책 Seoul City Walk from Cheonggyecheon to Euljiro" loading="lazy" width="320" height="180"><span class="badge">45:36</span></div>
+      <div class="entry-body"><strong>[4K]서울 청계천에서 을지로까지 걷기 | 도심 속 여유로운 산책 Seoul City Walk from Cheonggyecheon to Euljiro</strong><span>Seoul Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Y5zy10wLUKI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Y5zy10wLUKI"><img src="https://i.ytimg.com/vi/Y5zy10wLUKI/hqdefault.jpg" alt="[4K] 연남동 홍대 거리 걷기｜Seoul Walk in Yeonnam-dong &amp; Hongdae" loading="lazy" width="320" height="180"><span class="badge">52:48</span></div>
+      <div class="entry-body"><strong>[4K] 연남동 홍대 거리 걷기｜Seoul Walk in Yeonnam-dong &amp; Hongdae</strong><span>Seoul Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=GyighJc3tls" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="GyighJc3tls"><img src="https://i.ytimg.com/vi/GyighJc3tls/hqdefault.jpg" alt="[Full Version]Seoul Walking Tour 4K | Gangnam Streets, Nonhyeon, Sinsa | Trendy Seoul City Walk 강남거리" loading="lazy" width="320" height="180"><span class="badge">1:53:51</span></div>
+      <div class="entry-body"><strong>[Full Version]Seoul Walking Tour 4K | Gangnam Streets, Nonhyeon, Sinsa | Trendy Seoul City Walk 강남거리</strong><span>Seoul Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cGRGGM0LFcU" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cGRGGM0LFcU"><img src="https://i.ytimg.com/vi/cGRGGM0LFcU/hqdefault.jpg" alt="[4K] 한 겨울 청계천 걷기, 도심 한복판에서 힐링이 되는 공간. 한국의 아름다운 곳, 서울 여행, 듣기 좋은 백색소음 &#39;Seoul Walking&#39;" loading="lazy" width="320" height="180"><span class="badge">34:25</span></div>
+      <div class="entry-body"><strong>[4K] 한 겨울 청계천 걷기, 도심 한복판에서 힐링이 되는 공간. 한국의 아름다운 곳, 서울 여행, 듣기 좋은 백색소음 &#39;Seoul Walking&#39;</strong><span>서울워킹 SeoulWalking</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=uEQy-Fn9UBE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="uEQy-Fn9UBE"><img src="https://i.ytimg.com/vi/uEQy-Fn9UBE/hqdefault.jpg" alt="[4K Walk] 11월의 삼성동 코엑스 걷기(Samsungdong Coex, Seoul Gangnam,首尔市三成洞)" loading="lazy" width="320" height="180"><span class="badge">33:08</span></div>
+      <div class="entry-body"><strong>[4K Walk] 11월의 삼성동 코엑스 걷기(Samsungdong Coex, Seoul Gangnam,首尔市三成洞)</strong><span>4K Jeremy</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=nXTQnl__OLM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="nXTQnl__OLM"><img src="https://i.ytimg.com/vi/nXTQnl__OLM/hqdefault.jpg" alt="🎬 Seoul Summer Streets 광화문, 청계천 | Exploring Crowded Festivals &amp; Squid Game-Inspired Fun (4K HDR)" loading="lazy" width="320" height="180"><span class="badge">1:02:31</span></div>
+      <div class="entry-body"><strong>🎬 Seoul Summer Streets 광화문, 청계천 | Exploring Crowded Festivals &amp; Squid Game-Inspired Fun (4K HDR)</strong><span>Seoul Vibe Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=wmkAd6KMR9Y" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="wmkAd6KMR9Y"><img src="https://i.ytimg.com/vi/wmkAd6KMR9Y/hqdefault.jpg" alt="Heavy rain -Street walk in Seoul 4K HDR Korean Military Parade" loading="lazy" width="320" height="180"><span class="badge">1:36:14</span></div>
+      <div class="entry-body"><strong>Heavy rain -Street walk in Seoul 4K HDR Korean Military Parade</strong><span>SEOULTRIP4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=CcfTi24aRIY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="CcfTi24aRIY"><img src="https://i.ytimg.com/vi/CcfTi24aRIY/hqdefault.jpg" alt="Winter Walk from Myeongdong Fashion Street to Namsan Tower 🌃❄️ Crowded Seoul Night | 4K HDR" loading="lazy" width="320" height="180"><span class="badge">1:02:28</span></div>
+      <div class="entry-body"><strong>Winter Walk from Myeongdong Fashion Street to Namsan Tower 🌃❄️ Crowded Seoul Night | 4K HDR</strong><span>Seoul Vibe Walk 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=SxpEvrAFstg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="SxpEvrAFstg"><img src="https://i.ytimg.com/vi/SxpEvrAFstg/hqdefault.jpg" alt="Heavy Snow Myeongdong Seoul 4K HDR | Massive Crowds Walking Through Winter Snowstorm" loading="lazy" width="320" height="180"><span class="badge">1:04:26</span></div>
+      <div class="entry-body"><strong>Heavy Snow Myeongdong Seoul 4K HDR | Massive Crowds Walking Through Winter Snowstorm</strong><span>Walking path</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ca9uN3QyDmQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ca9uN3QyDmQ"><img src="https://i.ytimg.com/vi/ca9uN3QyDmQ/hqdefault.jpg" alt="[4K] Seoul Nightlife Walking Tour - BEST Street Food, Night Markets, and Party Districts." loading="lazy" width="320" height="180"><span class="badge">2:31:52</span></div>
+      <div class="entry-body"><strong>[4K] Seoul Nightlife Walking Tour - BEST Street Food, Night Markets, and Party Districts.</strong><span>World Wanderings: 4K Walking Tours</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="KR";window.__presetCategory="walk";</script>
+<script src="js/app.js"></script>
+</body>
+</html>

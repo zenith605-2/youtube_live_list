@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Walking Tour Live Cams | Camlisted</title>
+<meta name="description" content="41 walking tour live cams and videos in Japan, 2 live now. Free to watch, verified daily on Camlisted.">
+<link rel="canonical" href="https://camlisted.com/country/japan/walk.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Japan Walking Tour Live Cams | Camlisted">
+<meta property="og:description" content="41 walking tour live cams and videos in Japan, 2 live now. Free to watch, verified daily on Camlisted.">
+<meta property="og:url" content="https://camlisted.com/country/japan/walk.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0d1117">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-layout">
+<header class="site-header">
+  <div class="header-actions">
+    <select id="langSelect" class="lang-select">
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+    <div class="header-toolbar">
+      <button type="button" id="leaderboardBtn" class="pill-btn" data-i18n="leaderboard_button">🏆 Leaderboard</button>
+      <a href="https://ko-fi.com/zenith605" target="_blank" rel="noopener" class="pill-btn kofi-btn" title="Support on Ko-fi">☕ Ko-fi</a>
+      <span class="toolbar-divider"></span>
+      <div id="authArea" class="auth-area"></div>
+    </div>
+  </div>
+  <div class="utility-bar">
+    <span id="visitorStats" class="visitor-stats"></span>
+    <a href="browse.html" data-i18n="utility_map_link">🗺 World Map</a>
+    · <a href="about.html" data-i18n="about_link">About &amp; How to Use</a>
+    · <a href="privacy.html" data-i18n="privacy_policy">Privacy Policy</a>
+    · <a href="terms.html" data-i18n="terms_of_service">Terms</a>
+    · <a href="feedback.html" data-i18n="feedback_title">Feedback &amp; Feature Requests</a>
+  </div>
+  <div id="quotaInfo" class="quota-info" hidden></div>
+  <h1><a href="./" class="site-title-link">👣 Japan · Walking Tour Live Cams</a></h1>
+  <p class="subtitle" data-i18n="site_subtitle">A curated collection of live cams and real-world footage — traffic, wildlife, dashcams, city streets, and more, gathered from YouTube every day.</p>
+  <p class="category-hint" data-i18n="category_hint">🤝 Camlisted is built together by its users — sign in to submit new links, and fix any wrong category right on the card!</p>
+  <p id="memberPerks" class="member-perks" data-i18n="member_perks">✨ Free sign-in unlocks: submit links · upvote/downvote · favorites with notes · comments · Excel/TXT export · fix &amp; suggest categories</p>
+  <div id="cheerSection" class="cheer-section">
+    <div id="cheerList" class="cheer-list"></div>
+    <form id="cheerForm" class="cheer-form">
+      <input type="text" id="cheerInput" maxlength="200" data-i18n-placeholder="cheer_placeholder" placeholder="Leave a cheer! 🎉">
+      <button type="submit" data-i18n="cheer_send">Send</button>
+    </form>
+  </div>
+  <div class="controls">
+    <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search by title or channel...">
+  </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_type">Type</span>
+      <select id="contentTypeFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+    </div>
+    <select id="categoryFilter" hidden>
+      <option value="">All</option>
+    </select>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_country">Country</span>
+      <select id="countryFilter">
+        <option value="" data-i18n="filter_all">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_quality">Quality</span>
+      <select id="qualityFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="hd2160">4K</option>
+        <option value="hd1440">1440p</option>
+        <option value="hd1080">1080p</option>
+        <option value="hd720">720p</option>
+        <option value="large">480p</option>
+        <option value="medium">360p</option>
+        <option value="small">240p</option>
+        <option value="tiny">144p</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_added">Added</span>
+      <select id="addedFilter">
+        <option value="" data-i18n="filter_all">All</option>
+        <option value="7" data-i18n="added_week">Past week</option>
+        <option value="30" data-i18n="added_month">Past month</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label" data-i18n="filter_sort">Sort</span>
+      <select id="sortSelect">
+        <option value="default" data-i18n="sort_default">Default (by channel)</option>
+        <option value="newest" data-i18n="sort_newest">Newest first</option>
+        <option value="upvotes" data-i18n="sort_upvotes">Most upvotes</option>
+        <option value="downvotes" data-i18n="sort_downvotes">Most downvotes</option>
+        <option value="comments" data-i18n="sort_comments">Most comments</option>
+      </select>
+    </div>
+    <select id="statusFilter" hidden>
+      <option value="live" data-i18n="status_live">Live</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="offline" data-i18n="status_offline">Offline</option>
+    </select>
+    <select id="visibilityFilter" hidden>
+      <option value="listed" data-i18n="visibility_listed">Normal</option>
+      <option value="" data-i18n="filter_all">All</option>
+      <option value="hidden" data-i18n="visibility_hidden">Low-rated</option>
+    </select>
+    <label class="favorites-only-label" hidden>
+      <input type="checkbox" id="favoritesOnlyCheckbox">
+      <span data-i18n="favorites_only">⭐ My favorites</span>
+    </label>
+    <div class="view-toggle">
+      <button type="button" id="gridViewBtn" class="view-btn" data-i18n="view_grid">▦ Grid</button>
+      <button type="button" id="listViewBtn" class="view-btn" data-i18n="view_list">☰ List</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
+      <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
+    </div>
+    <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
+  </div>
+  <div id="tagFilterBar" class="tag-filter-bar"></div>
+  <div id="submitSection" class="submit-section" hidden>
+    <p class="submit-heading" data-i18n="submit_heading">📮 Know a link we're missing? Submit it here!</p>
+    <form id="submitForm" class="submit-form">
+      <input type="text" id="submitUrl" data-i18n-placeholder="submit_placeholder" placeholder="Paste a YouTube live URL (e.g. https://www.youtube.com/watch?v=...)">
+      <select id="submitContentType">
+        <option value="live" data-i18n="content_type_live">Live</option>
+        <option value="video" data-i18n="content_type_video">Video</option>
+      </select>
+      <select id="submitCategory">
+        <option value="" data-i18n="submit_category_auto">Auto-detect category</option>
+      </select>
+      <button type="submit" data-i18n="submit_button">Submit</button>
+      <span id="submitStatus" class="submit-status"></span>
+    </form>
+  </div>
+</header>
+
+<nav id="sidebar" class="sidebar"></nav>
+<div class="page-content">
+<span id="resultCount" class="result-count"></span>
+<section class="seo-intro"><p>Walking Tour live cams in Japan — <strong>41</strong> feeds (2 live right now, 39 recorded), curated from public YouTube streams and re-checked daily.</p><p>Examples include “Tokyo Evening Walk in Shinjuku - 4K HDR 60fps Spatial …” and “4K Japan 🇯🇵 Walking Tour Odaiba｜东京台场海滨徒步”. Free to watch, no sign-up — this page zooms in on walking tour scenes specifically within Japan.</p><nav class="seo-links"><span class="seo-links-label">See also:</span> <a href="/country/japan.html">All Japan cams</a> <a href="/c/walk.html">Walking Tour worldwide</a></nav></section>
+<main id="grid" class="grid">
+    <a class="entry" href="https://www.youtube.com/watch?v=vj50bgIkBFI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="vj50bgIkBFI"><img src="https://i.ytimg.com/vi/vj50bgIkBFI/hqdefault_live.jpg" alt="🔴Girl’s Tokyo Walk 24/7🐶Shibuya, Nakano, Ikebukuro, etc.💖" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Girl’s Tokyo Walk 24/7🐶Shibuya, Nakano, Ikebukuro, etc.💖</strong><span>Japan Walk </span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=L6wO1-U2RTY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="L6wO1-U2RTY"><img src="https://i.ytimg.com/vi/L6wO1-U2RTY/hqdefault_live.jpg" alt="🔴Tokyo Streets 24/7🐶Shinjuku, Shibuya, Ikebukuro, etc.💖" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
+      <div class="entry-body"><strong>🔴Tokyo Streets 24/7🐶Shinjuku, Shibuya, Ikebukuro, etc.💖</strong><span>Japan Walk </span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=cwnKBK1r9rk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="cwnKBK1r9rk"><img src="https://i.ytimg.com/vi/cwnKBK1r9rk/hqdefault.jpg" alt="【絶景！雪の京都東山を歩く２時間】祇園 三年坂 八坂の塔 清水寺 八坂神社 円山公園　Kyoto snow walking tour  ASMR" loading="lazy" width="320" height="180"><span class="badge">2:03:26</span></div>
+      <div class="entry-body"><strong>【絶景！雪の京都東山を歩く２時間】祇園 三年坂 八坂の塔 清水寺 八坂神社 円山公園　Kyoto snow walking tour  ASMR</strong><span>VIRTUAL KYOTO</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=jaiPSefCGcE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="jaiPSefCGcE"><img src="https://i.ytimg.com/vi/jaiPSefCGcE/hqdefault.jpg" alt="ハワイ街歩き ワイキキからアラモアナショッピングセンターまでお散歩 #4K" loading="lazy" width="320" height="180"><span class="badge">39:09</span></div>
+      <div class="entry-body"><strong>ハワイ街歩き ワイキキからアラモアナショッピングセンターまでお散歩 #4K</strong><span>Chunyi Channel</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ZcvW0AplmV8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ZcvW0AplmV8"><img src="https://i.ytimg.com/vi/ZcvW0AplmV8/hqdefault.jpg" alt="Midnight to Dawn Walk from Tokyo station to Harajuku | 4K" loading="lazy" width="320" height="180"><span class="badge">3:56:05</span></div>
+      <div class="entry-body"><strong>Midnight to Dawn Walk from Tokyo station to Harajuku | 4K</strong><span>Tokyo Twilight</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Sj8yNISzSu0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Sj8yNISzSu0"><img src="https://i.ytimg.com/vi/Sj8yNISzSu0/hqdefault.jpg" alt="【4K Tokyo walk】新大久保 Shin-Okubo #70 東京散歩" loading="lazy" width="320" height="180"><span class="badge">38:23</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】新大久保 Shin-Okubo #70 東京散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=xmN76Iwoix8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="xmN76Iwoix8"><img src="https://i.ytimg.com/vi/xmN76Iwoix8/hqdefault.jpg" alt="[東京散歩 4K60] 渋谷 SHIBUYA / Jul. 2026 (1) [WALK TOKYO]" loading="lazy" width="320" height="180"><span class="badge">30:53</span></div>
+      <div class="entry-body"><strong>[東京散歩 4K60] 渋谷 SHIBUYA / Jul. 2026 (1) [WALK TOKYO]</strong><span>WALK IN TOKYO ch</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Je-wc3NaRfE" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Je-wc3NaRfE"><img src="https://i.ytimg.com/vi/Je-wc3NaRfE/hqdefault.jpg" alt="【4K】【東京】夜の日本橋散歩：時を超えた東京の美しさ　A Nighttime Stroll through Nihonbashi: The Timeless Beauty of Tokyo" loading="lazy" width="320" height="180"><span class="badge">1:05:51</span></div>
+      <div class="entry-body"><strong>【4K】【東京】夜の日本橋散歩：時を超えた東京の美しさ　A Nighttime Stroll through Nihonbashi: The Timeless Beauty of Tokyo</strong><span>Non-stop walking in JAPAN</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=7vhvGUH2rC4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="7vhvGUH2rC4"><img src="https://i.ytimg.com/vi/7vhvGUH2rC4/hqdefault.jpg" alt="【東京】麻布台から六本木。夕暮れから夜への絶景散歩 4K HDR　Azabudai Hills to Roppongi Hills. Sunset to Night. Blue Hour Walk" loading="lazy" width="320" height="180"><span class="badge">1:02:37</span></div>
+      <div class="entry-body"><strong>【東京】麻布台から六本木。夕暮れから夜への絶景散歩 4K HDR　Azabudai Hills to Roppongi Hills. Sunset to Night. Blue Hour Walk</strong><span>Non-stop walking in JAPAN</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=_dWyKj7I9JM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="_dWyKj7I9JM"><img src="https://i.ytimg.com/vi/_dWyKj7I9JM/hqdefault.jpg" alt="Walking Shibuya Crossing at Night, Binaural City Sounds in Tokyo | 4k" loading="lazy" width="320" height="180"><span class="badge">24:57</span></div>
+      <div class="entry-body"><strong>Walking Shibuya Crossing at Night, Binaural City Sounds in Tokyo | 4k</strong><span>Nomadic Ambience</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=vYyl6absDUk" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="vYyl6absDUk"><img src="https://i.ytimg.com/vi/vYyl6absDUk/hqdefault.jpg" alt="4K Japan 🇯🇵 Walking Tour Odaiba｜东京台场海滨徒步" loading="lazy" width="320" height="180"><span class="badge">33:56</span></div>
+      <div class="entry-body"><strong>4K Japan 🇯🇵 Walking Tour Odaiba｜东京台场海滨徒步</strong><span>4K City Walk Pro</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=s0ZLTOBHwr8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="s0ZLTOBHwr8"><img src="https://i.ytimg.com/vi/s0ZLTOBHwr8/hqdefault.jpg" alt="4K Japan Walking Tour 🇯🇵 Higashi Nihombashi｜东日本桥徒步漫游｜东京街景·沉浸式无解说" loading="lazy" width="320" height="180"><span class="badge">42:08</span></div>
+      <div class="entry-body"><strong>4K Japan Walking Tour 🇯🇵 Higashi Nihombashi｜东日本桥徒步漫游｜东京街景·沉浸式无解说</strong><span>4K City Walk Pro</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=UsVsQaV7z5k" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="UsVsQaV7z5k"><img src="https://i.ytimg.com/vi/UsVsQaV7z5k/hqdefault.jpg" alt="🇯🇵 4K Japan Walking Tour - Relaxing Moss Covered Village Walk | 4K Ambience in HDR 60fps" loading="lazy" width="320" height="180"><span class="badge">3:06:25</span></div>
+      <div class="entry-body"><strong>🇯🇵 4K Japan Walking Tour - Relaxing Moss Covered Village Walk | 4K Ambience in HDR 60fps</strong><span>World Wanderings: 4K Walking Tours</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=8tdU1IjncGc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="8tdU1IjncGc"><img src="https://i.ytimg.com/vi/8tdU1IjncGc/hqdefault.jpg" alt="4K日本徒步 🇯🇵 南鱼沼市 · 日本乡村徒步 | Japan Countryside Walk 4K" loading="lazy" width="320" height="180"><span class="badge">37:59</span></div>
+      <div class="entry-body"><strong>4K日本徒步 🇯🇵 南鱼沼市 · 日本乡村徒步 | Japan Countryside Walk 4K</strong><span>4K City Walk Pro</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=pRhT--6bV5A" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="pRhT--6bV5A"><img src="https://i.ytimg.com/vi/pRhT--6bV5A/hqdefault.jpg" alt="4k日本徒步 🇯🇵 大阪夜晚城市漫步｜上本町出发｜天王寺夜景 4K Osaka Night Walking Tour" loading="lazy" width="320" height="180"><span class="badge">2:07:50</span></div>
+      <div class="entry-body"><strong>4k日本徒步 🇯🇵 大阪夜晚城市漫步｜上本町出发｜天王寺夜景 4K Osaka Night Walking Tour</strong><span>4K City Walk Pro</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=o4BykL4ogsQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="o4BykL4ogsQ"><img src="https://i.ytimg.com/vi/o4BykL4ogsQ/hqdefault.jpg" alt="【4K Tokyo walk】渋谷 Shibuya #198  東京散歩" loading="lazy" width="320" height="180"><span class="badge">38:57</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】渋谷 Shibuya #198  東京散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Ze42hH2GzHc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Ze42hH2GzHc"><img src="https://i.ytimg.com/vi/Ze42hH2GzHc/hqdefault.jpg" alt="Tokyo, Japan 4K Walking Tour - Captions &amp; Immersive Sound [4K Ultra HD/60fps]" loading="lazy" width="320" height="180"><span class="badge">3:32:59</span></div>
+      <div class="entry-body"><strong>Tokyo, Japan 4K Walking Tour - Captions &amp; Immersive Sound [4K Ultra HD/60fps]</strong><span>HP Walking Tours</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=qEkelYI7oFo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="qEkelYI7oFo"><img src="https://i.ytimg.com/vi/qEkelYI7oFo/hqdefault.jpg" alt="【4K】鶯谷お散歩 Japan Uguisudani Walk 2022.10.11" loading="lazy" width="320" height="180"><span class="badge">9:12</span></div>
+      <div class="entry-body"><strong>【4K】鶯谷お散歩 Japan Uguisudani Walk 2022.10.11</strong><span>お散歩 Japan Walk</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=gV-Z3IKZOwM" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="gV-Z3IKZOwM"><img src="https://i.ytimg.com/vi/gV-Z3IKZOwM/hqdefault.jpg" alt="東京駅〜有楽町〜銀座〜築地本願寺〜勝鬨橋をのんびり散歩  | 4K Walk in Tokyo | DJI Pocket 2 | Japan 2022" loading="lazy" width="320" height="180"><span class="badge">1:11:33</span></div>
+      <div class="entry-body"><strong>東京駅〜有楽町〜銀座〜築地本願寺〜勝鬨橋をのんびり散歩  | 4K Walk in Tokyo | DJI Pocket 2 | Japan 2022</strong><span>【歩人】 ALTO channel</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=3OK1Q7ZYvfI" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="3OK1Q7ZYvfI"><img src="https://i.ytimg.com/vi/3OK1Q7ZYvfI/hqdefault.jpg" alt="【4K Tokyo walk】原宿 Harajuku #106 東京 散歩" loading="lazy" width="320" height="180"><span class="badge">31:36</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】原宿 Harajuku #106 東京 散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=4x28DlqAqX8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="4x28DlqAqX8"><img src="https://i.ytimg.com/vi/4x28DlqAqX8/hqdefault.jpg" alt="【4K Tokyo walk】原宿 Harajuku #112 東京 散歩" loading="lazy" width="320" height="180"><span class="badge">36:40</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】原宿 Harajuku #112 東京 散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=yYcUJafdGso" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="yYcUJafdGso"><img src="https://i.ytimg.com/vi/yYcUJafdGso/hqdefault.jpg" alt="ママさんのT 散歩 4K" loading="lazy" width="320" height="180"><span class="badge">1:19</span></div>
+      <div class="entry-body"><strong>ママさんのT 散歩 4K</strong><span>日本散歩 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=LB0FXGM_2EA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="LB0FXGM_2EA"><img src="https://i.ytimg.com/vi/LB0FXGM_2EA/hqdefault.jpg" alt="【4K Tokyo walk】原宿 Harajuku #113 東京 散歩" loading="lazy" width="320" height="180"><span class="badge">31:25</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】原宿 Harajuku #113 東京 散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=AFzrjqD_aH4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="AFzrjqD_aH4"><img src="https://i.ytimg.com/vi/AFzrjqD_aH4/hqdefault.jpg" alt="リラックス街散歩4K" loading="lazy" width="320" height="180"><span class="badge">1:38</span></div>
+      <div class="entry-body"><strong>リラックス街散歩4K</strong><span>日本散歩 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=x4ziqlgIFoc" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="x4ziqlgIFoc"><img src="https://i.ytimg.com/vi/x4ziqlgIFoc/hqdefault.jpg" alt="【4K Tokyo walk】渋谷 Shibuya #235 東京散歩" loading="lazy" width="320" height="180"><span class="badge">49:03</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】渋谷 Shibuya #235 東京散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=ZjuaHfJNjq0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="ZjuaHfJNjq0"><img src="https://i.ytimg.com/vi/ZjuaHfJNjq0/hqdefault.jpg" alt="Yokohama Night walk  [4K]" loading="lazy" width="320" height="180"><span class="badge">1:21:02</span></div>
+      <div class="entry-body"><strong>Yokohama Night walk  [4K]</strong><span>Taku Japan</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=KoDM_rm8dc8" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="KoDM_rm8dc8"><img src="https://i.ytimg.com/vi/KoDM_rm8dc8/hqdefault.jpg" alt="[東京散歩 4K] 渋谷 宮下パーク SHIBUYA MIYASHITA PARK / May 2026 (1)  [WALK TOKYO]" loading="lazy" width="320" height="180"><span class="badge">10:31</span></div>
+      <div class="entry-body"><strong>[東京散歩 4K] 渋谷 宮下パーク SHIBUYA MIYASHITA PARK / May 2026 (1)  [WALK TOKYO]</strong><span>WALK IN TOKYO ch</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Pr9Hfdz8fYA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Pr9Hfdz8fYA"><img src="https://i.ytimg.com/vi/Pr9Hfdz8fYA/hqdefault.jpg" alt="【4K Tokyo walk】新大久保 Shin-Okubo #40 東京散歩" loading="lazy" width="320" height="180"><span class="badge">28:57</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】新大久保 Shin-Okubo #40 東京散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=-ym8bR3prns" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="-ym8bR3prns"><img src="https://i.ytimg.com/vi/-ym8bR3prns/hqdefault.jpg" alt="【4K 東京散歩】駅間Walk#2 遠回りしながら 新宿 Shinjuku → 渋谷 Shibuya Strolling Between Stations" loading="lazy" width="320" height="180"><span class="badge">1:06:58</span></div>
+      <div class="entry-body"><strong>【4K 東京散歩】駅間Walk#2 遠回りしながら 新宿 Shinjuku → 渋谷 Shibuya Strolling Between Stations</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=D0bUCcWxYn4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="D0bUCcWxYn4"><img src="https://i.ytimg.com/vi/D0bUCcWxYn4/hqdefault.jpg" alt="【散歩動画/Japanese Walking video vol.1】福生七夕まつり編/2025.08.08" loading="lazy" width="320" height="180"><span class="badge">8:21</span></div>
+      <div class="entry-body"><strong>【散歩動画/Japanese Walking video vol.1】福生七夕まつり編/2025.08.08</strong><span>ICECLEAM</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=WO7QzuZS5sY" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="WO7QzuZS5sY"><img src="https://i.ytimg.com/vi/WO7QzuZS5sY/hqdefault.jpg" alt="夜の吉祥寺を散歩【4K東京街歩き】Japan Tokyo 4K night walking tour/Kichijoji" loading="lazy" width="320" height="180"><span class="badge">1:00:39</span></div>
+      <div class="entry-body"><strong>夜の吉祥寺を散歩【4K東京街歩き】Japan Tokyo 4K night walking tour/Kichijoji</strong><span>sozoro walk</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=BYqCey1VTkw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="BYqCey1VTkw"><img src="https://i.ytimg.com/vi/BYqCey1VTkw/hqdefault.jpg" alt="正月明けの阿佐ヶ谷を散歩【4K東京街歩き】Japan Tokyo 4K walking tour/Asagaya" loading="lazy" width="320" height="180"><span class="badge">1:04:54</span></div>
+      <div class="entry-body"><strong>正月明けの阿佐ヶ谷を散歩【4K東京街歩き】Japan Tokyo 4K walking tour/Asagaya</strong><span>sozoro walk</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=spinJYvpo78" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="spinJYvpo78"><img src="https://i.ytimg.com/vi/spinJYvpo78/hqdefault.jpg" alt="【4K Tokyo walk】池袋 Ikebukuro #23 東京 散歩" loading="lazy" width="320" height="180"><span class="badge">48:44</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】池袋 Ikebukuro #23 東京 散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=Vcj8Ygm7ljo" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="Vcj8Ygm7ljo"><img src="https://i.ytimg.com/vi/Vcj8Ygm7ljo/hqdefault.jpg" alt="【4K Tokyo walk】池袋 Ikebukuro #37 東京 散歩" loading="lazy" width="320" height="180"><span class="badge">36:57</span></div>
+      <div class="entry-body"><strong>【4K Tokyo walk】池袋 Ikebukuro #37 東京 散歩</strong><span>HARｷﾝｸﾞ&#39;TV</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=kZ9Qzv3TBQg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="kZ9Qzv3TBQg"><img src="https://i.ytimg.com/vi/kZ9Qzv3TBQg/hqdefault.jpg" alt="夜の銀座を散歩【4K東京街歩き】Japan Tokyo 4K night walking tour/Ginza" loading="lazy" width="320" height="180"><span class="badge">1:19:38</span></div>
+      <div class="entry-body"><strong>夜の銀座を散歩【4K東京街歩き】Japan Tokyo 4K night walking tour/Ginza</strong><span>sozoro walk</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=yvCeIr-oi38" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="yvCeIr-oi38"><img src="https://i.ytimg.com/vi/yvCeIr-oi38/hqdefault.jpg" alt="夜の蒲田を散歩【4K東京街歩き】Japan Tokyo 4K night walking tour/Kamata" loading="lazy" width="320" height="180"><span class="badge">1:04:16</span></div>
+      <div class="entry-body"><strong>夜の蒲田を散歩【4K東京街歩き】Japan Tokyo 4K night walking tour/Kamata</strong><span>sozoro walk</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=3p-0hx7ryRg" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="3p-0hx7ryRg"><img src="https://i.ytimg.com/vi/3p-0hx7ryRg/hqdefault.jpg" alt="【4K/大阪夜散歩】大阪市北区阪急大阪梅田駅を街歩き Night Walking around Osaka Umeda Station,Osaka,Japan,2025" loading="lazy" width="320" height="180"><span class="badge">20:06</span></div>
+      <div class="entry-body"><strong>【4K/大阪夜散歩】大阪市北区阪急大阪梅田駅を街歩き Night Walking around Osaka Umeda Station,Osaka,Japan,2025</strong><span>Walking Around Japan Channel</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=d9ssxRmluZ4" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="d9ssxRmluZ4"><img src="https://i.ytimg.com/vi/d9ssxRmluZ4/hqdefault.jpg" alt="日本橋〜神田を散歩【4K東京街歩き】Japan Tokyo 4K walking tour/Nihonbashi,Kanda" loading="lazy" width="320" height="180"><span class="badge">1:12:53</span></div>
+      <div class="entry-body"><strong>日本橋〜神田を散歩【4K東京街歩き】Japan Tokyo 4K walking tour/Nihonbashi,Kanda</strong><span>sozoro walk</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=3FUIYAwQ7Xs" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="3FUIYAwQ7Xs"><img src="https://i.ytimg.com/vi/3FUIYAwQ7Xs/hqdefault.jpg" alt="Tokyo Evening Walk in Shinjuku - 4K HDR 60fps Spatial Audio" loading="lazy" width="320" height="180"><span class="badge">2:18:50</span></div>
+      <div class="entry-body"><strong>Tokyo Evening Walk in Shinjuku - 4K HDR 60fps Spatial Audio</strong><span>Prowalk Tours</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=e8f7NnyO4PA" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="e8f7NnyO4PA"><img src="https://i.ytimg.com/vi/e8f7NnyO4PA/hqdefault.jpg" alt="Shibuya Night Walk: Tokyo&#39;s Neon Wonderland | 4K 60fps HDR with Captions" loading="lazy" width="320" height="180"><span class="badge">1:26:45</span></div>
+      <div class="entry-body"><strong>Shibuya Night Walk: Tokyo&#39;s Neon Wonderland | 4K 60fps HDR with Captions</strong><span>Prowalk Tours</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=28ZjrtD_iL0" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="28ZjrtD_iL0"><img src="https://i.ytimg.com/vi/28ZjrtD_iL0/hqdefault.jpg" alt="Tokyo, Japan 4K HDR Walking Tour 🇯🇵 Day &amp; Night Street Views in 60fps" loading="lazy" width="320" height="180"><span class="badge">3:30:04</span></div>
+      <div class="entry-body"><strong>Tokyo, Japan 4K HDR Walking Tour 🇯🇵 Day &amp; Night Street Views in 60fps</strong><span>World Wanderings: 4K Walking Tours</span></div>
+    </a></main>
+
+<div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <span id="bulkActionCount"></span>
+  <button type="button" id="bulkDeleteBtn" class="bulk-delete-btn" data-i18n="bulk_delete_button">Delete selected</button>
+  <button type="button" id="bulkClearBtn" class="bulk-clear-btn" data-i18n="bulk_clear_button">Clear</button>
+</div>
+
+<p id="emptyState" class="empty-state" data-i18n="empty_state" hidden>No results to display.</p>
+</div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="modalTitle" class="modal-title"></span>
+      <a id="modalOpenNewTab" class="modal-open-new-tab" target="_blank" rel="noopener" data-i18n="watch_on_youtube">Watch on YouTube</a>
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-url-row">
+      <input type="text" id="modalUrlInput" class="modal-url-input" readonly>
+      <button type="button" id="modalCopyBtn" class="modal-copy-btn" data-i18n="copy_url">Copy</button>
+    </div>
+    <div class="modal-player"></div>
+    <div class="modal-comments">
+      <h3 data-i18n="comments_title">Comments</h3>
+      <div id="commentsList" class="comments-list"></div>
+      <form id="commentForm" class="comment-form" hidden>
+        <input type="text" id="commentInput" maxlength="500" data-i18n-placeholder="comment_placeholder" placeholder="Add a comment...">
+        <button type="submit" data-i18n="comment_submit">Post</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="leaderboardModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="leaderboard-content">
+    <div class="modal-header">
+      <span class="modal-title" data-i18n="leaderboard_title">🏆 Leaderboard</span>
+      <button type="button" id="leaderboardClose" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+  </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/i18n.js"></script>
+<script>window.__presetCountry="JP";window.__presetCategory="walk";</script>
+<script src="js/app.js"></script>
+</body>
+</html>
