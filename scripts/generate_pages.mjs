@@ -210,7 +210,28 @@ function linkRow(label, links) {
   return `<nav class="seo-links"><span class="seo-links-label">${escapeHtml(label)}:</span> ${links.join(' ')}</nav>`;
 }
 
-function appPage(indexTemplate, { title, description, canonicalPath, h1, presetScript, staticGrid, intro = '' }) {
+// 공유 미리보기 이미지: 페이지 첫 캠의 유튜브 썸네일 (자산 없이 실제 캠 미리보기가 뜸)
+function ogImageOf(entries) {
+  const first = entries.find(s => s.video_id);
+  return first ? `https://i.ytimg.com/vi/${first.video_id}/hqdefault.jpg` : '';
+}
+// 페이지 구조화 데이터: CollectionPage + BreadcrumbList (JSON-LD 배열)
+function collectionJsonLd({ name, url, description, crumbs }) {
+  const blocks = [{
+    '@context': 'https://schema.org', '@type': 'CollectionPage',
+    name, url: SITE + url, description,
+    isPartOf: { '@type': 'WebSite', name: 'Camlisted', url: SITE + '/' },
+  }];
+  if (crumbs?.length) {
+    blocks.push({
+      '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: SITE + c.path })),
+    });
+  }
+  return JSON.stringify(blocks);
+}
+
+function appPage(indexTemplate, { title, description, canonicalPath, h1, presetScript, staticGrid, intro = '', ogImage = '', jsonLd = '' }) {
   let html = indexTemplate;
   html = html.replace(/<title[^>]*>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`);
   html = html.replace(/(<meta name="description" content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
@@ -218,6 +239,14 @@ function appPage(indexTemplate, { title, description, canonicalPath, h1, presetS
   html = html.replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
   html = html.replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
   html = html.replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${SITE}${canonicalPath}$2`);
+  if (ogImage) {
+    html = html.replace(/(<meta property="og:image" content=")[^"]*(")/, `$1${escapeHtml(ogImage)}$2`);
+    html = html.replace(/(<meta name="twitter:image" content=")[^"]*(")/, `$1${escapeHtml(ogImage)}$2`);
+    html = html.replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${escapeHtml(title)}$2`);
+    html = html.replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
+  }
+  // 페이지별 구조화 데이터(JSON-LD)를 </head> 앞에 추가 (홈의 WebSite 스키마와 별개)
+  if (jsonLd) html = html.replace('</head>', `<script type="application/ld+json">${jsonLd}</script>\n</head>`);
   // 하위 폴더에서도 css/js 상대경로가 동작하도록 (반드시 다른 URL보다 먼저 선언되어야 함)
   html = html.replace('<head>', '<head>\n<base href="/">');
   // h1을 페이지 주제로 교체 (data-i18n을 떼서 언어 전환 시 일반 제목으로 덮어쓰이지 않게)
@@ -608,6 +637,15 @@ async function main() {
   const today = new Date().toISOString().slice(0, 10);
   console.log(`전체 ${streams.length}건 중 공개 ${visible.length}건으로 페이지 생성`);
 
+  // 홈페이지 공유 미리보기(og:image/twitter:image)를 현재 최상위 라이브 캠 썸네일로 갱신 →
+  // 링크를 공유할 때 실제 캠 미리보기가 뜨고, 매일 신선한 유효 이미지로 유지된다.
+  const homeTop = visible.filter(s => s.content_type === 'live')
+    .sort((a, b) => (b.upvote_count || 0) - (a.upvote_count || 0))[0] || visible[0];
+  if (homeTop?.video_id) {
+    const resolvedIndex = indexTemplate.replace(/(\/vi\/)[^/]*(\/hqdefault\.jpg")/g, `$1${homeTop.video_id}$2`);
+    await writeFile(path.join(ROOT, 'index.html'), resolvedIndex);
+  }
+
   await mkdir(path.join(ROOT, 'country'), { recursive: true });
   await mkdir(path.join(ROOT, 'c'), { recursive: true });
 
@@ -691,6 +729,11 @@ async function main() {
       presetScript: `window.__presetCountry=${JSON.stringify(code)};`,
       staticGrid: entries.map(entryCard).join(''),
       intro,
+      ogImage: ogImageOf(entries),
+      jsonLd: collectionJsonLd({
+        name: `Live Cams in ${name}`, url: `/country/${slug}.html`, description: `${list.length} live cams and videos from ${name}.`,
+        crumbs: [{ name: 'Home', path: '/' }, { name: name, path: `/country/${slug}.html` }],
+      }),
     });
     await writeFile(path.join(ROOT, 'country', `${slug}.html`), html);
     countryPages.push({ code, name, slug, count: list.length });
@@ -727,6 +770,11 @@ async function main() {
       presetScript: `window.__presetCategory=${JSON.stringify(cat.key)};`,
       staticGrid: entries.map(entryCard).join(''),
       intro,
+      ogImage: ogImageOf(entries),
+      jsonLd: collectionJsonLd({
+        name: `${label} Live Cams`, url: `/c/${cat.key}.html`, description: `${list.length} ${lower} live cams and videos worldwide.`,
+        crumbs: [{ name: 'Home', path: '/' }, { name: `${label} cams`, path: `/c/${cat.key}.html` }],
+      }),
     });
     await writeFile(path.join(ROOT, 'c', `${cat.key}.html`), html);
     categoryPages.push({
@@ -763,6 +811,11 @@ async function main() {
       presetScript: `window.__presetCountry=${JSON.stringify(cb.code)};window.__presetCategory=${JSON.stringify(cb.catkey)};`,
       staticGrid: entries.map(entryCard).join(''),
       intro,
+      ogImage: ogImageOf(entries),
+      jsonLd: collectionJsonLd({
+        name: `${cb.name} ${cb.label} Live Cams`, url: `/country/${cb.slug}/${cb.catkey}.html`, description: `${cb.list.length} ${lower} live cams in ${cb.name}.`,
+        crumbs: [{ name: 'Home', path: '/' }, { name: cb.name, path: `/country/${cb.slug}.html` }, { name: cb.label, path: `/country/${cb.slug}/${cb.catkey}.html` }],
+      }),
     });
     await writeFile(path.join(ROOT, 'country', cb.slug, `${cb.catkey}.html`), html);
     sitemapUrls.push({ loc: `${SITE}/country/${cb.slug}/${cb.catkey}.html`, priority: '0.6', changefreq: 'weekly' });
