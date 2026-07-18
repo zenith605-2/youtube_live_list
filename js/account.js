@@ -303,6 +303,66 @@ exportTxtBtn.addEventListener('click', async () => {
   downloadFile('favorites.txt', buildTxt(items), 'text/plain;charset=utf-8');
 });
 
+// ===== AI 검수 로그 (승인/거절제안 검토 + 확정삭제/복구) =====
+const adminAiLog = document.getElementById('adminAiLog');
+let aiLogVerdict = 'reject';
+
+async function loadAiLog() {
+  if (!adminAiLog) return;
+  let query = sb.from('ai_review_log')
+    .select('*')
+    .order('reviewed_at', { ascending: false })
+    .limit(100);
+  if (aiLogVerdict) query = query.eq('verdict', aiLogVerdict);
+  const { data, error } = await query;
+  if (error) { adminAiLog.textContent = error.message; return; }
+  if (!data?.length) { adminAiLog.textContent = t('admin_ailog_empty'); return; }
+
+  adminAiLog.innerHTML = data.map(r => {
+    const badge = r.verdict === 'approve' ? '✅' : r.verdict === 'reject' ? '🚫' : '❓';
+    // 거절 제안 + 아직 미처리인 것만 확정삭제/복구 버튼 노출
+    const actions = (r.verdict === 'reject' && r.resolution === 'pending')
+      ? `<button type="button" class="ailog-del-btn" data-video-id="${escapeHtml(r.video_id)}">${escapeHtml(t('admin_ailog_confirm_delete'))}</button>
+         <button type="button" class="ailog-keep-btn" data-video-id="${escapeHtml(r.video_id)}">${escapeHtml(t('admin_ailog_restore'))}</button>`
+      : (r.resolution !== 'pending' ? `<span class="admin-meta">${escapeHtml(r.resolution === 'deleted' ? t('admin_ailog_deleted') : t('admin_ailog_restored'))}</span>` : '');
+    return `
+      <div class="admin-row">
+        <div class="admin-info">
+          <div class="admin-title">${badge} ${escapeHtml((r.title || r.video_id).slice(0, 70))}</div>
+          <div class="admin-meta">
+            ${escapeHtml(r.channel_title || '')}
+            ${r.reason ? `· 💬 ${escapeHtml(r.reason)}` : ''}
+            ${r.suggested_country ? `· 🌍 ${escapeHtml(r.suggested_country)}` : ''}
+            · <a href="https://www.youtube.com/watch?v=${encodeURIComponent(r.video_id)}" target="_blank" rel="noopener">▶</a>
+          </div>
+        </div>
+        <div class="admin-actions">${actions}</div>
+      </div>`;
+  }).join('');
+}
+
+document.querySelectorAll('.ailog-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.ailog-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    aiLogVerdict = tab.dataset.verdict;
+    loadAiLog();
+  });
+});
+
+adminAiLog?.addEventListener('click', async (e) => {
+  const del = e.target.closest('.ailog-del-btn');
+  const keep = e.target.closest('.ailog-keep-btn');
+  if (!del && !keep) return;
+  const videoId = (del || keep).dataset.videoId;
+  const { error } = await sb.rpc('resolve_ai_rejection', {
+    p_video_id: videoId,
+    p_action: del ? 'delete' : 'restore',
+  });
+  if (error) alert(error.message);
+  await loadAiLog();
+});
+
 async function refresh() {
   applyStaticTranslations();
   if (!currentUser) {
@@ -320,7 +380,7 @@ async function refresh() {
   await checkAdmin();
   adminSections.hidden = !isAdmin;
   if (isAdmin) {
-    await Promise.all([loadFlagged(), loadUsers(), loadCategoryLog(), loadSuggestions(), loadTagSuggestions(), loadConditionTagList()]);
+    await Promise.all([loadFlagged(), loadUsers(), loadCategoryLog(), loadSuggestions(), loadTagSuggestions(), loadConditionTagList(), loadAiLog()]);
   }
 }
 

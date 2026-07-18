@@ -1510,6 +1510,44 @@ body {
 }
 
 /* 썸네일 좌하단의 현지 시간·날씨 배지 (LIVE 좌상, NEW 우상, 길이 우하와 안 겹치는 자리) */
+.admin-ailog-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.ailog-tab {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.ailog-tab.active {
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.ailog-del-btn,
+.ailog-keep-btn {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+.ailog-del-btn {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .wx-badge {
   position: absolute;
   left: 8px;

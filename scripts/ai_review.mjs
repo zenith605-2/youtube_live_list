@@ -70,8 +70,10 @@ Prefer the FILMING location over the channel owner's country when they conflict 
 Items to judge:
 ${JSON.stringify(items.map((s, i) => ({ i, title: s.title, channel: s.channel_title, type: s.content_type, hint: s.country || null })))}
 
+Give a short reason (<= 12 words) for each verdict.
+
 Respond ONLY as a compact JSON array, one object per item:
-[{"i":0,"verdict":"approve|reject|unsure","category":"<key>","country":"<ISO2 or null>"}]`;
+[{"i":0,"verdict":"approve|reject|unsure","category":"<key>","country":"<ISO2 or null>","reason":"<short>"}]`;
 }
 
 async function requestModel(model, prompt) {
@@ -145,22 +147,25 @@ async function main() {
     }
     const byIndex = new Map((verdicts || []).map((v) => [v.i, v]));
 
+    const logRows = [];
     for (let j = 0; j < batch.length; j++) {
       const s = batch[j];
       const v = byIndex.get(j);
       if (!v) { unsure += 1; continue; }
 
-      if (v.verdict === 'reject') {
-        // 삭제만 — 차단목록엔 안 올림 (오판이어도 재검색으로 다시 들어올 수 있게)
-        const { error } = await supabase.from('streams').delete().eq('video_id', s.video_id);
-        if (error) { console.error('거절 삭제 실패:', s.video_id, error.message); failed += 1; }
-        else rejected += 1;
-        continue;
-      }
+      const verdict = ['approve', 'reject', 'unsure'].includes(v.verdict) ? v.verdict : 'unsure';
+      logRows.push({
+        video_id: s.video_id, title: s.title, channel_title: s.channel_title,
+        verdict, reason: (v.reason || '').slice(0, 200),
+        suggested_category: v.category || null, suggested_country: v.country || null,
+      });
+
+      // 거절이어도 즉시 삭제하지 않는다 — 로그에 남기고 대기 유지, 관리자가 로그에서 확정 삭제/복구.
+      if (verdict === 'reject') { rejected += 1; continue; }
 
       // 승인 또는 보류: 카테고리·국가 교정을 함께 반영 (보류여도 큐에서 정확도 개선)
       const patch = {};
-      if (v.verdict === 'approve') patch.approval_status = 'approved';
+      if (verdict === 'approve') patch.approval_status = 'approved';
       if (v.category && validCat.has(v.category) && v.category !== s.category) {
         patch.category = v.category;
         patch.category_source = 'ai';
@@ -173,14 +178,18 @@ async function main() {
         const { error } = await supabase.from('streams').update(patch).eq('video_id', s.video_id);
         if (error) { console.error('반영 실패:', s.video_id, error.message); failed += 1; continue; }
       }
-      if (v.verdict === 'approve') approved += 1;
+      if (verdict === 'approve') approved += 1;
       else unsure += 1;
+    }
+    if (logRows.length) {
+      const { error } = await supabase.from('ai_review_log').insert(logRows);
+      if (error) console.error('AI 로그 기록 실패:', error.message);
     }
     console.log(`  진행 ${Math.min(i + BATCH, pending.length)}/${pending.length}`);
     if (i + BATCH < pending.length) await sleep(DELAY_MS);
   }
 
-  console.log(`AI 검수 완료 — 승인 ${approved} / 거절 ${rejected} / 보류 ${unsure} / 실패 ${failed}`);
+  console.log(`AI 검수 완료 — 승인 ${approved} / 거절제안 ${rejected}(대기유지·관리자 확인 필요) / 보류 ${unsure} / 실패 ${failed}`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });
