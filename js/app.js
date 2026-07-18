@@ -58,6 +58,7 @@ let streams = [];
 let currentUser = null;
 let isAdmin = false;
 let showPendingOnly = false; // "대기중" 사이드바 항목을 눌렀을 때만 true
+let showRecentApprovedOnly = false; // 관리자 "최근 승인" 검수 뷰
 
 // 조건 태그 (일반 영상 전용) — 카테고리와 별개의 필터 축
 // 기본 9개로 시작하고, 시작 시 condition_tags 테이블에서 승인된 태그 전체를 불러온다
@@ -267,6 +268,11 @@ function currentFiltered() {
 
   const filtered = streams.filter(s => {
     if (showPendingOnly) return s.approvalStatus === 'pending';
+    // 관리자 전용 "최근 승인" 뷰: 최근 3일 내 등록·승인된 영상만 (다른 필터 무시) — 검수용
+    if (showRecentApprovedOnly) {
+      return s.approvalStatus !== 'pending' && s.addedAt &&
+        (Date.now() - new Date(s.addedAt).getTime() < 3 * 24 * 3600 * 1000);
+    }
     if (s.approvalStatus === 'pending') return false;
     if (q && !s.title.toLowerCase().includes(q) && !s.channelTitle.toLowerCase().includes(q)) return false;
     if (contentType && s.contentType !== contentType) return false;
@@ -282,7 +288,7 @@ function currentFiltered() {
     return true;
   });
 
-  switch (sortSelect.value) {
+  switch (showRecentApprovedOnly ? 'newest' : sortSelect.value) {
     case 'newest':
       filtered.sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0));
       break;
@@ -1301,6 +1307,7 @@ document.getElementById('clearFiltersBtn').addEventListener('click', () => {
   visibilityFilter.value = 'listed'; // 기본값: 정상 노출만
   favoritesOnlyCheckbox.checked = false;
   showPendingOnly = false;
+  showRecentApprovedOnly = false;
   activeTags.clear();
   renderTagFilterBar();
   syncUrlFromFilters();
@@ -1528,6 +1535,11 @@ function pendingCount() {
   return streams.filter(s => s.approvalStatus === 'pending').length;
 }
 
+function recentApprovedCount() {
+  const cutoff = Date.now() - 3 * 24 * 3600 * 1000;
+  return streams.filter(s => s.approvalStatus !== 'pending' && s.addedAt && new Date(s.addedAt).getTime() > cutoff).length;
+}
+
 function renderSidebar() {
   // 접힘 상태: 토글 버튼만 남긴다 (상태는 기기별 저장)
   const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === '1';
@@ -1541,6 +1553,7 @@ function renderSidebar() {
   const pendingHtml = (pendingCount() > 0 || isAdmin) ? `
     <div class="sidebar-section">
       <button type="button" id="sidebarPendingBtn" class="sidebar-group-btn">⏳ ${escapeHtml(t('sidebar_pending'))} <span class="sidebar-count">${pendingCount()}</span></button>
+      ${isAdmin ? `<button type="button" id="sidebarRecentBtn" class="sidebar-group-btn">🆕 ${escapeHtml(t('sidebar_recent_approved'))} <span class="sidebar-count">${recentApprovedCount()}</span></button>` : ''}
     </div>
   ` : '';
   const suggestHtml = currentUser ? `
@@ -1582,6 +1595,8 @@ function updateSidebarActiveState() {
   });
   const pendingBtn = document.getElementById('sidebarPendingBtn');
   if (pendingBtn) pendingBtn.classList.toggle('active', showPendingOnly);
+  const recentBtn = document.getElementById('sidebarRecentBtn');
+  if (recentBtn) recentBtn.classList.toggle('active', showRecentApprovedOnly);
 }
 
 sidebar.addEventListener('click', async (e) => {
@@ -1616,6 +1631,14 @@ sidebar.addEventListener('click', async (e) => {
   }
   if (e.target.closest('#sidebarPendingBtn')) {
     showPendingOnly = true;
+    showRecentApprovedOnly = false;
+    updateSidebarActiveState();
+    render(currentFiltered());
+    return;
+  }
+  if (e.target.closest('#sidebarRecentBtn')) {
+    showRecentApprovedOnly = true;
+    showPendingOnly = false;
     updateSidebarActiveState();
     render(currentFiltered());
     return;
@@ -1623,6 +1646,7 @@ sidebar.addEventListener('click', async (e) => {
   const btn = e.target.closest('button[data-content-type]');
   if (!btn) return;
   showPendingOnly = false;
+  showRecentApprovedOnly = false;
   contentTypeFilter.value = btn.dataset.contentType;
   categoryFilter.value = btn.dataset.category || '';
   syncUrlFromFilters();
