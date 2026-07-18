@@ -5,13 +5,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Live Cams &amp; Webcams in Spain – Camlisted</title>
-<meta name="description" content="Watch 43 live cams and 7 real-world videos from Spain: traffic cameras, city streets, harbors, beaches and more. Verified daily.">
+<meta name="description" content="Watch 42 live cams and 7 real-world videos from Spain: traffic cameras, city streets, harbors, beaches and more. Verified daily.">
 <link rel="canonical" href="https://camlisted.com/country/spain.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Live Cams &amp; Webcams in Spain – Camlisted">
-<meta property="og:description" content="Watch 43 live cams and 7 real-world videos from Spain: traffic cameras, city streets, harbors, beaches and more. Verified daily.">
+<meta property="og:description" content="Watch 42 live cams and 7 real-world videos from Spain: traffic cameras, city streets, harbors, beaches and more. Verified daily.">
 <meta property="og:url" content="https://camlisted.com/country/spain.html">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d1117">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -124,6 +126,9 @@
     <div class="view-toggle">
       <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
       <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
     </div>
     <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
   </div>
@@ -309,10 +314,6 @@
       <div class="thumb" data-vid="MqVlAR3L2Q4"><img src="https://i.ytimg.com/vi/MqVlAR3L2Q4/hqdefault_live.jpg" alt="🌅 Mallorca Webcam Port d’Andratx – House of Sunset 24/7  4K UHD 🌊 #PortAndratx #weather  #livestream" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>🌅 Mallorca Webcam Port d’Andratx – House of Sunset 24/7  4K UHD 🌊 #PortAndratx #weather  #livestream</strong><span>Mallorca Webcam</span></div>
     </a>
-    <a class="entry" href="https://www.youtube.com/watch?v=TF1aS7A0cr0" target="_blank" rel="noopener">
-      <div class="thumb" data-vid="TF1aS7A0cr0"><img src="https://i.ytimg.com/vi/TF1aS7A0cr0/hqdefault_live.jpg" alt="Webcam Lanzarote - Live Stream from the Beachbar in Costa Teguise" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
-      <div class="entry-body"><strong>Webcam Lanzarote - Live Stream from the Beachbar in Costa Teguise</strong><span>Beach Bar Lanzarote</span></div>
-    </a>
     <a class="entry" href="https://www.youtube.com/watch?v=AtHeW1Eut7s" target="_blank" rel="noopener">
       <div class="thumb" data-vid="AtHeW1Eut7s"><img src="https://i.ytimg.com/vi/AtHeW1Eut7s/hqdefault_live.jpg" alt="🌞 Mallorca Webcam Camp de Mar Beach Live 24/7 4K UHD #balearicislands #Sunset #Travel #beachvibes" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>🌞 Mallorca Webcam Camp de Mar Beach Live 24/7 4K UHD #balearicislands #Sunset #Travel #beachvibes</strong><span>Mallorca Webcam</span></div>
@@ -393,6 +394,21 @@
     </div>
     <ol id="leaderboardList" class="leaderboard-list"></ol>
   </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>

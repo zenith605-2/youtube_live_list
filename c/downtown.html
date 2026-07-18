@@ -5,13 +5,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>City Street Live Cams &amp; Videos – Camlisted</title>
-<meta name="description" content="149 live city street cams and 62 videos, curated from YouTube and verified daily. Free to watch, no sign-up.">
+<meta name="description" content="148 live city street cams and 62 videos, curated from YouTube and verified daily. Free to watch, no sign-up.">
 <link rel="canonical" href="https://camlisted.com/c/downtown.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="City Street Live Cams &amp; Videos – Camlisted">
-<meta property="og:description" content="149 live city street cams and 62 videos, curated from YouTube and verified daily. Free to watch, no sign-up.">
+<meta property="og:description" content="148 live city street cams and 62 videos, curated from YouTube and verified daily. Free to watch, no sign-up.">
 <meta property="og:url" content="https://camlisted.com/c/downtown.html">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d1117">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -124,6 +126,9 @@
     <div class="view-toggle">
       <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
       <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
     </div>
     <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
   </div>
@@ -637,10 +642,6 @@
       <div class="thumb" data-vid="Ml9sYQ09Rwc"><img src="https://i.ytimg.com/vi/Ml9sYQ09Rwc/hqdefault_live.jpg" alt="🟢 Montego Bay Live 24/7 | Sam Sharpe Square, Jamaica | See Jamaica" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>🟢 Montego Bay Live 24/7 | Sam Sharpe Square, Jamaica | See Jamaica</strong><span>See Jamaica </span></div>
     </a>
-    <a class="entry" href="https://www.youtube.com/watch?v=w4UIqG-efV8" target="_blank" rel="noopener">
-      <div class="thumb" data-vid="w4UIqG-efV8"><img src="https://i.ytimg.com/vi/w4UIqG-efV8/hqdefault_live.jpg" alt="Castro Street Cam 4 Live Stream" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
-      <div class="entry-body"><strong>Castro Street Cam 4 Live Stream</strong><span>Castro Street Cam 4</span></div>
-    </a>
     <a class="entry" href="https://www.youtube.com/watch?v=C32EiZiQPkQ" target="_blank" rel="noopener">
       <div class="thumb" data-vid="C32EiZiQPkQ"><img src="https://i.ytimg.com/vi/C32EiZiQPkQ/hqdefault_live.jpg" alt="EarthCam Live: New Orleans Balcony View" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>EarthCam Live: New Orleans Balcony View</strong><span>EarthCam</span></div>
@@ -748,6 +749,10 @@
     <a class="entry" href="https://www.youtube.com/watch?v=ZxurMK4g1TA" target="_blank" rel="noopener">
       <div class="thumb" data-vid="ZxurMK4g1TA"><img src="https://i.ytimg.com/vi/ZxurMK4g1TA/hqdefault.jpg" alt="New York City 4K Drone Video | Manhattan, Central Park Aerials" loading="lazy" width="320" height="180"><span class="badge">8:16</span></div>
       <div class="entry-body"><strong>New York City 4K Drone Video | Manhattan, Central Park Aerials</strong><span>Explore The World 4K</span></div>
+    </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=wg1iMd4-hDQ" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="wg1iMd4-hDQ"><img src="https://i.ytimg.com/vi/wg1iMd4-hDQ/hqdefault.jpg" alt="Axis V5938 at night - Distance is 250 meters" loading="lazy" width="320" height="180"><span class="badge">1:37</span></div>
+      <div class="entry-body"><strong>Axis V5938 at night - Distance is 250 meters</strong><span>Francois Bernard</span></div>
     </a></main>
 
 <div id="bulkActionBar" class="bulk-action-bar" hidden>
@@ -793,6 +798,21 @@
     </div>
     <ol id="leaderboardList" class="leaderboard-list"></ol>
   </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>

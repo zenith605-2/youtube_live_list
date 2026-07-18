@@ -12,6 +12,8 @@
 <meta property="og:description" content="31 live plaza / square cams and 2 videos, curated from YouTube and verified daily. Free to watch, no sign-up.">
 <meta property="og:url" content="https://camlisted.com/c/plaza.html">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d1117">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -124,6 +126,9 @@
     <div class="view-toggle">
       <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
       <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
     </div>
     <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
   </div>
@@ -325,6 +330,21 @@
     </div>
     <ol id="leaderboardList" class="leaderboard-list"></ol>
   </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>

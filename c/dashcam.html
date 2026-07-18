@@ -12,6 +12,8 @@
 <meta property="og:description" content="4 live dashcam cams and 144 videos, curated from YouTube and verified daily. Free to watch, no sign-up.">
 <meta property="og:url" content="https://camlisted.com/c/dashcam.html">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d1117">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -124,6 +126,9 @@
     <div class="view-toggle">
       <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
       <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
     </div>
     <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
   </div>
@@ -493,6 +498,10 @@
       <div class="thumb" data-vid="rcRXbyr5ibI"><img src="https://i.ytimg.com/vi/rcRXbyr5ibI/hqdefault.jpg" alt="Możliwości kamery samochodowej Dashcam" loading="lazy" width="320" height="180"><span class="badge">0:49</span></div>
       <div class="entry-body"><strong>Możliwości kamery samochodowej Dashcam</strong><span>IKOL Videos</span></div>
     </a>
+    <a class="entry" href="https://www.youtube.com/watch?v=MbYmmER7aWw" target="_blank" rel="noopener">
+      <div class="thumb" data-vid="MbYmmER7aWw"><img src="https://i.ytimg.com/vi/MbYmmER7aWw/hqdefault.jpg" alt="12 Times Dashcams Caught Terrifying Encounters" loading="lazy" width="320" height="180"><span class="badge">21:03</span></div>
+      <div class="entry-body"><strong>12 Times Dashcams Caught Terrifying Encounters</strong><span>Chezzoid</span></div>
+    </a>
     <a class="entry" href="https://www.youtube.com/watch?v=dxG6PCcxiVw" target="_blank" rel="noopener">
       <div class="thumb" data-vid="dxG6PCcxiVw"><img src="https://i.ytimg.com/vi/dxG6PCcxiVw/hqdefault.jpg" alt="BEST OF TEXAS DRIVERS |  20 Minutes of Road Rage &amp; Bad Drivers |  PART 11" loading="lazy" width="320" height="180"><span class="badge">20:33</span></div>
       <div class="entry-body"><strong>BEST OF TEXAS DRIVERS |  20 Minutes of Road Rage &amp; Bad Drivers |  PART 11</strong><span>Dashcam Lessons</span></div>
@@ -552,10 +561,6 @@
     <a class="entry" href="https://www.youtube.com/watch?v=X_yoLHwNSRU" target="_blank" rel="noopener">
       <div class="thumb" data-vid="X_yoLHwNSRU"><img src="https://i.ytimg.com/vi/X_yoLHwNSRU/hqdefault.jpg" alt="Australian Car Crash / Dash Cam Compilation 41" loading="lazy" width="320" height="180"><span class="badge">27:44</span></div>
       <div class="entry-body"><strong>Australian Car Crash / Dash Cam Compilation 41</strong><span>Dash Cam Owners Australia</span></div>
-    </a>
-    <a class="entry" href="https://www.youtube.com/watch?v=MbYmmER7aWw" target="_blank" rel="noopener">
-      <div class="thumb" data-vid="MbYmmER7aWw"><img src="https://i.ytimg.com/vi/MbYmmER7aWw/hqdefault.jpg" alt="12 Times Dashcams Caught Terrifying Encounters" loading="lazy" width="320" height="180"><span class="badge">21:03</span></div>
-      <div class="entry-body"><strong>12 Times Dashcams Caught Terrifying Encounters</strong><span>Chezzoid</span></div>
     </a>
     <a class="entry" href="https://www.youtube.com/watch?v=8id5q_mwtWA" target="_blank" rel="noopener">
       <div class="thumb" data-vid="8id5q_mwtWA"><img src="https://i.ytimg.com/vi/8id5q_mwtWA/hqdefault.jpg" alt="High-Speed Police Chases Over 150MPH - Caught on Dashcam" loading="lazy" width="320" height="180"><span class="badge">49:14</span></div>
@@ -785,6 +790,21 @@
     </div>
     <ol id="leaderboardList" class="leaderboard-list"></ol>
   </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>

@@ -1,0 +1,12 @@
+{
+  "name": "Camlisted – YouTube Live Cams & Footage",
+  "short_name": "Camlisted",
+  "description": "A curated, daily-updated directory of YouTube live cams and real-world footage.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

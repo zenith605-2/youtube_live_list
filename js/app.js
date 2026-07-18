@@ -125,6 +125,86 @@ function countryOptionsHtml() {
   return countryOptionsCache.html;
 }
 
+// ===== 캠 위치의 현지 시간·날씨 (국가 단위, Open-Meteo 무료 API) =====
+// 국가 중심좌표 (generate_pages.mjs와 동일한 표)
+const COUNTRY_CENTROIDS = {
+  US: [39.8, -98.6], CA: [56.1, -106.3], MX: [23.6, -102.5], BR: [-14.2, -51.9], AR: [-38.4, -63.6],
+  CL: [-35.7, -71.5], PE: [-9.2, -75.0], CO: [4.6, -74.3], CR: [9.7, -83.8], CU: [21.5, -77.8],
+  GB: [54.0, -2.0], IE: [53.4, -8.2], FR: [46.2, 2.2], DE: [51.2, 10.4], NL: [52.1, 5.3],
+  BE: [50.5, 4.5], CH: [46.8, 8.2], AT: [47.5, 14.6], IT: [41.9, 12.6], ES: [40.5, -3.7],
+  PT: [39.4, -8.2], GR: [39.1, 21.8], TR: [39.0, 35.2], RU: [61.5, 105.3], UA: [48.4, 31.2],
+  PL: [51.9, 19.1], CZ: [49.8, 15.5], HU: [47.2, 19.5], RO: [45.9, 24.9], BG: [42.7, 25.5],
+  HR: [45.1, 15.2], RS: [44.0, 21.0], NO: [60.5, 8.5], SE: [60.1, 18.6], FI: [61.9, 25.7],
+  DK: [56.3, 9.5], IS: [64.9, -19.0], IN: [20.6, 79.0], PK: [30.4, 69.3], BD: [23.7, 90.4],
+  LK: [7.9, 80.8], NP: [28.4, 84.1], CN: [35.9, 104.2], TW: [23.7, 121.0], HK: [22.3, 114.2],
+  JP: [36.2, 138.3], KR: [36.5, 127.9], TH: [15.9, 100.9], VN: [14.1, 108.3], PH: [12.9, 121.8],
+  ID: [-0.8, 113.9], MY: [4.2, 101.9], SG: [1.35, 103.8], KH: [12.6, 105.0], LA: [19.9, 102.5],
+  MM: [21.9, 95.9], AU: [-25.3, 133.8], NZ: [-40.9, 174.9], AE: [23.4, 53.8], SA: [23.9, 45.1],
+  IL: [31.0, 34.9], EG: [26.8, 30.8], MA: [31.8, -7.1], KE: [-0.02, 37.9], ZA: [-30.6, 22.9],
+  NA: [-22.9, 18.5],
+};
+
+const countryWx = new Map(); // code -> { temp, wcode, offsetSec }
+const WX_CACHE_KEY = 'countryWxCache';
+const WX_TTL_MS = 30 * 60 * 1000;
+
+function wxEmoji(code) {
+  if (code === 0) return '☀️';
+  if (code <= 2) return '🌤';
+  if (code === 3) return '☁️';
+  if (code === 45 || code === 48) return '🌫';
+  if (code >= 51 && code <= 67) return '🌧';
+  if (code >= 71 && code <= 77) return '❄️';
+  if (code >= 80 && code <= 82) return '🌦';
+  if (code >= 85 && code <= 86) return '🌨';
+  if (code >= 95) return '⛈';
+  return '';
+}
+
+function wxHtml(country) {
+  const w = countryWx.get(country);
+  if (!w) return '';
+  // 현지 시각 = UTC + 그 지역 오프셋 (렌더 시점 기준이라 분 단위로 정확)
+  const local = new Date(Date.now() + w.offsetSec * 1000);
+  const hm = `${String(local.getUTCHours()).padStart(2, '0')}:${String(local.getUTCMinutes()).padStart(2, '0')}`;
+  return `<span class="card-wx">🕐 ${hm} ${wxEmoji(w.wcode)} ${Math.round(w.temp)}°C</span>`;
+}
+
+// 카탈로그에 등장하는 나라들의 현재 날씨를 국가당 1회씩 가져온다 (30분 localStorage 캐시)
+async function loadCountryWeather() {
+  let cache = {};
+  try { cache = JSON.parse(localStorage.getItem(WX_CACHE_KEY) || '{}'); } catch { /* 무시 */ }
+  const now = Date.now();
+  const codes = [...new Set(streams.map(s => s.country).filter(c => c && COUNTRY_CENTROIDS[c]))];
+  const toFetch = [];
+  for (const code of codes) {
+    const hit = cache[code];
+    if (hit && now - hit.ts < WX_TTL_MS) countryWx.set(code, hit);
+    else toFetch.push(code);
+  }
+  await Promise.all(toFetch.map(async (code) => {
+    try {
+      const [lat, lng] = COUNTRY_CENTROIDS[code];
+      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code&timezone=auto`);
+      const data = await res.json();
+      const entry = {
+        temp: data.current.temperature_2m,
+        wcode: data.current.weather_code,
+        offsetSec: data.utc_offset_seconds,
+        ts: now,
+      };
+      countryWx.set(code, entry);
+      cache[code] = entry;
+    } catch { /* 실패한 나라는 표시 생략 */ }
+  }));
+  try { localStorage.setItem(WX_CACHE_KEY, JSON.stringify(cache)); } catch { /* 무시 */ }
+  // 이미 그려진 카드들의 빈 자리를 채운다
+  document.querySelectorAll('.card-wx-slot').forEach(el => {
+    const html = wxHtml(el.dataset.country);
+    if (html) el.outerHTML = html;
+  });
+}
+
 function countryDisplayName(code) {
   if (code === 'XX') return t('country_other'); // 모음집 등 여러 나라가 섞인 영상용 예약 코드
   try {
@@ -443,6 +523,7 @@ function cardInnerHtml(s, groupIndex) {
           : (s.matchedKeyword ? `<span class="card-keyword">${escapeHtml(s.matchedKeyword)}</span>` : '')}
         ${dateHtml}
         ${addedHtml}
+        ${s.country && s.country !== 'XX' ? (wxHtml(s.country) || `<span class="card-wx-slot" data-country="${escapeHtml(s.country)}"></span>`) : ''}
         ${countryHtml}
         ${qualityHtml}
         ${categoryHtml}
@@ -1612,6 +1693,7 @@ async function loadStreams() {
   populateCountryFilter();
   renderSidebar();
   render(currentFiltered());
+  loadCountryWeather(); // 카드에 현지 시간·날씨 표시 (비동기, 완료되는 대로 채워짐)
 }
 
 sb.auth.onAuthStateChange(async (_event, session) => {
@@ -1743,6 +1825,99 @@ async function loadVisitStats() {
   visitorStatsEl.textContent = t('visitor_stats', { today: data.today_count, total: data.total_count });
 }
 
+// ===== TV 모드: 현재 필터 결과를 전체화면으로 자동 순환 재생 (▦ 버튼으로 2×2 동시 시청) =====
+const tvOverlay = document.getElementById('tvOverlay');
+const tvStage = document.getElementById('tvStage');
+let tvList = [];
+let tvIndex = 0;
+let tvTimer = null;
+let tvPaused = false;
+let tvMulti = false;
+const TV_INTERVAL_MS = 45000;
+
+function tvEmbed(videoId) {
+  return `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+}
+
+function tvRender() {
+  if (!tvList.length) return;
+  tvIndex = ((tvIndex % tvList.length) + tvList.length) % tvList.length;
+  if (tvMulti) {
+    const four = [0, 1, 2, 3].map(i => tvList[(tvIndex + i) % tvList.length]);
+    tvStage.className = 'tv-stage multi';
+    tvStage.innerHTML = four.map(s => `
+      <div class="tv-cell">${tvEmbed(s.videoId)}<span class="tv-cell-label">${escapeHtml(s.title.slice(0, 60))}</span></div>
+    `).join('');
+    document.getElementById('tvTitle').textContent = '';
+  } else {
+    const s = tvList[tvIndex];
+    tvStage.className = 'tv-stage';
+    tvStage.innerHTML = tvEmbed(s.videoId);
+    document.getElementById('tvTitle').textContent = s.title;
+  }
+  document.getElementById('tvCounter').textContent = `${tvIndex + 1} / ${tvList.length}`;
+}
+
+function tvResetTimer() {
+  clearInterval(tvTimer);
+  tvTimer = null;
+  if (!tvPaused) tvTimer = setInterval(() => tvAdvance(1), TV_INTERVAL_MS);
+}
+
+function tvAdvance(step) {
+  tvIndex += step * (tvMulti ? 4 : 1);
+  tvRender();
+  tvResetTimer();
+}
+
+function tvOpen() {
+  const list = currentFiltered();
+  if (!list.length) return;
+  tvList = [...list].sort(() => Math.random() - 0.5); // 셔플 — 같은 채널이 연달아 나오지 않게
+  tvIndex = 0;
+  tvPaused = false;
+  tvMulti = false;
+  document.getElementById('tvPauseBtn').textContent = '⏸';
+  document.getElementById('tvMultiBtn').classList.remove('active');
+  // 뒤에서 돌던 미리보기 iframe들은 리소스만 먹으니 내려둔다 (닫을 때 재렌더로 복구)
+  document.querySelectorAll('#grid iframe').forEach(f => f.remove());
+  tvOverlay.hidden = false;
+  document.body.style.overflow = 'hidden';
+  tvRender();
+  tvResetTimer();
+}
+
+function tvClose() {
+  clearInterval(tvTimer);
+  tvTimer = null;
+  tvStage.innerHTML = '';
+  tvOverlay.hidden = true;
+  document.body.style.overflow = '';
+  render(currentFiltered()); // 그리드 미리보기 복구
+}
+
+document.getElementById('tvModeBtn')?.addEventListener('click', tvOpen);
+document.getElementById('tvCloseBtn')?.addEventListener('click', tvClose);
+document.getElementById('tvPrevBtn')?.addEventListener('click', () => tvAdvance(-1));
+document.getElementById('tvNextBtn')?.addEventListener('click', () => tvAdvance(1));
+document.getElementById('tvPauseBtn')?.addEventListener('click', () => {
+  tvPaused = !tvPaused;
+  document.getElementById('tvPauseBtn').textContent = tvPaused ? '▶' : '⏸';
+  tvResetTimer();
+});
+document.getElementById('tvMultiBtn')?.addEventListener('click', () => {
+  tvMulti = !tvMulti;
+  document.getElementById('tvMultiBtn').classList.toggle('active', tvMulti);
+  tvRender();
+  tvResetTimer();
+});
+document.addEventListener('keydown', (e) => {
+  if (tvOverlay?.hidden) return;
+  if (e.key === 'Escape') tvClose();
+  else if (e.key === 'ArrowRight') tvAdvance(1);
+  else if (e.key === 'ArrowLeft') tvAdvance(-1);
+});
+
 async function init() {
   langSelect.value = currentLang;
   applyStaticTranslations();
@@ -1765,3 +1940,8 @@ async function init() {
 }
 
 init();
+
+// PWA: 홈 화면 설치를 위한 서비스워커 (캐싱 없음 — sw.js 참고)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}

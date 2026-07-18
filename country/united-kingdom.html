@@ -5,13 +5,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Live Cams &amp; Webcams in United Kingdom – Camlisted</title>
-<meta name="description" content="Watch 51 live cams and 36 real-world videos from United Kingdom: traffic cameras, city streets, harbors, beaches and more. Verified daily.">
+<meta name="description" content="Watch 49 live cams and 36 real-world videos from United Kingdom: traffic cameras, city streets, harbors, beaches and more. Verified daily.">
 <link rel="canonical" href="https://camlisted.com/country/united-kingdom.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Live Cams &amp; Webcams in United Kingdom – Camlisted">
-<meta property="og:description" content="Watch 51 live cams and 36 real-world videos from United Kingdom: traffic cameras, city streets, harbors, beaches and more. Verified daily.">
+<meta property="og:description" content="Watch 49 live cams and 36 real-world videos from United Kingdom: traffic cameras, city streets, harbors, beaches and more. Verified daily.">
 <meta property="og:url" content="https://camlisted.com/country/united-kingdom.html">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d1117">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5525855908528070" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -124,6 +126,9 @@
     <div class="view-toggle">
       <button type="button" id="previewAutoBtn" class="view-btn" data-i18n="preview_auto">▶ Auto preview</button>
       <button type="button" id="previewHoverBtn" class="view-btn" data-i18n="preview_hover">🖱 Hover preview</button>
+    </div>
+    <div class="view-toggle">
+      <button type="button" id="tvModeBtn" class="view-btn" data-i18n="tv_button">📺 TV</button>
     </div>
     <button type="button" id="clearFiltersBtn" class="clear-filters-btn" data-i18n="filter_clear">✕ Clear filters</button>
   </div>
@@ -261,10 +266,6 @@
       <div class="thumb" data-vid="2-glov2GinU"><img src="https://i.ytimg.com/vi/2-glov2GinU/hqdefault_live.jpg" alt="🏛️ US Capitol Building | Senate Floor LIVE | Washington D.C. 24/7" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>🏛️ US Capitol Building | Senate Floor LIVE | Washington D.C. 24/7</strong><span>EarthLiveTV</span></div>
     </a>
-    <a class="entry" href="https://www.youtube.com/watch?v=wyfL7lGC0N4" target="_blank" rel="noopener">
-      <div class="thumb" data-vid="wyfL7lGC0N4"><img src="https://i.ytimg.com/vi/wyfL7lGC0N4/hqdefault_live.jpg" alt="LIVE 🔴 Bird Feeder &amp; Wildlife Camera Scotland UK | 24/7 Garden Birds &amp; Night Wildlife" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
-      <div class="entry-body"><strong>LIVE 🔴 Bird Feeder &amp; Wildlife Camera Scotland UK | 24/7 Garden Birds &amp; Night Wildlife</strong><span>Scottish Wildlife Garden</span></div>
-    </a>
     <a class="entry" href="https://www.youtube.com/watch?v=xa_7z1bHsPM" target="_blank" rel="noopener">
       <div class="thumb" data-vid="xa_7z1bHsPM"><img src="https://i.ytimg.com/vi/xa_7z1bHsPM/hqdefault_live.jpg" alt="🔴Philippines Live camera House View, Agdao, Davao City #philippines" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>🔴Philippines Live camera House View, Agdao, Davao City #philippines</strong><span>JazBaz Philippines</span></div>
@@ -272,10 +273,6 @@
     <a class="entry" href="https://www.youtube.com/watch?v=D38HQbFbMzs" target="_blank" rel="noopener">
       <div class="thumb" data-vid="D38HQbFbMzs"><img src="https://i.ytimg.com/vi/D38HQbFbMzs/hqdefault_live.jpg" alt="Port Isaac Webcam" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
       <div class="entry-body"><strong>Port Isaac Webcam</strong><span>Old School Hotel Port Isaac</span></div>
-    </a>
-    <a class="entry" href="https://www.youtube.com/watch?v=SZ80AH33tnY" target="_blank" rel="noopener">
-      <div class="thumb" data-vid="SZ80AH33tnY"><img src="https://i.ytimg.com/vi/SZ80AH33tnY/hqdefault_live.jpg" alt="Heathrow Airport Live - Friday 10th July 2026" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
-      <div class="entry-body"><strong>Heathrow Airport Live - Friday 10th July 2026</strong><span>Flight Focus 365</span></div>
     </a>
     <a class="entry" href="https://www.youtube.com/watch?v=Q71sLS8h9a4" target="_blank" rel="noopener">
       <div class="thumb" data-vid="Q71sLS8h9a4"><img src="https://i.ytimg.com/vi/Q71sLS8h9a4/hqdefault_live.jpg" alt="🔴 El Gaucho | Soi 19 | Sukhumvit Road | Bangkok | Thailand | Live Street Webcam | 2160p 4K" loading="lazy" width="320" height="180"><span class="badge live">LIVE</span></div>
@@ -541,6 +538,21 @@
     </div>
     <ol id="leaderboardList" class="leaderboard-list"></ol>
   </div>
+</div>
+
+<div id="tvOverlay" class="tv-overlay" hidden>
+  <div class="tv-topbar">
+    <span id="tvTitle" class="tv-title"></span>
+    <span id="tvCounter" class="tv-counter"></span>
+    <div class="tv-controls">
+      <button type="button" id="tvPrevBtn" class="tv-btn" title="Previous">⏮</button>
+      <button type="button" id="tvPauseBtn" class="tv-btn" title="Pause rotation">⏸</button>
+      <button type="button" id="tvNextBtn" class="tv-btn" title="Next">⏭</button>
+      <button type="button" id="tvMultiBtn" class="tv-btn" title="2×2 multiview">▦</button>
+      <button type="button" id="tvCloseBtn" class="tv-btn" title="Close">✕</button>
+    </div>
+  </div>
+  <div id="tvStage" class="tv-stage"></div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
