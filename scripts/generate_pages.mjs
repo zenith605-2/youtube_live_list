@@ -84,7 +84,7 @@ const PAGE_CSS = `
   .globe-sel-label { position: absolute; top: 10px; left: 12px; z-index: 5; background: rgba(0,0,0,.7); border: 1px solid var(--accent); border-radius: 6px; padding: 4px 10px; color: #fff; font-size: 0.9rem; font-weight: 600; pointer-events: none; }
   .globe-bar { display: flex; gap: 12px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
   .random-btn { background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
-  .panel { position: fixed; right: 0; top: 0; bottom: 0; width: min(420px, 100%); z-index: 40; background: rgba(13,17,23,.97); border-left: 1px solid var(--border); padding: 16px; display: none; flex-direction: column; gap: 10px; }
+  .panel { position: fixed; right: 0; top: 0; bottom: 0; width: min(500px, 100%); z-index: 40; background: rgba(13,17,23,.97); border-left: 1px solid var(--border); padding: 16px; display: none; flex-direction: column; gap: 10px; }
   .panel.open { display: flex; }
   .panel .close { position: absolute; top: 10px; right: 12px; background: none; border: 0; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
   .panel h2 { font-size: 1.1rem; color: #fff; padding-right: 30px; margin: 0; }
@@ -105,7 +105,8 @@ const PAGE_CSS = `
   .panel-filter button.active { color: #fff; border-color: var(--accent); }
   @media (max-width: 900px) {
     .map-globe-row { grid-template-columns: 1fr; }
-    .panel { top: auto; bottom: 0; height: 62%; width: 100%; border-left: 0; border-top: 1px solid var(--border); }
+    .panel { top: auto; bottom: 0; height: 85%; width: 100%; border-left: 0; border-top: 1px solid var(--border); }
+    .panel .player { max-height: 34vh; }
   }
 `;
 
@@ -260,7 +261,7 @@ async function writeGlobePage(countByCode, slugByCode, visible, today) {
   .topbar h1 { font-size: 1rem; font-weight: 600; color: #fff; }
   .topbar .hint { color: #9aa4b2; font-size: 0.8rem; }
   .random-btn { margin-left: auto; background: #ff3b3b; color: #fff; border: 0; border-radius: 999px; padding: 8px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-  .panel { position: fixed; right: 0; top: 0; bottom: 0; width: min(420px, 100%); z-index: 6; background: rgba(13,17,23,.96); border-left: 1px solid #2a2f3a; padding: 16px; display: none; flex-direction: column; gap: 10px; }
+  .panel { position: fixed; right: 0; top: 0; bottom: 0; width: min(500px, 100%); z-index: 6; background: rgba(13,17,23,.96); border-left: 1px solid #2a2f3a; padding: 16px; display: none; flex-direction: column; gap: 10px; }
   .panel.open { display: flex; }
   .panel .close { position: absolute; top: 10px; right: 12px; background: none; border: 0; color: #9aa4b2; font-size: 1.4rem; cursor: pointer; }
   .panel h2 { font-size: 1.1rem; color: #fff; padding-right: 30px; }
@@ -280,7 +281,8 @@ async function writeGlobePage(countByCode, slugByCode, visible, today) {
   .panel-filter button { background: #161b22; color: #9aa4b2; border: 1px solid #2a2f3a; border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; cursor: pointer; }
   .panel-filter button.active { color: #fff; border-color: #ff3b3b; }
   @media (max-width: 640px) {
-    .panel { top: auto; bottom: 0; height: 62%; width: 100%; border-left: 0; border-top: 1px solid #2a2f3a; }
+    .panel { top: auto; bottom: 0; height: 85%; width: 100%; border-left: 0; border-top: 1px solid #2a2f3a; }
+    .panel .player { max-height: 34vh; }
   }
 </style>
 </head>
