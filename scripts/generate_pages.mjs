@@ -67,6 +67,7 @@ const PAGE_CSS = `
   .map-wrap path[data-href] { cursor: pointer; }
   .map-wrap path:hover { filter: brightness(1.6); stroke: #ffffff; }
   .map-tip { position: fixed; z-index: 10; background: rgba(0,0,0,.85); border: 1px solid var(--border); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 0.85rem; pointer-events: none; white-space: nowrap; }
+  .map-tip.pinned { position: absolute; transform: translate(-50%, -110%); border-color: var(--accent); }
   .map-note { color: var(--muted); font-size: 0.8rem; margin-bottom: 4px; }
   .map-legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; color: var(--muted); font-size: 0.8rem; margin-bottom: 18px; }
   .map-legend .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 5px; vertical-align: -2px; }
@@ -498,6 +499,7 @@ async function main() {
       <div class="map-wrap">
         <svg viewBox="0 0 900 441" role="img" aria-label="World map of available cams by country">${mapSvgPaths}</svg>
         <div id="mapTip" class="map-tip" hidden></div>
+        <div id="mapPinTip" class="map-tip pinned" hidden></div>
       </div>
       <div class="globe-bar">
         <div class="map-type-filter" style="margin:0">Show:
@@ -509,7 +511,6 @@ async function main() {
           ${[...MAP_BUCKETS].reverse().map(b => `<span><span class="sw" style="background:${b.color}"></span><span${b.min === 0 ? ' class="legend-none"' : ''}>${b.label}</span></span>`).join('')}
         </div>
       </div>
-      <p class="map-note" id="mapSelNote" style="color:var(--accent);font-weight:600" hidden></p>
       <p class="map-note">Hover a country to see how many cams it has — click to browse them.</p>
       <script>
         (function () {
@@ -528,26 +529,38 @@ async function main() {
             return mapType === 'live' ? live : mapType === 'video' ? video : live + video;
           }
           function repaint() {
-            var selName = null;
+            var selPath = null;
             paths.forEach(function (p) {
               var sel = p.dataset.code === window.__selCode;
               p.setAttribute('fill', bucketColor(countOf(p)));
               p.style.stroke = sel ? '#ffffff' : '';
               p.style.strokeWidth = sel ? '1.8' : '';
-              if (sel) { selName = p.dataset.name; p.parentNode.appendChild(p); } // 테두리가 이웃에 가려지지 않게 맨 위로
+              if (sel) { selPath = p; p.parentNode.appendChild(p); } // 테두리가 이웃에 가려지지 않게 맨 위로
             });
-            var note = document.getElementById('mapSelNote');
-            if (note) {
-              if (selName) {
-                var W = window.__L || {};
-                note.textContent = (W.selected || 'Selected:') + ' ' + selName;
-                note.hidden = false;
+            // 선택된 나라 위에 호버 툴팁과 같은 형태의 라벨을 고정으로 띄운다
+            var pin = document.getElementById('mapPinTip');
+            if (pin) {
+              if (selPath) {
+                var W = window.__L || { live: 'Live', videos: 'Videos' };
+                pin.textContent = selPath.dataset.name + ' — ' + W.live + ': ' + selPath.dataset.live + ' · ' + W.videos + ': ' + selPath.dataset.video;
+                var wrapRect = pin.parentNode.getBoundingClientRect();
+                var pr = selPath.getBoundingClientRect();
+                var topPos = pr.top - wrapRect.top;
+                if (topPos < 36) topPos = 36; // 위쪽 가장자리 나라도 툴팁이 카드 안에 보이게
+                pin.hidden = false; // 폭 측정을 위해 먼저 표시
+                var half = pin.offsetWidth / 2 + 6;
+                var leftPos = pr.left - wrapRect.left + pr.width / 2;
+                if (leftPos < half) leftPos = half; // 좌우 가장자리 나라도 카드 안에 들어오게
+                if (leftPos > wrapRect.width - half) leftPos = wrapRect.width - half;
+                pin.style.left = leftPos + 'px';
+                pin.style.top = topPos + 'px';
               } else {
-                note.hidden = true;
+                pin.hidden = true;
               }
             }
           }
           window.__repaintMap = repaint;
+          window.addEventListener('resize', repaint);
           paths.forEach(function (p) {
             p.addEventListener('mousemove', function (e) {
               var W = window.__L || { live: 'Live', videos: 'Videos' };
