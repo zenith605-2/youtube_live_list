@@ -58,6 +58,14 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python scripts/classify_thumbnails.py
 
+      # ---- AI 검수: 승인 대기 큐를 Gemini로 자동 판정 (GEMINI_API_KEY 없으면 스킵) ----
+      - name: AI review pending queue
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/ai_review.mjs
+
       # ---- 국가/카테고리별 정적 SEO 페이지 재생성 후 변경분만 커밋 ----
       - name: Generate SEO pages
         env:
