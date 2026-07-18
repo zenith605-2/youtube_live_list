@@ -167,7 +167,7 @@ function wxHtml(country) {
   // 현지 시각 = UTC + 그 지역 오프셋 (렌더 시점 기준이라 분 단위로 정확)
   const local = new Date(Date.now() + w.offsetSec * 1000);
   const hm = `${String(local.getUTCHours()).padStart(2, '0')}:${String(local.getUTCMinutes()).padStart(2, '0')}`;
-  return `<span class="card-wx">🕐 ${hm} ${wxEmoji(w.wcode)} ${Math.round(w.temp)}°C</span>`;
+  return `<span class="wx-badge">🕐 ${hm} ${wxEmoji(w.wcode)} ${Math.round(w.temp)}°C</span>`;
 }
 
 // 카탈로그에 등장하는 나라들의 현재 날씨를 국가당 1회씩 가져온다 (30분 localStorage 캐시)
@@ -511,6 +511,7 @@ function cardInnerHtml(s, groupIndex) {
         <span class="live-badge ${badgeClass}">${badgeText}</span>
         ${s.approvalStatus === 'pending' ? `<span class="new-badge pending-badge">${t('pending_badge')}</span>` : (isRecentlyAdded ? '<span class="new-badge">NEW</span>' : '')}
         ${!isLiveType && s.durationSeconds ? `<span class="duration-badge">${formatDuration(s.durationSeconds)}</span>` : ''}
+        ${s.country && s.country !== 'XX' ? (wxHtml(s.country) || `<span class="wx-badge card-wx-slot" data-country="${escapeHtml(s.country)}"></span>`) : ''}
         ${offlineNoticeHtml}
         ${thumbHtml}
       </div>
@@ -523,7 +524,6 @@ function cardInnerHtml(s, groupIndex) {
           : (s.matchedKeyword ? `<span class="card-keyword">${escapeHtml(s.matchedKeyword)}</span>` : '')}
         ${dateHtml}
         ${addedHtml}
-        ${s.country && s.country !== 'XX' ? (wxHtml(s.country) || `<span class="card-wx-slot" data-country="${escapeHtml(s.country)}"></span>`) : ''}
         ${countryHtml}
         ${qualityHtml}
         ${categoryHtml}

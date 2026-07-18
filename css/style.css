@@ -1509,10 +1509,22 @@ body {
   font-size: 0.78rem;
 }
 
-.card-wx {
-  display: block;
-  color: var(--muted);
-  font-size: 0.75rem;
+/* 썸네일 좌하단의 현지 시간·날씨 배지 (LIVE 좌상, NEW 우상, 길이 우하와 안 겹치는 자리) */
+.wx-badge {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.wx-badge:empty {
+  display: none;
 }
 
 /* ===== TV 모드 ===== */
