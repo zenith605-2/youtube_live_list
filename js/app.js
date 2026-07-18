@@ -476,7 +476,12 @@ function cardInnerHtml(s, groupIndex) {
     const dateHtml = isLiveType
       ? (s.startedAt ? `<span class="card-started">🕐 ${escapeHtml(formatRelativeTime(s.startedAt))}</span>` : '')
       : (s.publishedAt ? `<span class="card-started">📅 ${escapeHtml(formatRelativeTime(s.publishedAt))}</span>` : '');
-    const addedHtml = s.addedAt ? `<span class="card-added">📌 ${escapeHtml(formatRelativeTime(s.addedAt))}</span>` : '';
+    // 최신순 정렬이나 최근 승인 검수 뷰에선 상대시간 대신 실제 날짜를 보여준다
+    const showAddedDate = showRecentApprovedOnly || sortSelect.value === 'newest';
+    const addedText = s.addedAt
+      ? (showAddedDate ? new Date(s.addedAt).toLocaleDateString() : formatRelativeTime(s.addedAt))
+      : '';
+    const addedHtml = s.addedAt ? `<span class="card-added">📌 ${escapeHtml(addedText)}</span>` : '';
     const isRecentlyAdded = s.addedAt && (Date.now() - new Date(s.addedAt).getTime() < 3 * 24 * 3600 * 1000);
     const offlineDaysLeft = s.offlineSince
       ? Math.max(0, 7 - Math.floor((Date.now() - new Date(s.offlineSince).getTime()) / 86400000))
