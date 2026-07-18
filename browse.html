@@ -32,6 +32,8 @@
   .map-type-filter button.active { color: #fff; border-color: var(--accent); }
   @media (max-width: 700px) { .browse-list { columns: 2; } }
   .map-globe-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  /* min-width:0 — svg(고유폭 900px)나 캔버스가 트랙을 밀어내지 못하게 (없으면 한쪽이 짜부라짐) */
+  .mg-col { min-width: 0; }
   .globe-box { height: 460px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #000; }
   .globe-bar { display: flex; gap: 12px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
   .random-btn { background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
@@ -155,7 +157,10 @@
         var maxTotal = Math.max.apply(null, GC.map(function (c) { return c.live + c.video; }));
         var selectedCode = null;
 
-        var globe = Globe()(document.getElementById('globe'))
+        var globeBox = document.getElementById('globe');
+        var globe = Globe()(globeBox)
+          .width(globeBox.clientWidth)
+          .height(globeBox.clientHeight)
           .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
           .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
           .pointsData(GC)
@@ -171,6 +176,11 @@
         globe.controls().autoRotate = true;
         globe.controls().autoRotateSpeed = 0.6;
         globe.pointOfView({ lat: 20, lng: 10, altitude: 2.5 });
+        // 칼럼 폭이 바뀌면 캔버스도 따라가게 (고정 크기 캔버스가 레이아웃을 밀어내는 것 방지)
+        window.addEventListener('resize', function () {
+          globe.width(globeBox.clientWidth);
+          globe.height(globeBox.clientHeight);
+        });
 
         var panel = document.getElementById('panel');
         function openPanel(d, autoplayRandom) {
