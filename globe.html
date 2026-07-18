@@ -113,7 +113,10 @@
     } else {
       document.getElementById('player').innerHTML = '';
     }
-    globe.pointOfView({ lat: d.lat, lng: d.lng, altitude: 2.0 }, 900); // 잘리지 않는 선까지만 줌인
+    // 줌인하지 않고 회전만 한다 (줌인하면 임베드 프레임 높이에 따라 구가 잘림).
+    // 유저가 직접 줌아웃해뒀다면 그 레벨을 존중하고, 최소 2.3은 보장.
+    var alt = Math.max(globe.pointOfView().altitude, 2.3);
+    globe.pointOfView({ lat: d.lat, lng: d.lng, altitude: alt }, 900);
   }
   function play(id) {
     document.getElementById('player').innerHTML =
