@@ -110,6 +110,7 @@ const PAGE_CSS = `
   .cam-cat-edit, .cam-country-edit { background: var(--card-bg); border: 1px solid var(--border); border-radius: 999px; color: var(--text); font-size: 0.75rem; padding: 3px 8px; cursor: pointer; max-width: 45%; }
   .cam-cond { background: var(--card-bg); border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.72rem; padding: 2px 8px; cursor: pointer; }
   .cam-cond.on { color: var(--accent); border-color: var(--accent); }
+  .cam-cat-edit.saved, .cam-country-edit.saved { border-color: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,.3); }
   .panel-filter { display: flex; gap: 8px; }
   .panel-filter button { background: var(--card-bg); color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; cursor: pointer; }
   .panel-filter button.active { color: #fff; border-color: var(--accent); }
@@ -298,6 +299,7 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
   .cam-cat-edit, .cam-country-edit { background: #161b22; border: 1px solid #2a2f3a; border-radius: 999px; color: #e6e6e6; font-size: 0.75rem; padding: 3px 8px; cursor: pointer; max-width: 45%; }
   .cam-cond { background: #161b22; border: 1px solid #2a2f3a; border-radius: 999px; color: #9aa4b2; font-size: 0.72rem; padding: 2px 8px; cursor: pointer; }
   .cam-cond.on { color: #ff3b3b; border-color: #ff3b3b; }
+  .cam-cat-edit.saved, .cam-country-edit.saved { border-color: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,.3); }
   .panel-filter { display: flex; gap: 8px; }
   .panel-filter button { background: #161b22; color: #9aa4b2; border: 1px solid #2a2f3a; border-radius: 999px; padding: 3px 10px; font-size: 0.75rem; cursor: pointer; }
   .panel-filter button.active { color: #fff; border-color: #ff3b3b; }
@@ -384,19 +386,28 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
         }).join('');
       }
       meta.innerHTML = html;
+      function flash(el) { el.classList.add('saved'); setTimeout(function () { el.classList.remove('saved'); }, 1000); }
       meta.querySelector('.cam-cat-edit').addEventListener('change', function () {
-        var val = this.value;
-        window.__sbc.rpc('set_stream_category', { p_video_id: id, p_category: val }).then(function (r) { if (!r.error) v[3] = val; });
+        var el = this, val = el.value;
+        window.__sbc.rpc('set_stream_category', { p_video_id: id, p_category: val }).then(function (r) {
+          if (r.error) { alert(r.error.message); } else { v[3] = val; flash(el); }
+        });
       });
       meta.querySelector('.cam-country-edit').addEventListener('change', function () {
-        window.__sbc.rpc('set_stream_country', { p_video_id: id, p_country: this.value || null });
+        var el = this;
+        window.__sbc.rpc('set_stream_country', { p_video_id: id, p_country: el.value || null }).then(function (r) {
+          if (r.error) { alert(r.error.message); } else { flash(el); }
+        });
       });
       [].forEach.call(meta.querySelectorAll('.cam-cond'), function (btn) {
         btn.addEventListener('click', function () {
           var t = btn.dataset.t, i = tags.indexOf(t);
           if (i >= 0) tags.splice(i, 1); else tags.push(t);
           btn.classList.toggle('on');
-          window.__sbc.rpc('set_stream_tags', { p_video_id: id, p_tags: tags.slice() }).then(function (r) { if (!r.error) v[4] = tags.join(','); });
+          window.__sbc.rpc('set_stream_tags', { p_video_id: id, p_tags: tags.slice() }).then(function (r) {
+            if (r.error) { alert(r.error.message); btn.classList.toggle('on'); if (i >= 0) tags.push(t); else tags.splice(tags.indexOf(t), 1); }
+            else { v[4] = tags.join(','); }
+          });
         });
       });
     } else {
@@ -856,19 +867,28 @@ async function main() {
               }).join('');
             }
             meta.innerHTML = html;
+            var flash = function (el) { el.classList.add('saved'); setTimeout(function () { el.classList.remove('saved'); }, 1000); };
             meta.querySelector('.cam-cat-edit').addEventListener('change', function () {
-              var val = this.value;
-              window.__sbc.rpc('set_stream_category', { p_video_id: id, p_category: val }).then(function (r) { if (!r.error) v[3] = val; });
+              var el = this, val = el.value;
+              window.__sbc.rpc('set_stream_category', { p_video_id: id, p_category: val }).then(function (r) {
+                if (r.error) { alert(r.error.message); } else { v[3] = val; flash(el); }
+              });
             });
             meta.querySelector('.cam-country-edit').addEventListener('change', function () {
-              window.__sbc.rpc('set_stream_country', { p_video_id: id, p_country: this.value || null });
+              var el = this;
+              window.__sbc.rpc('set_stream_country', { p_video_id: id, p_country: el.value || null }).then(function (r) {
+                if (r.error) { alert(r.error.message); } else { flash(el); }
+              });
             });
             [].forEach.call(meta.querySelectorAll('.cam-cond'), function (btn) {
               btn.addEventListener('click', function () {
                 var t = btn.dataset.t, i = tags.indexOf(t);
                 if (i >= 0) tags.splice(i, 1); else tags.push(t);
                 btn.classList.toggle('on');
-                window.__sbc.rpc('set_stream_tags', { p_video_id: id, p_tags: tags.slice() }).then(function (r) { if (!r.error) v[4] = tags.join(','); });
+                window.__sbc.rpc('set_stream_tags', { p_video_id: id, p_tags: tags.slice() }).then(function (r) {
+                  if (r.error) { alert(r.error.message); btn.classList.toggle('on'); if (i >= 0) tags.push(t); else tags.splice(tags.indexOf(t), 1); }
+                  else { v[4] = tags.join(','); }
+                });
               });
             });
           } else {
