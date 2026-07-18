@@ -378,8 +378,8 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
       var opts = Object.keys(CATM).map(function (k) {
         return '<option value="' + k + '"' + (k === cat ? ' selected' : '') + '>' + (CATM[k].icon ? CATM[k].icon + ' ' : '') + (CATM[k][UILANG] || CATM[k].en || k) + '</option>';
       }).join('');
-      html += '<select class="cam-cat-edit">' + opts + '</select>';
       html += '<select class="cam-country-edit">' + countryOpts(window.__panelCode) + '</select>';
+      html += '<select class="cam-cat-edit">' + opts + '</select>';
       if (v[2] === 0) {
         html += Object.keys(CONDLABEL).map(function (t) {
           return '<button type="button" class="cam-cond' + (tags.indexOf(t) >= 0 ? ' on' : '') + '" data-t="' + t + '">' + CONDLABEL[t] + '</button>';
@@ -859,8 +859,8 @@ async function main() {
             var opts = Object.keys(CATM).map(function (k) {
               return '<option value="' + k + '"' + (k === cat ? ' selected' : '') + '>' + (CATM[k].icon ? CATM[k].icon + ' ' : '') + (CATM[k][UILANG] || CATM[k].en || k) + '</option>';
             }).join('');
-            html += '<select class="cam-cat-edit">' + opts + '</select>';
             html += '<select class="cam-country-edit">' + countryOpts(window.__panelCode) + '</select>';
+            html += '<select class="cam-cat-edit">' + opts + '</select>';
             if (v[2] === 0) {
               html += Object.keys(CONDLABEL).map(function (t) {
                 return '<button type="button" class="cam-cond' + (tags.indexOf(t) >= 0 ? ' on' : '') + '" data-t="' + t + '">' + CONDLABEL[t] + '</button>';
