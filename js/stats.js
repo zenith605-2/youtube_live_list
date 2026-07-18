@@ -90,6 +90,44 @@ async function loadStats() {
   `;
 }
 
+async function loadSourceStats() {
+  const body = document.getElementById('sourceTableBody');
+  const { data, error } = await sb
+    .from('visit_log')
+    .select('source')
+    .limit(50000);
+  if (error) {
+    body.innerHTML = `<tr><td colspan="3">${escapeHtml(error.message)}</td></tr>`;
+    return;
+  }
+  if (!data?.length) {
+    body.innerHTML = '<tr><td colspan="3">No visitor records yet.</td></tr>';
+    return;
+  }
+  const counts = new Map();
+  for (const r of data) {
+    const s = r.source || 'unknown'; // 043 이전 기록은 source가 없음 → unknown
+    counts.set(s, (counts.get(s) || 0) + 1);
+  }
+  const total = data.length;
+  const rows = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  body.innerHTML = rows.map(([source, n]) => {
+    const pct = Math.round((n / total) * 1000) / 10;
+    return `
+      <tr>
+        <td>${escapeHtml(source)}</td>
+        <td>${n}</td>
+        <td>
+          <div class="country-bar-wrap">
+            <div class="country-bar" style="width:${pct}%"></div>
+            <span class="country-pct">${pct}%</span>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
 async function loadCountryStats() {
   const body = document.getElementById('countryTableBody');
   const { data, error } = await sb
@@ -191,7 +229,7 @@ async function init() {
   }
   statsGate.hidden = true;
   statsContent.hidden = false;
-  await Promise.all([loadStats(), loadRecentVisitors(), loadCountryStats()]);
+  await Promise.all([loadStats(), loadRecentVisitors(), loadSourceStats(), loadCountryStats()]);
 }
 
 init();

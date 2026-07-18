@@ -1864,6 +1864,26 @@ async function fetchVisitorGeo() {
   return { ip: null, country: null };
 }
 
+// 유입 경로(referrer)를 정규화한다. trackVisit은 그날 첫 방문 시 1회만 기록되므로
+// 여기서 잡히는 referrer는 "사이트에 처음 들어온 출처"(reddit/google/직접 등)가 된다.
+function visitSource() {
+  const ref = document.referrer || '';
+  if (!ref) return 'direct';
+  let host = '';
+  try { host = new URL(ref).hostname.replace(/^www\./, ''); } catch { return 'direct'; }
+  if (host === location.hostname.replace(/^www\./, '')) return 'internal';
+  if (/(^|\.)reddit\.com$|(^|\.)redd\.it$/.test(host)) return 'reddit';
+  if (/(^|\.)google\./.test(host)) return 'google';
+  if (/(^|\.)bing\.com$/.test(host)) return 'bing';
+  if (/(^|\.)duckduckgo\.com$/.test(host)) return 'duckduckgo';
+  if (/(^|\.)(x\.com|twitter\.com|t\.co)$/.test(host)) return 'x';
+  if (/(^|\.)news\.ycombinator\.com$/.test(host)) return 'hackernews';
+  if (/(^|\.)(youtube\.com|youtu\.be)$/.test(host)) return 'youtube';
+  if (/(^|\.)facebook\.com$/.test(host)) return 'facebook';
+  if (/(^|\.)t\.me$/.test(host)) return 'telegram';
+  return host; // 그 외는 출처 호스트명 그대로 기록
+}
+
 async function trackVisit() {
   // 관리자 본인의 방문은 통계에서 제외. 한 번 관리자로 로그인한 기기는 표시를 남겨서
   // 이후 로그아웃 상태로 둘러볼 때도 집계되지 않는다.
@@ -1877,7 +1897,13 @@ async function trackVisit() {
   // "오늘"의 기준은 한국 자정 (UTC 기준이면 KST 09:00에 리셋되어 헷갈림)
   const todayKst = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
   const geo = await fetchVisitorGeo();
-  await sb.from('visit_log').insert({ visit_date: todayKst, visitor_key: visitorKey, ip: geo.ip, country: geo.country });
+  const row = { visit_date: todayKst, visitor_key: visitorKey, ip: geo.ip, country: geo.country, source: visitSource() };
+  const { error } = await sb.from('visit_log').insert(row);
+  // 043 마이그레이션(source 컬럼) 실행 전이면 컬럼 없음 에러가 나므로 source 빼고 재시도해 방문 집계는 유지
+  if (error && /source/i.test(error.message || '')) {
+    delete row.source;
+    await sb.from('visit_log').insert(row);
+  }
   // 같은 날 중복 방문 시 유니크 제약 위반 에러가 나는데, 의도된 동작이라 무시한다.
 }
 

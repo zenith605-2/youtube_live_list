@@ -42,6 +42,21 @@
     </div>
     <p class="stats-note">"Existing/Valid/Offline/New/Deleted" are recorded by the daily midnight-KST update job (from the day it first runs after this feature was added). Signups and Visitors are counted live from the database.</p>
 
+    <h2 class="stats-subheading">Traffic Sources (all time)</h2>
+    <p class="stats-note">Where visitors came from on their first visit (reddit, google, direct, etc.). Google Search Console only shows google search — this shows everything else too.</p>
+    <div class="stats-table-wrap">
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Visits</th>
+            <th style="width:50%">Share</th>
+          </tr>
+        </thead>
+        <tbody id="sourceTableBody"></tbody>
+      </table>
+    </div>
+
     <h2 class="stats-subheading">Visitors by Country (all time)</h2>
     <div class="stats-table-wrap">
       <table class="stats-table">
