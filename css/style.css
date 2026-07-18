@@ -722,6 +722,30 @@ body {
   font-weight: 600;
 }
 
+/* 전용 Cheers 페이지: 가로 티커가 아니라 세로 방명록(신규가 위, 오래된 게 아래) */
+.feedback-page .cheer-list {
+  flex-direction: column;
+  overflow-x: visible;
+  gap: 10px;
+  max-width: 640px;
+  margin: 20px auto 0;
+}
+.feedback-page .cheer-chip {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-size: 0.9rem;
+  text-align: left;
+  line-height: 1.4;
+}
+
 .cheer-empty {
   color: var(--muted);
   font-size: 0.78rem;
