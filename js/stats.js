@@ -284,18 +284,19 @@ async function loadReturningVisitors() {
     if (!r.ip) continue;
     const day = r.visit_date || kstDateOf(r.created_at);
     let e = byIp.get(r.ip);
-    if (!e) { e = { days: new Set(), country: r.country || '–', first: day, last: day }; byIp.set(r.ip, e); }
+    if (!e) { e = { days: new Set(), total: 0, country: r.country || '–', first: day, last: day }; byIp.set(r.ip, e); }
     e.days.add(day);
+    e.total += 1; // 총 방문 기록 수 (같은 날 여러 기기면 일수보다 큼)
     if (r.country) e.country = r.country;
     if (day < e.first) e.first = day;
     if (day > e.last) e.last = day;
   }
   const rows = [...byIp.entries()]
-    .map(([ip, e]) => ({ ip, country: e.country, visits: e.days.size, first: e.first, last: e.last }))
-    .filter(r => r.visits >= 2)
-    .sort((a, b) => b.visits - a.visits || (a.last < b.last ? 1 : -1));
+    .map(([ip, e]) => ({ ip, country: e.country, days: e.days.size, total: e.total, first: e.first, last: e.last }))
+    .filter(r => r.days >= 2)
+    .sort((a, b) => b.days - a.days || b.total - a.total || (a.last < b.last ? 1 : -1));
   if (!rows.length) {
-    body.innerHTML = '<tr><td colspan="5">No returning visitors yet (same IP on 2+ days).</td></tr>';
+    body.innerHTML = '<tr><td colspan="6">No returning visitors yet (same IP on 2+ days).</td></tr>';
     return;
   }
   body.innerHTML = rows.map((r, i) => `
@@ -303,7 +304,8 @@ async function loadReturningVisitors() {
       <td>${i + 1}</td>
       <td class="ip-cell">${escapeHtml(r.ip)}</td>
       <td>${escapeHtml(r.country)}</td>
-      <td><strong>${r.visits}</strong></td>
+      <td>${r.days}</td>
+      <td><strong>${r.total}</strong></td>
       <td>${escapeHtml(r.first)} → ${escapeHtml(r.last)}</td>
     </tr>`).join('');
 }
