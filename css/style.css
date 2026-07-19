@@ -1762,6 +1762,8 @@ body {
   display: flex;
   flex-direction: column;
 }
+/* display:flex가 hidden 속성을 덮어쓰지 않게 — 닫힌 패널은 확실히 숨김 */
+.account-video-panel[hidden] { display: none; }
 .account-video-panel-head {
   display: flex;
   align-items: center;
