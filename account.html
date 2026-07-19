@@ -101,6 +101,16 @@
   </div>
 </main>
 
+<!-- 제목 클릭 시 오른쪽에서 영상 미리보기 (월드맵 패널과 같은 개념) -->
+<aside id="videoPanel" class="account-video-panel" hidden>
+  <div class="account-video-panel-head">
+    <span id="videoPanelTitle" class="account-video-panel-title"></span>
+    <button type="button" id="videoPanelClose" class="modal-close" aria-label="Close">&times;</button>
+  </div>
+  <div class="account-video-panel-player"><iframe id="videoPanelFrame" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+  <div id="videoPanelMeta" class="account-video-panel-meta"></div>
+</aside>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="js/i18n.js"></script>

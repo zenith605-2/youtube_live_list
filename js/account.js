@@ -497,19 +497,20 @@ async function loadCategoryLog() {
     adminCategoryLog.textContent = t('admin_catlog_empty');
     return;
   }
-  // 영상 제목과 변경자 닉네임을 붙여서 보여준다
+  // 영상 정보(제목/썸네일/카테고리/조건)와 변경자 닉네임을 붙여서 보여준다
   const videoIds = [...new Set(data.map(r => r.video_id))];
   const userIds = [...new Set(data.map(r => r.changed_by).filter(Boolean))];
   const [videosRes, usersRes] = await Promise.all([
-    sb.from('streams').select('video_id, title').in('video_id', videoIds),
+    sb.from('streams').select('video_id, title, thumbnail, category, tags, content_type').in('video_id', videoIds),
     userIds.length ? sb.from('profiles').select('id, display_name').in('id', userIds) : Promise.resolve({ data: [] }),
   ]);
-  const titleMap = new Map((videosRes.data || []).map(v => [v.video_id, v.title]));
+  const streamMap = new Map((videosRes.data || []).map(v => [v.video_id, v]));
   const nameMap = new Map((usersRes.data || []).map(u => [u.id, u.display_name]));
 
   adminCategoryLog.innerHTML = `
     <div class="admin-table-wrap"><table class="admin-table">
       <thead><tr>
+        <th></th>
         <th>${escapeHtml(t('admin_col_title'))}</th>
         <th>${escapeHtml(t('admin_col_before'))}</th>
         <th>${escapeHtml(t('admin_col_after'))}</th>
@@ -517,21 +518,70 @@ async function loadCategoryLog() {
         <th>${escapeHtml(t('admin_col_date'))}</th>
         <th></th>
       </tr></thead>
-      <tbody>${data.map(r => `
+      <tbody>${data.map(r => {
+        const s = streamMap.get(r.video_id);
+        const thumb = s?.thumbnail || `https://i.ytimg.com/vi/${r.video_id}/mqdefault.jpg`;
+        return `
         <tr class="admin-row">
-          <td class="admin-td-title">${escapeHtml((titleMap.get(r.video_id) || r.video_id).slice(0, 60))}</td>
+          <td class="admin-td-thumb"><img class="admin-thumb-sm" src="${escapeHtml(thumb)}" alt="" loading="lazy"></td>
+          <td class="admin-td-title"><a href="#" class="panel-play-link" data-video-id="${escapeHtml(r.video_id)}">${escapeHtml((s?.title || r.video_id).slice(0, 60))}</a></td>
           <td>${escapeHtml(r.old_category || '(none)')}</td>
           <td><b>${escapeHtml(r.new_category)}</b></td>
           <td>${escapeHtml(nameMap.get(r.changed_by) || t('anonymous'))}</td>
           <td class="admin-td-date">${new Date(r.changed_at).toLocaleString()}</td>
-          <td>${r.old_category && titleMap.has(r.video_id) ? `<button type="button" class="catlog-revert-btn" data-video-id="${escapeHtml(r.video_id)}" data-old-category="${escapeHtml(r.old_category)}">${escapeHtml(t('admin_catlog_revert'))}</button>` : ''}</td>
-        </tr>`).join('')}
+          <td>${r.old_category && s ? `<button type="button" class="catlog-revert-btn" data-video-id="${escapeHtml(r.video_id)}" data-old-category="${escapeHtml(r.old_category)}">${escapeHtml(t('admin_catlog_revert'))}</button>` : ''}</td>
+        </tr>`;
+      }).join('')}
       </tbody>
     </table></div>`;
   enhanceAdminTable(adminCategoryLog);
+  catlogStreamMap = streamMap; // 패널 열 때 카테고리/조건 표시에 사용
 }
 
+// ===== 영상 미리보기 패널 (제목 클릭 → 오른쪽에서 재생 + 카테고리/조건 표시) =====
+let catlogStreamMap = new Map();
+let categoryLabelMap = null; // key -> {label, icon}
+const videoPanel = document.getElementById('videoPanel');
+const videoPanelFrame = document.getElementById('videoPanelFrame');
+const videoPanelTitle = document.getElementById('videoPanelTitle');
+const videoPanelMeta = document.getElementById('videoPanelMeta');
+
+async function getCategoryLabelMap() {
+  if (categoryLabelMap) return categoryLabelMap;
+  const { data } = await sb.from('categories').select('key, label_en, label_ko, label_ja, label_zh, label_es, icon');
+  const langCol = { ko: 'label_ko', ja: 'label_ja', zh: 'label_zh', es: 'label_es' }[currentLang];
+  categoryLabelMap = new Map((data || []).map(c => [c.key, {
+    label: (langCol && c[langCol]) || c.label_en || c.key,
+    icon: c.icon || '',
+  }]));
+  return categoryLabelMap;
+}
+
+async function openVideoPanel(videoId) {
+  const s = catlogStreamMap.get(videoId);
+  videoPanel.hidden = false;
+  videoPanelTitle.textContent = (s?.title || videoId).slice(0, 80);
+  videoPanelFrame.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&playsinline=1`;
+  const [catMap, tagMap] = await Promise.all([getCategoryLabelMap(), getTagLabelMap()]);
+  const cat = s?.category ? catMap.get(s.category) : null;
+  const catHtml = cat ? `<span class="panel-badge">${escapeHtml(cat.icon)} ${escapeHtml(cat.label)}</span>` : '';
+  const tagHtml = (s?.tags || []).map(tg => `<span class="panel-badge panel-badge-tag">${escapeHtml(tagMap.get(tg) || tg)}</span>`).join('');
+  videoPanelMeta.innerHTML = catHtml + tagHtml || `<span class="admin-meta">–</span>`;
+}
+
+function closeVideoPanel() {
+  videoPanel.hidden = true;
+  videoPanelFrame.src = 'about:blank'; // 재생 중지
+}
+document.getElementById('videoPanelClose')?.addEventListener('click', closeVideoPanel);
+
 adminCategoryLog?.addEventListener('click', async (e) => {
+  const play = e.target.closest('.panel-play-link');
+  if (play) {
+    e.preventDefault();
+    openVideoPanel(play.dataset.videoId);
+    return;
+  }
   const btn = e.target.closest('.catlog-revert-btn');
   if (!btn) return;
   btn.disabled = true;

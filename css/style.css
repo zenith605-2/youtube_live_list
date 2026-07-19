@@ -1731,6 +1731,69 @@ body {
 }
 .admin-filter-ctrl:focus { outline: none; border-color: var(--accent); }
 
+/* 액션(마지막) 열이 좁아 버튼 글자가 세로로 꺾이던 것 방지 */
+.admin-table td:last-child { white-space: nowrap; }
+
+/* 목록 썸네일 (카테고리 변경 이력 등) */
+.admin-td-thumb { width: 84px; }
+.admin-thumb-sm {
+  width: 80px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+.panel-play-link { color: var(--text); text-decoration: none; }
+.panel-play-link:hover { color: var(--accent); }
+
+/* 오른쪽 영상 미리보기 패널 (월드맵 패널과 같은 개념) */
+.account-video-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(420px, 100vw);
+  height: 100vh;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.45);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+}
+.account-video-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.account-video-panel-title {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-video-panel-player { aspect-ratio: 16 / 9; background: #000; }
+.account-video-panel-player iframe { width: 100%; height: 100%; border: 0; }
+.account-video-panel-meta {
+  padding: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.panel-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  font-size: 0.82rem;
+  color: var(--text);
+}
+.panel-badge-tag { color: var(--muted); }
+
 /* 계정/관리자 탭 */
 .account-tabs {
   display: flex;
