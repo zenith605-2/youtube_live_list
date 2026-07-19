@@ -528,7 +528,7 @@ async function loadCategoryLog() {
           <td>${escapeHtml(r.old_category || '(none)')}</td>
           <td><b>${escapeHtml(r.new_category)}</b></td>
           <td>${escapeHtml(nameMap.get(r.changed_by) || t('anonymous'))}</td>
-          <td class="admin-td-date">${new Date(r.changed_at).toLocaleString()}</td>
+          <td class="admin-td-date">${new Date(r.changed_at).toLocaleString(undefined, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
           <td>${r.old_category && s ? `<button type="button" class="catlog-revert-btn" data-video-id="${escapeHtml(r.video_id)}" data-old-category="${escapeHtml(r.old_category)}">${escapeHtml(t('admin_catlog_revert'))}</button>` : ''}</td>
         </tr>`;
       }).join('')}

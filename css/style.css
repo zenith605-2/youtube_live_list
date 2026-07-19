@@ -1673,7 +1673,7 @@ body {
 }
 /* 필터가 숨긴 행: 위 display:table-row가 hidden 속성(display:none)을 덮어쓰지 않게 */
 .admin-table .admin-row[hidden] { display: none; }
-.admin-table .admin-td-title { max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-table .admin-td-title { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .admin-table .admin-td-title a { color: var(--text); text-decoration: none; }
 .admin-table .admin-td-title a:hover { color: var(--accent); }
 .admin-table .admin-td-date { white-space: nowrap; color: var(--muted); font-size: 0.78rem; }
