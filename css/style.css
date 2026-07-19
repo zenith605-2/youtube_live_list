@@ -2258,8 +2258,6 @@ body {
   flex-direction: column;
   gap: 8px;
   margin: 12px 0;
-  max-height: 420px;
-  overflow-y: auto;
 }
 
 .favorite-row {
