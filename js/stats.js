@@ -177,7 +177,7 @@ function fmtStay(secs) {
 }
 
 let visitorPage = 0;
-const VISITOR_PAGE_SIZE = 50;
+const VISITOR_PAGE_SIZE = 10;
 let visitorRowsHtml = []; // 행 HTML 캐시 (페이지 전환 시 재조회 없이 슬라이스)
 
 function renderVisitorPage() {

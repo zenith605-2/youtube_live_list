@@ -44,7 +44,7 @@ function enhanceAdminTable(container) {
   if (!headRow || bodyRows.length < 2) return; // 1행이면 필터 무의미
 
   const colCount = headRow.children.length;
-  const PAGE_SIZE = 50;
+  const PAGE_SIZE = 10;
   let page = 0;
   const filterRow = document.createElement('tr');
   filterRow.className = 'admin-filter-row';
