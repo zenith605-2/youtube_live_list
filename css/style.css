@@ -2611,3 +2611,22 @@ body {
     -webkit-box-orient: vertical;
   }
 }
+
+/* ===== 홈 상단 미니 세계지도 (World Map 부각) ===== */
+.home-map {
+  margin: 0 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  padding: 12px 14px;
+}
+.home-map-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.home-map-title { font-size: 1rem; font-weight: 600; color: var(--text); }
+.home-map-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.home-map-wrap { position: relative; height: 300px; border-radius: 8px; overflow: hidden; background: #0d1117; }
+@media (max-width: 700px) { .home-map-wrap { height: 200px; } }
+.home-map-wrap svg { width: 100%; height: 100%; display: block; }
+.home-map-wrap path { stroke: #0d1117; stroke-width: 0.5; }
+.home-map-wrap path[data-clickable] { cursor: pointer; }
+.home-map-wrap path[data-clickable]:hover { filter: brightness(1.6); stroke: #fff; }
+.home-map-tip { position: fixed; z-index: 20; background: rgba(0,0,0,.85); border: 1px solid var(--border); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 0.85rem; pointer-events: none; white-space: nowrap; }

@@ -1763,6 +1763,60 @@ function populateCountryFilter() {
   countryFilter.value = countries.includes(current) ? current : '';
 }
 
+// ===== 홈 상단 미니 세계지도 =====
+let homeMapPaths = null; // world_map_paths.json 캐시
+function homeHeat(n) {
+  if (!n) return '#232a35';
+  if (n >= 200) return '#ff3b3b';
+  if (n >= 50) return '#ff7a45';
+  if (n >= 10) return '#ffb020';
+  return '#f2e284';
+}
+async function renderHomeMap() {
+  const section = document.getElementById('homeMap');
+  const svg = document.getElementById('homeMapSvg');
+  if (!section || !svg) return;
+  try {
+    if (!homeMapPaths) homeMapPaths = await (await fetch('config/world_map_paths.json')).json();
+  } catch (e) { return; } // 지도 데이터 로드 실패 시 조용히 스킵
+  // 나라별 캠 수 집계 (현재 로드된 전체 스트림 기준)
+  const counts = {};
+  for (const s of streams) { if (s.country) counts[s.country] = (counts[s.country] || 0) + 1; }
+  const tip = document.getElementById('homeMapTip');
+  svg.innerHTML = Object.entries(homeMapPaths).map(([code, v]) => {
+    const n = counts[code] || 0;
+    const name = countryDisplayName(code) || v.name || code;
+    return `<path d="${v.path}" fill="${homeHeat(n)}" data-code="${code}" data-name="${name.replace(/"/g, '&quot;')}" data-count="${n}"${n ? ' data-clickable="1"' : ''}></path>`;
+  }).join('');
+  section.hidden = false;
+  // 상호작용 (한 번만 바인딩)
+  if (svg.dataset.bound) return;
+  svg.dataset.bound = '1';
+  svg.addEventListener('mousemove', (e) => {
+    const p = e.target.closest('path'); if (!p) { tip.hidden = true; return; }
+    tip.textContent = `${p.dataset.name} · ${p.dataset.count} ${t('map_cams_label') || 'cams'}`;
+    tip.hidden = false; tip.style.left = (e.clientX + 14) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+  });
+  svg.addEventListener('mouseleave', () => { tip.hidden = true; });
+  svg.addEventListener('click', (e) => {
+    const p = e.target.closest('path[data-clickable]'); if (!p) return;
+    const code = p.dataset.code;
+    // 해당 나라로 필터 (필터 옵션에 있으면 선택 → 기존 change 파이프라인 재사용)
+    if ([...countryFilter.options].some(o => o.value === code)) {
+      countryFilter.value = code;
+      countryFilter.dispatchEvent(new Event('change'));
+    }
+    document.querySelector('.filter-bar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+document.getElementById('homeMapRandom')?.addEventListener('click', () => {
+  const pool = currentFiltered();
+  const list = pool.length ? pool : streams;
+  if (!list.length) return;
+  const s = list[Math.floor(Math.random() * list.length)];
+  openCard(s.videoId, s.title);
+});
+
 async function loadStreams() {
   selectedForDelete.clear();
   channelGroupsFullySelected.clear();
@@ -1792,6 +1846,7 @@ async function loadStreams() {
   populateCountryFilter();
   renderSidebar();
   render(currentFiltered());
+  renderHomeMap(); // 홈 상단 미니 세계지도 (World Map 부각)
   loadCountryWeather(); // 카드에 현지 시간·날씨 표시 (비동기, 완료되는 대로 채워짐)
 }
 
