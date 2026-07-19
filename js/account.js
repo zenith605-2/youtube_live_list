@@ -32,9 +32,10 @@ document.querySelectorAll('.account-tab-btn').forEach(btn => {
 let currentUser = null;
 let isAdmin = false;
 
-// ===== 관리자 테이블 공용: 엑셀식 열 필터 =====
+// ===== 관리자 테이블 공용: 엑셀식 열 필터 + 50개 단위 페이지네이션 =====
 // 헤더 아래에 필터 행을 삽입한다. 열의 고유값이 적으면(≤12) 드롭다운, 많으면 검색 입력.
-// 빈 헤더(버튼 열)는 필터 없음. 테이블은 리로드 때마다 다시 그려지므로 매번 호출한다.
+// 빈 헤더(버튼 열)는 필터 없음. 필터 통과분을 50개씩 나눠 보여주고 아래에 ◀ 1/N ▶ 페이저.
+// 테이블은 리로드 때마다 다시 그려지므로 매번 호출한다.
 function enhanceAdminTable(container) {
   const table = container.querySelector('.admin-table');
   if (!table) return;
@@ -43,25 +44,47 @@ function enhanceAdminTable(container) {
   if (!headRow || bodyRows.length < 2) return; // 1행이면 필터 무의미
 
   const colCount = headRow.children.length;
+  const PAGE_SIZE = 50;
+  let page = 0;
   const filterRow = document.createElement('tr');
   filterRow.className = 'admin-filter-row';
   const controls = []; // 열별 필터 컨트롤 (없으면 null)
 
-  const applyFilters = () => {
-    for (const row of bodyRows) {
-      let show = true;
-      for (let i = 0; i < colCount; i++) {
-        const ctrl = controls[i];
-        if (!ctrl || !ctrl.value) continue;
-        const cell = (row.children[i]?.textContent || '').trim();
-        if (ctrl.tagName === 'SELECT' ? cell !== ctrl.value : !cell.toLowerCase().includes(ctrl.value.toLowerCase())) {
-          show = false;
-          break;
-        }
-      }
-      row.hidden = !show;
+  const pager = document.createElement('div');
+  pager.className = 'admin-pager';
+  container.appendChild(pager);
+  pager.addEventListener('click', (e) => {
+    const b = e.target.closest('.pager-btn');
+    if (!b || b.disabled) return;
+    page += Number(b.dataset.nav);
+    applyView();
+  });
+
+  const matchRow = (row) => {
+    for (let i = 0; i < colCount; i++) {
+      const ctrl = controls[i];
+      if (!ctrl || !ctrl.value) continue;
+      const cell = (row.children[i]?.textContent || '').trim();
+      if (ctrl.tagName === 'SELECT' ? cell !== ctrl.value : !cell.toLowerCase().includes(ctrl.value.toLowerCase())) return false;
     }
+    return true;
   };
+
+  const applyView = () => {
+    const matching = bodyRows.filter(matchRow);
+    const pages = Math.max(1, Math.ceil(matching.length / PAGE_SIZE));
+    if (page >= pages) page = pages - 1;
+    if (page < 0) page = 0;
+    const shown = new Set(matching.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE));
+    for (const row of bodyRows) row.hidden = !shown.has(row);
+    pager.hidden = pages <= 1;
+    pager.innerHTML = `
+      <button type="button" class="pager-btn" data-nav="-1" ${page === 0 ? 'disabled' : ''}>◀</button>
+      <span class="pager-info">${page + 1} / ${pages} · ${matching.length}</span>
+      <button type="button" class="pager-btn" data-nav="1" ${page === pages - 1 ? 'disabled' : ''}>▶</button>`;
+  };
+
+  const applyFilters = () => { page = 0; applyView(); }; // 필터 바뀌면 1페이지로
 
   for (let i = 0; i < colCount; i++) {
     const th = document.createElement('th');
@@ -95,6 +118,7 @@ function enhanceAdminTable(container) {
     filterRow.appendChild(th);
   }
   headRow.parentElement.appendChild(filterRow);
+  applyView(); // 초기 페이징 적용 (50개 초과분 숨김 + 페이저 표시)
 }
 
 function escapeHtml(str) {
@@ -471,7 +495,7 @@ async function loadAiLog() {
   let query = sb.from('ai_review_log')
     .select('*')
     .order('reviewed_at', { ascending: false })
-    .limit(aiLogDate ? 500 : 100);
+    .limit(500);
   if (aiLogVerdict) query = query.eq('verdict', aiLogVerdict);
   if (aiLogDate) {
     const start = new Date(`${aiLogDate}T00:00:00`); // 로컬 자정 기준
@@ -571,7 +595,7 @@ async function loadCategoryLog() {
     .from('category_changes')
     .select('*')
     .order('changed_at', { ascending: false })
-    .limit(50);
+    .limit(500);
   if (error) {
     adminCategoryLog.textContent = error.message;
     return;

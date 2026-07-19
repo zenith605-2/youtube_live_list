@@ -1736,6 +1736,27 @@ body {
 /* 액션(마지막) 열이 좁아 버튼 글자가 세로로 꺾이던 것 방지 */
 .admin-table td:last-child { white-space: nowrap; }
 
+/* 테이블 페이저: 50개 단위 ◀ 1/N ▶ */
+.admin-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.pager-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.78rem;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.pager-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.pager-btn:disabled { opacity: 0.35; cursor: default; }
+.pager-info { font-size: 0.8rem; color: var(--muted); }
+
 /* AI 검수 로그 달력: 날짜 클릭 → 그날 기록만 표시 */
 .ailog-calendar { max-width: 360px; margin-bottom: 14px; }
 .cal-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
