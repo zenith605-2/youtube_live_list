@@ -32,6 +32,71 @@ document.querySelectorAll('.account-tab-btn').forEach(btn => {
 let currentUser = null;
 let isAdmin = false;
 
+// ===== 관리자 테이블 공용: 엑셀식 열 필터 =====
+// 헤더 아래에 필터 행을 삽입한다. 열의 고유값이 적으면(≤12) 드롭다운, 많으면 검색 입력.
+// 빈 헤더(버튼 열)는 필터 없음. 테이블은 리로드 때마다 다시 그려지므로 매번 호출한다.
+function enhanceAdminTable(container) {
+  const table = container.querySelector('.admin-table');
+  if (!table) return;
+  const headRow = table.querySelector('thead tr');
+  const bodyRows = [...table.querySelectorAll('tbody tr')];
+  if (!headRow || bodyRows.length < 2) return; // 1행이면 필터 무의미
+
+  const colCount = headRow.children.length;
+  const filterRow = document.createElement('tr');
+  filterRow.className = 'admin-filter-row';
+  const controls = []; // 열별 필터 컨트롤 (없으면 null)
+
+  const applyFilters = () => {
+    for (const row of bodyRows) {
+      let show = true;
+      for (let i = 0; i < colCount; i++) {
+        const ctrl = controls[i];
+        if (!ctrl || !ctrl.value) continue;
+        const cell = (row.children[i]?.textContent || '').trim();
+        if (ctrl.tagName === 'SELECT' ? cell !== ctrl.value : !cell.toLowerCase().includes(ctrl.value.toLowerCase())) {
+          show = false;
+          break;
+        }
+      }
+      row.hidden = !show;
+    }
+  };
+
+  for (let i = 0; i < colCount; i++) {
+    const th = document.createElement('th');
+    const label = headRow.children[i].textContent.trim();
+    if (!label) { controls.push(null); filterRow.appendChild(th); continue; }
+
+    const values = [...new Set(bodyRows.map(r => (r.children[i]?.textContent || '').trim()))].filter(Boolean);
+    let ctrl;
+    if (values.length <= 12) {
+      ctrl = document.createElement('select');
+      const all = document.createElement('option');
+      all.value = '';
+      all.textContent = t('admin_filter_all');
+      ctrl.appendChild(all);
+      for (const v of values.sort((a, b) => a.localeCompare(b))) {
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v.length > 28 ? v.slice(0, 27) + '…' : v;
+        ctrl.appendChild(opt);
+      }
+      ctrl.addEventListener('change', applyFilters);
+    } else {
+      ctrl = document.createElement('input');
+      ctrl.type = 'search';
+      ctrl.placeholder = '🔍';
+      ctrl.addEventListener('input', applyFilters);
+    }
+    ctrl.className = 'admin-filter-ctrl';
+    controls.push(ctrl);
+    th.appendChild(ctrl);
+    filterRow.appendChild(th);
+  }
+  headRow.parentElement.appendChild(filterRow);
+}
+
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str ?? '';
@@ -91,6 +156,7 @@ async function loadFlagged() {
       </tr></thead>
       <tbody>${data.map(flaggedRowHtml).join('')}</tbody>
     </table></div>`;
+  enhanceAdminTable(adminFlaggedList);
 }
 
 adminFlaggedList.addEventListener('click', async (e) => {
@@ -164,6 +230,7 @@ async function loadUsers() {
       </tr></thead>
       <tbody>${rows.map(userRowHtml).join('')}</tbody>
     </table></div>`;
+  enhanceAdminTable(adminUserList);
 }
 
 adminUserList.addEventListener('click', async (e) => {
@@ -367,6 +434,7 @@ async function loadAiLog() {
       </tr></thead>
       <tbody>${bodyRows}</tbody>
     </table></div>`;
+  enhanceAdminTable(adminAiLog);
 }
 
 document.querySelectorAll('.ailog-tab').forEach(tab => {
@@ -460,6 +528,7 @@ async function loadCategoryLog() {
         </tr>`).join('')}
       </tbody>
     </table></div>`;
+  enhanceAdminTable(adminCategoryLog);
 }
 
 adminCategoryLog?.addEventListener('click', async (e) => {

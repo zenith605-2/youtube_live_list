@@ -1687,6 +1687,24 @@ body {
   margin-right: 6px;
 }
 
+/* 열 필터 행 (엑셀식): 헤더 바로 아래, 열별 드롭다운/검색 */
+.admin-filter-row th {
+  background: var(--bg);
+  padding: 4px 6px;
+}
+.admin-filter-ctrl {
+  width: 100%;
+  min-width: 60px;
+  box-sizing: border-box;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.78rem;
+  padding: 4px 6px;
+}
+.admin-filter-ctrl:focus { outline: none; border-color: var(--accent); }
+
 /* 계정/관리자 탭 */
 .account-tabs {
   display: flex;
