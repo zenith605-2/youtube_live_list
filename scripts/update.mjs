@@ -864,6 +864,38 @@ async function main() {
     .lt('changed_at', new Date(Date.now() - 90 * 86400 * 1000).toISOString());
   if (catLogCleanErr) console.error('카테고리 이력 정리 실패:', catLogCleanErr.message);
 
+  // 같은 채널 + 완전 동일 제목 중복 정리: 대표 1개만 남긴다.
+  // (채널이 같은 캠을 여러 스트림/아카이브로 반복 올리면 그리드에 똑같은 카드가 나란히 뜸)
+  // 라이브 우선, 그다음 최신 등록순으로 대표를 고르고 나머지는 삭제 + 차단목록(재수집 방지).
+  try {
+    const dupRows = await fetchAllRows('streams', 'video_id, title, channel_title, content_type, added_at');
+    const dupGroups = new Map();
+    for (const r of dupRows || []) {
+      if (!r.title || !r.channel_title) continue;
+      const k = `${r.channel_title}||${r.title}`;
+      if (!dupGroups.has(k)) dupGroups.set(k, []);
+      dupGroups.get(k).push(r);
+    }
+    const dupIds = [];
+    for (const rows of dupGroups.values()) {
+      if (rows.length < 2) continue;
+      rows.sort((a, b) =>
+        ((b.content_type === 'live') - (a.content_type === 'live'))
+        || String(b.added_at || '').localeCompare(String(a.added_at || '')));
+      dupIds.push(...rows.slice(1).map(r => r.video_id));
+    }
+    if (dupIds.length) {
+      const { error: dupDelErr } = await supabase.from('streams').delete().in('video_id', dupIds);
+      if (dupDelErr) console.error('중복 삭제 실패:', dupDelErr.message);
+      else {
+        await supabase.from('blocklist').upsert(dupIds.map(id => ({ video_id: id })), { onConflict: 'video_id' });
+        console.log(`동일 제목+채널 중복 삭제: ${dupIds.length}건 (차단목록 등록으로 재수집 방지)`);
+      }
+    }
+  } catch (err) {
+    console.error('중복 검사 실패:', err.message);
+  }
+
   // 생존확인 루프에서 발견한 기존 세로 영상 삭제 + 차단목록 등록
   if (verticalIds.length) {
     const { error: verticalErr } = await supabase.from('streams').delete().in('video_id', verticalIds);

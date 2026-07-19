@@ -617,25 +617,27 @@ async function loadCategoryLog() {
   adminCategoryLog.innerHTML = `
     <div class="admin-table-wrap"><table class="admin-table">
       <thead><tr>
+        <th>#</th>
+        <th>${escapeHtml(t('admin_col_date'))}</th>
         <th></th>
         <th>${escapeHtml(t('admin_col_title'))}</th>
         <th>${escapeHtml(t('admin_col_before'))}</th>
         <th>${escapeHtml(t('admin_col_after'))}</th>
         <th>${escapeHtml(t('admin_col_by'))}</th>
-        <th>${escapeHtml(t('admin_col_date'))}</th>
         <th></th>
       </tr></thead>
-      <tbody>${data.map(r => {
+      <tbody>${data.map((r, idx) => {
         const s = streamMap.get(r.video_id);
         const thumb = s?.thumbnail || `https://i.ytimg.com/vi/${r.video_id}/mqdefault.jpg`;
         return `
         <tr class="admin-row">
+          <td class="admin-td-num">${idx + 1}</td>
+          <td class="admin-td-date">${new Date(r.changed_at).toLocaleString(undefined, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
           <td class="admin-td-thumb"><img class="admin-thumb-sm" src="${escapeHtml(thumb)}" alt="" loading="lazy"></td>
           <td class="admin-td-title"><a href="#" class="panel-play-link" data-video-id="${escapeHtml(r.video_id)}">${escapeHtml((s?.title || r.video_id).slice(0, 60))}</a></td>
           <td>${escapeHtml(r.old_category || '(none)')}</td>
           <td><b>${escapeHtml(r.new_category)}</b></td>
           <td>${escapeHtml(nameMap.get(r.changed_by) || t('anonymous'))}</td>
-          <td class="admin-td-date">${new Date(r.changed_at).toLocaleString(undefined, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
           <td>${r.old_category && s ? `<button type="button" class="catlog-revert-btn" data-video-id="${escapeHtml(r.video_id)}" data-old-category="${escapeHtml(r.old_category)}">${escapeHtml(t('admin_catlog_revert'))}</button>` : ''}</td>
         </tr>`;
       }).join('')}
