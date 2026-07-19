@@ -13,6 +13,7 @@ const ROOT = path.resolve(__dirname, '..');
 const KEYWORDS_PATH = path.join(ROOT, 'config', 'keywords.json');
 const KEYWORDS_VIDEO_PATH = path.join(ROOT, 'config', 'keywords-video.json');
 const EXCLUDE_KEYWORDS_PATH = path.join(ROOT, 'config', 'exclude-keywords.json');
+const NO_EMBED_KEYWORDS_PATH = path.join(ROOT, 'config', 'no-embed-keywords.json');
 
 const API_KEY = process.env.YOUTUBE_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -361,10 +362,11 @@ function selectRotatingSubset(list, maxPerRun) {
 }
 
 async function main() {
-  const [keywordsRaw, keywordsVideoRaw, excludeRaw, categoriesResult, blocklistRows, blockedChannelRows] = await Promise.all([
+  const [keywordsRaw, keywordsVideoRaw, excludeRaw, noEmbedRaw, categoriesResult, blocklistRows, blockedChannelRows] = await Promise.all([
     readFile(KEYWORDS_PATH, 'utf-8'),
     readFile(KEYWORDS_VIDEO_PATH, 'utf-8').catch(() => '{"keywords":[]}'),
     readFile(EXCLUDE_KEYWORDS_PATH, 'utf-8').catch(() => '{"keywords":[]}'),
+    readFile(NO_EMBED_KEYWORDS_PATH, 'utf-8').catch(() => '{"keywords":[]}'),
     supabase.from('categories').select('key, keywords'),
     fetchAllRows('blocklist', 'video_id'),
     fetchAllRows('blocked_channels', 'channel_id'),
@@ -372,6 +374,7 @@ async function main() {
   const keywords = JSON.parse(keywordsRaw).keywords || [];
   const keywordsVideo = JSON.parse(keywordsVideoRaw).keywords || [];
   const excludeKeywords = (JSON.parse(excludeRaw).keywords || []).map(k => k.toLowerCase());
+  const noEmbedKeywords = (JSON.parse(noEmbedRaw).keywords || []).map(k => k.toLowerCase());
   if (categoriesResult.error) throw categoriesResult.error;
   const categoryRows = (categoriesResult.data || []).filter(c => c.key !== 'other');
   const blockedIds = new Set(blocklistRows.map(r => r.video_id));
@@ -380,6 +383,11 @@ async function main() {
   const isExcluded = (title, channelTitle) => {
     const haystack = `${title} ${channelTitle}`.toLowerCase();
     return excludeKeywords.some(k => haystack.includes(k));
+  };
+  // 저작권 관리로 외부표시가 막힌(=API는 embeddable=true지만 실제 재생 불가) 채널: 삭제 대신 embeddable=false 강제
+  const isNoEmbed = (title, channelTitle) => {
+    const haystack = `${title} ${channelTitle}`.toLowerCase();
+    return noEmbedKeywords.some(k => haystack.includes(k));
   };
 
   const classifyCategory = (title, channelTitle) => {
@@ -463,8 +471,9 @@ async function main() {
     validCount += 1;
     const patch = { video_id: row.video_id };
     let needsUpdate = false;
-    if (HAS_EMBEDDABLE && row.embeddable !== embOk) {
-      patch.embeddable = embOk; // 임베드 차단/해제 상태를 매일 최신으로 반영
+    const embFinal = isNoEmbed(title, channelTitle) ? false : embOk; // 저작권 차단 채널은 강제 false
+    if (HAS_EMBEDDABLE && row.embeddable !== embFinal) {
+      patch.embeddable = embFinal; // 임베드 차단/해제 상태를 매일 최신으로 반영
       needsUpdate = true;
     }
     if (contentTypeFixed) {
@@ -793,7 +802,7 @@ async function main() {
       published_at: c.contentType === 'video' ? (info.snippet?.publishedAt || null) : null,
       duration_seconds: c.contentType === 'video' ? parseDurationSeconds(info.contentDetails?.duration) : null,
       tags: c.contentType === 'video' ? tagsFromTitle(c.title) : [],
-      ...(HAS_EMBEDDABLE ? { embeddable: info?.status?.embeddable !== false } : {}),
+      ...(HAS_EMBEDDABLE ? { embeddable: isNoEmbed(c.title, c.channelTitle) ? false : info?.status?.embeddable !== false } : {}),
     };
   });
 
