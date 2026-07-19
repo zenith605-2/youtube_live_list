@@ -92,6 +92,7 @@ function enhanceAdminTable(container) {
     if (!label) { controls.push(null); filterRow.appendChild(th); continue; }
 
     const values = [...new Set(bodyRows.map(r => (r.children[i]?.textContent || '').trim()))].filter(Boolean);
+    if (!values.length) { controls.push(null); filterRow.appendChild(th); continue; } // 텍스트 없는 열(썸네일 등)은 필터 생략
     let ctrl;
     if (values.length <= 12) {
       ctrl = document.createElement('select');
@@ -346,7 +347,7 @@ async function refreshFavoritesSection() {
     <div class="admin-table-wrap"><table class="admin-table">
       <thead><tr>
         <th>#</th>
-        <th></th>
+        <th>${escapeHtml(t('account_export_thumbnail_label'))}</th>
         <th>${escapeHtml(t('admin_col_title'))}</th>
         <th>${escapeHtml(t('admin_col_channel'))}</th>
         <th>${escapeHtml(t('filter_type'))}</th>
@@ -547,7 +548,7 @@ async function loadAiLog() {
     <div class="admin-table-wrap"><table class="admin-table">
       <thead><tr>
         <th></th>
-        <th></th>
+        <th>${escapeHtml(t('account_export_thumbnail_label'))}</th>
         <th>${escapeHtml(t('admin_col_title'))}</th>
         <th>${escapeHtml(t('admin_col_channel'))}</th>
         <th>${escapeHtml(t('admin_col_reason'))}</th>
@@ -639,7 +640,7 @@ async function loadCategoryLog() {
       <thead><tr>
         <th>#</th>
         <th>${escapeHtml(t('admin_col_date'))}</th>
-        <th></th>
+        <th>${escapeHtml(t('account_export_thumbnail_label'))}</th>
         <th>${escapeHtml(t('admin_col_title'))}</th>
         <th>${escapeHtml(t('admin_col_before'))}</th>
         <th>${escapeHtml(t('admin_col_after'))}</th>
