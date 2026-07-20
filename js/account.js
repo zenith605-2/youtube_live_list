@@ -153,8 +153,9 @@ async function checkAdmin() {
 function flaggedRowHtml(r) {
   return `
     <tr class="admin-row" data-video-id="${escapeHtml(r.video_id)}" data-visibility="${r.visibility}">
+      <td class="admin-td-thumb"><img class="admin-thumb-sm" src="https://i.ytimg.com/vi/${encodeURIComponent(r.video_id)}/mqdefault.jpg" alt="" loading="lazy"></td>
       <td class="admin-td-title">
-        <a href="https://www.youtube.com/watch?v=${encodeURIComponent(r.video_id)}" target="_blank" rel="noopener">${escapeHtml((r.title || r.video_id).slice(0, 60))}</a>
+        <a href="#" class="panel-play-link" data-video-id="${escapeHtml(r.video_id)}" data-title="${escapeHtml((r.title || '').slice(0, 80))}">${escapeHtml((r.title || r.video_id).slice(0, 60))}</a>
       </td>
       <td>${escapeHtml(r.channel_title || t('admin_no_info'))}</td>
       <td>👎 ${r.downvote_count || 0}</td>
@@ -186,6 +187,7 @@ async function loadFlagged() {
   adminFlaggedList.innerHTML = `
     <div class="admin-table-wrap"><table class="admin-table">
       <thead><tr>
+        <th>${escapeHtml(t('account_export_thumbnail_label'))}</th>
         <th>${escapeHtml(t('admin_col_title'))}</th>
         <th>${escapeHtml(t('admin_col_channel'))}</th>
         <th>👎</th>
@@ -198,6 +200,13 @@ async function loadFlagged() {
 }
 
 adminFlaggedList.addEventListener('click', async (e) => {
+  // 제목 클릭은 유튜브로 나가지 않고 오른쪽 프리뷰 패널에서 재생
+  const play = e.target.closest('.panel-play-link');
+  if (play) {
+    e.preventDefault();
+    openVideoPanel(play.dataset.videoId, play.dataset.title);
+    return;
+  }
   const row = e.target.closest('.admin-row');
   if (!row) return;
   const videoId = row.dataset.videoId;
