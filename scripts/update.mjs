@@ -346,7 +346,7 @@ async function searchVideoByKeyword(keyword, maxResults = 25) {
 // (채널 스캔이 키워드 검색보다 신규 발견 효율이 훨씬 좋음 — 채널당 카메라가 여러 개인 경우가 많아서).
 const SEARCH_BUDGET_PER_RUN = 95;
 const MAX_LIVE_KEYWORDS_PER_RUN = 20;
-const MAX_VIDEO_KEYWORDS_PER_RUN = 15;
+const MAX_VIDEO_KEYWORDS_PER_RUN = 20;
 
 // 키워드 목록이 위 한도보다 길어지면, 매일 같은 키워드만 반복하지 않도록 날짜 기준으로 창을 옮겨가며 선택한다.
 // (키워드가 한도 이하면 매일 전부 사용 — 지금은 두 목록 다 한도 이내라 항상 전체 사용됨)
