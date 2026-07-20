@@ -41,7 +41,7 @@ async function loadStats() {
       .eq('status', 'live')
       .or('approval_status.is.null,approval_status.neq.pending')
       .or('visibility.is.null,visibility.eq.listed'),
-    sb.from('visit_stats').select('total_count').maybeSingle(), // 누적 방문자(최근 90일 순방문)
+    sb.from('visit_stats').select('total_count').maybeSingle(), // 전체 기간 순 방문자 (방문 기록은 영구 보관, IP만 90일 후 익명화)
   ]);
 
   const daily = dailyRes.data || [];
@@ -87,7 +87,7 @@ async function loadStats() {
     <div class="stats-card"><span class="stats-card-num">${totalStreams}</span><span class="stats-card-label">Total streams</span><span class="stats-card-sub">Visible ${visibleRes.count ?? '?'} · Pending ${pendingRes.count ?? '?'} · Offline ${offlineRes.count ?? '?'}</span></div>
     <div class="stats-card"><span class="stats-card-num">${totalUsers}</span><span class="stats-card-label">Total users</span></div>
     <div class="stats-card"><span class="stats-card-num">${visitsByDate.get(today) ?? 0}</span><span class="stats-card-label">Visitors today</span></div>
-    <div class="stats-card"><span class="stats-card-num">${visitStatsRes.data?.total_count ?? '?'}</span><span class="stats-card-label">Total visitors</span><span class="stats-card-sub">last 90 days</span></div>
+    <div class="stats-card"><span class="stats-card-num">${visitStatsRes.data?.total_count ?? '?'}</span><span class="stats-card-label">Total visitors</span><span class="stats-card-sub">all time</span></div>
     <div class="stats-card"><span class="stats-card-num">${signupsByDate.get(today) ?? 0}</span><span class="stats-card-label">Signups today</span></div>
   `;
 }

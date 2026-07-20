@@ -878,12 +878,23 @@ async function main() {
     ['category_changes', 'changed_at'],
     ['tag_changes', 'changed_at'],
     ['ai_review_log', 'reviewed_at'],
-    ['visit_log', 'created_at'],
     ['visit_durations', 'created_at'],
   ]) {
     const { error: logCleanErr } = await supabase.from(logTable).delete().lt(tsCol, cutoff90);
     if (logCleanErr) console.error(`${logTable} 정리 실패:`, logCleanErr.message);
   }
+
+  // 방문 기록(visit_log)은 삭제하지 않고 IP만 90일 뒤 비운다.
+  // - 행을 남겨야 visit_stats의 total_count(= count(distinct visitor_key))가 "전체 기간" 순 방문자가 된다.
+  //   (지우면 Total이 최근 90일치로 쪼그라들고 시간이 지나면 줄어들기까지 한다)
+  // - 개인정보인 IP만 90일 보관 후 익명화 → 통계는 영구, 개인정보는 최소 기간
+  const { error: anonErr, count: anonCount } = await supabase
+    .from('visit_log')
+    .update({ ip: null }, { count: 'exact' })
+    .lt('created_at', cutoff90)
+    .not('ip', 'is', null);
+  if (anonErr) console.error('방문 기록 IP 익명화 실패:', anonErr.message);
+  else if (anonCount) console.log(`방문 기록 IP 익명화(90일 경과): ${anonCount}건`);
 
   // 같은 채널 + 완전 동일 제목의 "라이브" 중복 정리: 같은 실시간 피드가 여러 스트림으로
   // 잡힌 경우만 대표 1개(최신)를 남긴다. 일반 영상(video)은 제목이 같아도 다른 날짜의
