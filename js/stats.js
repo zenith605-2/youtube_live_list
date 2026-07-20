@@ -227,15 +227,15 @@ async function loadRecentVisitors() {
   // RLS 정책상 관리자 토큰으로만 읽힌다 (일반 유저/게스트는 빈 결과)
   const { data, error } = await sb
     .from('visit_log')
-    .select('created_at, country, ip, visitor_key')
+    .select('created_at, country, ip, visitor_key, source')
     .order('created_at', { ascending: false })
     .limit(500);
   if (error) {
-    body.innerHTML = `<tr><td colspan="5">${escapeHtml(error.message)}</td></tr>`;
+    body.innerHTML = `<tr><td colspan="6">${escapeHtml(error.message)}</td></tr>`;
     return;
   }
   if (!data?.length) {
-    body.innerHTML = '<tr><td colspan="5">No visitor records yet.</td></tr>';
+    body.innerHTML = '<tr><td colspan="6">No visitor records yet.</td></tr>';
     return;
   }
 
@@ -262,6 +262,7 @@ async function loadRecentVisitors() {
       <td>${fmtTime(r.created_at)}</td>
       <td>${escapeHtml(r.country || '–')}</td>
       <td class="ip-cell">${escapeHtml(r.ip || '–')}</td>
+      <td>${escapeHtml(r.source || '–')}</td>
       <td>${escapeHtml((r.visitor_key || '').slice(0, 8))}</td>
       <td>${fmtStay(stayByKeyDate.get(`${r.visitor_key}|${kstDateOf(r.created_at)}`))}</td>
     </tr>
