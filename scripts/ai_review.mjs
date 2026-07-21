@@ -58,7 +58,7 @@ async function fetchPending() {
 function buildPrompt(items, categoryKeys) {
   return `You are a strict moderator for a directory of REAL-WORLD live cameras and ambient footage: fixed/mounted live cams (traffic, city streets, beaches, harbors, airports, train stations, nature/wildlife, skylines, plazas), dashcam driving footage, and first-person walking-tour videos.
 
-APPROVE only if the video is genuinely one of these — a fixed camera view, or real-world ambient / walking / driving footage, with NO host talking to the camera and no edited entertainment.
+APPROVE only if the video is genuinely one of these — a fixed camera view, or real-world ambient / walking / driving footage, with NO host talking to the camera and no edited entertainment. Raw CCTV / security-camera recordings of real events (earthquakes, accidents, fires, storms) ARE acceptable — this directory explicitly collects them; approve them as long as the footage itself is camera-recorded reality, not a news-program edit with anchors or graphics.
 
 REJECT if it is: news broadcast or anchor desk, talk show, music video, a 24/7 music / BGM / lofi / relaxing-sound / white-noise / sleep livestream (reject even if the title says LIVE and shows a static image), gaming, reaction/commentary, tutorial, product review, talking-head vlog, sports match broadcast, movie/TV clip, or clearly unrelated/staged content.
 
@@ -131,15 +131,28 @@ async function callGemini(prompt) {
 
 // 이미 승인(공개)된 카탈로그를 오래된 순으로 다시 판정하기 위한 조회.
 // ai_checked_at이 오래됐거나(없는) 것부터 순환 재검수 → 전체가 시간을 두고 한 바퀴 돈다.
+// 사람이 직접 제보/등록한 것(source='user')은 제외 — 사람이 검토해 넣은 걸 AI가 함부로 내리지 않는다.
 async function fetchApprovedToAudit(limit) {
   const { data, error } = await supabase
     .from('streams')
     .select('video_id, title, channel_title, category, country, country_source, content_type')
     .eq('approval_status', 'approved')
+    .neq('source', 'user')
     .order('ai_checked_at', { ascending: true, nullsFirst: true })
     .limit(limit);
   if (error) throw error;
   return data || [];
+}
+
+// 관리자가 한 번 "살리기(복구)"로 AI 판정을 뒤집은 영상 목록.
+// 재검수가 같은 영상을 2주마다 또 숨기는 루프를 막기 위해, 이 목록은 다시 숨기지 않는다.
+async function fetchAdminRestoredIds() {
+  const { data, error } = await supabase
+    .from('ai_review_log')
+    .select('video_id')
+    .eq('resolution', 'restored');
+  if (error) { console.error('복구 이력 조회 실패:', error.message); return new Set(); }
+  return new Set((data || []).map((r) => r.video_id));
 }
 
 // 대기 큐 검수: 승인/거절제안/보류. (기존 동작 유지)
@@ -214,6 +227,7 @@ async function reviewPending(pending, categoryKeys, validCat) {
 async function auditApproved(categoryKeys, validCat) {
   const rows = await fetchApprovedToAudit(AUDIT_PER_RUN);
   if (!rows.length) { console.log('재검수: 승인 카탈로그 없음'); return; }
+  const adminRestoredIds = await fetchAdminRestoredIds(); // 관리자가 살린 건 다시 숨기지 않는다
   console.log(`승인 카탈로그 재검수: ${rows.length}건 (오래된 순)`);
   const now = new Date().toISOString();
   let hidden = 0, kept = 0, failed = 0;
@@ -239,7 +253,7 @@ async function auditApproved(categoryKeys, validCat) {
       const verdict = v && ['approve', 'reject', 'unsure'].includes(v.verdict) ? v.verdict : 'unsure';
       const patch = { ai_checked_at: now }; // 재검수했음을 표시 → 순환
 
-      if (verdict === 'reject') {
+      if (verdict === 'reject' && !adminRestoredIds.has(s.video_id)) {
         patch.visibility = 'hidden'; // 공개에서만 내림(삭제 아님) — Keep으로 복구 가능
         hidden += 1;
         logRows.push({
