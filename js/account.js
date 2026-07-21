@@ -654,7 +654,7 @@ async function loadAiLog() {
   // AI가 반영한 카테고리/조건(스트림 현재 값)을 함께 보여주고 바로 수정할 수 있게 조인
   const aiIds = [...new Set(data.map(r => r.video_id))];
   const [{ data: aiStreamRows }, aiCatMap, aiTagMap] = await Promise.all([
-    sb.from('streams').select('video_id, category, tags, content_type').in('video_id', aiIds),
+    sb.from('streams').select('video_id, category, tags, content_type, country').in('video_id', aiIds),
     getCategoryLabelMap(),
     getTagLabelMap(),
   ]);
@@ -675,14 +675,28 @@ async function loadAiLog() {
     return `<div class="ailog-tags">${[...aiTagMap.entries()].map(([k, label]) =>
       `<span class="ailog-tag-chip ${(s.tags || []).includes(k) ? 'on' : ''}" data-video-id="${escapeHtml(r.video_id)}" data-tag="${escapeHtml(k)}">${escapeHtml(label)}</span>`).join('')}</div>`;
   };
+  // 국가: AI가 판별해 스트림에 반영한 값 (클릭하면 select로 바뀌어 바로 수정 가능)
+  const countryName = (code) => {
+    try { return new Intl.DisplayNames([currentLang], { type: 'region' }).of(code) || code; } catch { return code; }
+  };
+  const countryCell = (r) => {
+    const s = aiStreamMap.get(r.video_id);
+    if (!s) return '<span class="admin-meta">–</span>';
+    const c = s.country;
+    return `<span class="ailog-country" data-video-id="${escapeHtml(r.video_id)}" data-country="${escapeHtml(c || '')}" title="${escapeHtml(t('admin_country_edit_hint'))}">${c ? `${escapeHtml(countryName(c))} (${escapeHtml(c)})` : '🌍 ?'}</span>`;
+  };
 
   const bodyRows = data.map(r => {
     const badge = r.verdict === 'approve' ? '✅' : r.verdict === 'reject' ? '🚫' : '❓';
     // 거절 제안 + 아직 미처리인 것만 확정삭제/복구 버튼 노출
-    const actions = (r.verdict === 'reject' && r.resolution === 'pending')
+    let actions = (r.verdict === 'reject' && r.resolution === 'pending')
       ? `<button type="button" class="ailog-del-btn" data-video-id="${escapeHtml(r.video_id)}">${escapeHtml(t('admin_ailog_confirm_delete'))}</button>
          <button type="button" class="ailog-keep-btn" data-video-id="${escapeHtml(r.video_id)}">${escapeHtml(t('admin_ailog_restore'))}</button>`
       : (r.resolution !== 'pending' ? `<span class="admin-meta">${escapeHtml(r.resolution === 'deleted' ? t('admin_ailog_deleted') : t('admin_ailog_restored'))}</span>` : '');
+    // 승인/기타 행에도 삭제 버튼 (스트림이 아직 있을 때만) — 삭제 시 차단목록 등록 포함
+    if (!(r.verdict === 'reject' && r.resolution === 'pending') && aiStreamMap.has(r.video_id)) {
+      actions += ` <button type="button" class="ailog-del2-btn" data-video-id="${escapeHtml(r.video_id)}">🗑 ${escapeHtml(t('admin_delete_button'))}</button>`;
+    }
     return `
       <tr class="admin-row">
         <td>${badge}</td>
@@ -692,7 +706,8 @@ async function loadAiLog() {
         <td>${(() => { const s = aiStreamMap.get(r.video_id); return s ? (s.content_type === 'live' ? t('content_type_live') : t('content_type_video')) : '<span class="admin-meta">–</span>'; })()}</td>
         <td class="admin-td-cat">${catEditCell(r)}</td>
         <td class="admin-td-cond">${condCell(r)}</td>
-        <td class="admin-td-reason">${r.reason ? escapeHtml(r.reason) : ''}${r.suggested_country ? ` · 🌍 ${escapeHtml(r.suggested_country)}` : ''}</td>
+        <td class="admin-td-country">${countryCell(r)}</td>
+        <td class="admin-td-reason">${r.reason ? escapeHtml(r.reason) : ''}</td>
         <td class="admin-td-actions">${actions}</td>
       </tr>`;
   }).join('');
@@ -706,6 +721,7 @@ async function loadAiLog() {
         <th>${escapeHtml(t('filter_type'))}</th>
         <th>${escapeHtml(t('admin_col_category'))}</th>
         <th>${escapeHtml(t('admin_col_conditions'))}</th>
+        <th>${escapeHtml(t('filter_country'))}</th>
         <th>${escapeHtml(t('admin_col_reason'))}</th>
         <th></th>
       </tr></thead>
@@ -725,6 +741,16 @@ document.querySelectorAll('.ailog-tab').forEach(tab => {
 
 // AI 로그에서 카테고리 즉시 수정 (set_stream_category RPC — 변경 이력에도 남음)
 adminAiLog?.addEventListener('change', async (e) => {
+  const countrySel = e.target.closest('.ailog-country-select');
+  if (countrySel) {
+    countrySel.disabled = true;
+    const { error } = await sb.rpc('set_stream_country', { p_video_id: countrySel.dataset.videoId, p_country: countrySel.value || null });
+    countrySel.disabled = false;
+    if (error) { alert(error.message); return; }
+    countrySel.classList.add('saved');
+    setTimeout(() => countrySel.classList.remove('saved'), 1000);
+    return;
+  }
   const sel = e.target.closest('.ailog-cat-select');
   if (!sel) return;
   sel.disabled = true;
@@ -733,6 +759,17 @@ adminAiLog?.addEventListener('change', async (e) => {
   if (error) alert(error.message);
   else { sel.classList.add('saved'); setTimeout(() => sel.classList.remove('saved'), 1000); }
 });
+
+// 국가 텍스트 클릭 → 그 자리에서 select로 전환 (행이 500개라 전 행에 select를 미리 만들면 무거워서 지연 생성)
+const AILOG_CC = 'AD AE AF AG AL AM AO AR AT AU AZ BA BB BD BE BF BG BH BI BJ BN BO BR BS BT BW BY BZ CA CD CF CG CH CI CL CM CN CO CR CU CV CY CZ DE DJ DK DM DO DZ EC EE EG ER ES ET FI FJ FM FR GA GB GD GE GH GL GM GN GQ GR GT GW GY HK HN HR HT HU ID IE IL IN IQ IR IS IT JM JO JP KE KG KH KI KM KN KP KR KW KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MG MH MK ML MM MN MO MR MT MU MV MW MX MY MZ NA NE NG NI NL NO NP NZ OM PA PE PF PG PH PK PL PT PW PY QA RO RS RU RW SA SB SC SD SE SG SI SK SL SM SN SO SR SS ST SV SY SZ TD TG TH TJ TL TM TN TO TR TT TW TZ UA UG US UY UZ VC VE VN VU WS YE ZA ZM ZW'.split(' ');
+function ailogCountryOptions(current) {
+  const name = (code) => {
+    try { return new Intl.DisplayNames([currentLang], { type: 'region' }).of(code) || code; } catch { return code; }
+  };
+  const rows = AILOG_CC.map(c => [c, name(c)]).sort((a, b) => a[1].localeCompare(b[1], currentLang));
+  return `<option value="">🌍 ?</option><option value="XX" ${current === 'XX' ? 'selected' : ''}>International</option>` +
+    rows.map(([c, n]) => `<option value="${c}" ${current === c ? 'selected' : ''}>${escapeHtml(n)} (${c})</option>`).join('');
+}
 
 adminAiLog?.addEventListener('click', async (e) => {
   // 조건 태그 칩 토글 (일반 영상만) — 낙관적 갱신, 실패 시 되돌림
@@ -749,6 +786,28 @@ adminAiLog?.addEventListener('click', async (e) => {
   if (play) {
     e.preventDefault();
     openVideoPanel(play.dataset.videoId, play.dataset.title);
+    return;
+  }
+  // 국가 텍스트 클릭 → 수정용 select로 전환
+  const countrySpan = e.target.closest('.ailog-country');
+  if (countrySpan) {
+    const sel = document.createElement('select');
+    sel.className = 'ailog-cat-select ailog-country-select';
+    sel.dataset.videoId = countrySpan.dataset.videoId;
+    sel.innerHTML = ailogCountryOptions(countrySpan.dataset.country || '');
+    countrySpan.replaceWith(sel);
+    sel.focus();
+    return;
+  }
+  // 일반 삭제 버튼 (승인된 행 등) — 차단목록 등록 후 삭제해 재수집 방지
+  const del2 = e.target.closest('.ailog-del2-btn');
+  if (del2) {
+    if (!confirm(t('admin_delete_confirm'))) return;
+    del2.disabled = true;
+    await sb.from('blocklist').insert({ video_id: del2.dataset.videoId, blocked_by: currentUser.id });
+    const { error } = await sb.from('streams').delete().eq('video_id', del2.dataset.videoId);
+    if (error) { alert(error.message); del2.disabled = false; return; }
+    await loadAiLog();
     return;
   }
   const del = e.target.closest('.ailog-del-btn');

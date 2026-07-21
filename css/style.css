@@ -2695,3 +2695,9 @@ body {
 
 /* 차단목록 섹션의 소제목 (Blocked Channels) */
 .admin-subheading { margin: 20px 0 8px; font-size: 0.95rem; color: var(--text); }
+
+/* AI 로그 국가 열: 클릭하면 select로 바뀌는 텍스트 */
+.admin-td-country { min-width: 110px; }
+.ailog-country { cursor: pointer; border-bottom: 1px dashed var(--border); font-size: 0.8rem; }
+.ailog-country:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.ailog-del2-btn { white-space: nowrap; }
