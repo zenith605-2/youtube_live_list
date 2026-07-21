@@ -1363,7 +1363,7 @@ function syncUrlFromFilters() {
   if (countryFilter.value) p.set('country', countryFilter.value);
   if (qualityFilter.value) p.set('quality', qualityFilter.value);
   if (addedFilter.value) p.set('added', addedFilter.value);
-  if (sortSelect.value !== 'default') p.set('sort', sortSelect.value);
+  if (sortSelect.value !== 'newest') p.set('sort', sortSelect.value); // 기본(최신순)일 땐 URL에 안 남김
   if (searchInput.value.trim()) p.set('q', searchInput.value.trim());
   if (activeTags.size) p.set('tags', [...activeTags].join(','));
   const qs = p.toString();
@@ -1458,7 +1458,7 @@ document.getElementById('clearFiltersBtn').addEventListener('click', () => {
   countryFilter.value = '';
   qualityFilter.value = '';
   addedFilter.value = '';
-  sortSelect.value = 'default';
+  sortSelect.value = 'newest'; // 기본 정렬: 최신 등록순
   statusFilter.value = 'live';       // 기본값: 라이브만
   visibilityFilter.value = 'listed'; // 기본값: 정상 노출만
   favoritesOnlyCheckbox.checked = false;
