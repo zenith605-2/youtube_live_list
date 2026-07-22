@@ -697,16 +697,20 @@ async function loadAiLog() {
   const bodyRows = data.map(r => {
     const badge = r.verdict === 'approve' ? '✅' : r.verdict === 'reject' ? '🚫' : '❓';
     // 거절 제안 + 아직 미처리인 것만 확정삭제/복구 버튼 노출
-    let actions = (r.verdict === 'reject' && r.resolution === 'pending')
+    // 스트림이 이미 사라진 행(다른 화면에서 삭제됨)은 처리할 게 없으므로 버튼 대신 상태만 표시
+    const gone = !aiStreamMap.has(r.video_id);
+    let actions = (r.verdict === 'reject' && r.resolution === 'pending' && !gone)
       ? `<button type="button" class="ailog-del-btn" data-video-id="${escapeHtml(r.video_id)}">${escapeHtml(t('admin_ailog_confirm_delete'))}</button>
          <button type="button" class="ailog-keep-btn" data-video-id="${escapeHtml(r.video_id)}">${escapeHtml(t('admin_ailog_restore'))}</button>`
-      : (r.resolution !== 'pending' ? `<span class="admin-meta">${escapeHtml(r.resolution === 'deleted' ? t('admin_ailog_deleted') : t('admin_ailog_restored'))}</span>` : '');
+      : (r.resolution !== 'pending' || gone
+          ? `<span class="admin-meta">${escapeHtml(r.resolution === 'restored' ? t('admin_ailog_restored') : t('admin_ailog_deleted'))}</span>`
+          : '');
     // 승인/기타 행에도 삭제 버튼 (스트림이 아직 있을 때만) — 삭제 시 차단목록 등록 포함
     if (!(r.verdict === 'reject' && r.resolution === 'pending') && aiStreamMap.has(r.video_id)) {
       actions += ` <button type="button" class="ailog-del2-btn" data-video-id="${escapeHtml(r.video_id)}">🗑 ${escapeHtml(t('admin_delete_button'))}</button>`;
     }
-    // 거절제안 + 미처리 행만 일괄 처리 대상 (이미 처리된 행은 되돌릴 게 없음)
-    const selectable = r.verdict === 'reject' && r.resolution === 'pending';
+    // 거절제안 + 미처리 + 스트림이 남아 있는 행만 일괄 처리 대상
+    const selectable = r.verdict === 'reject' && r.resolution === 'pending' && !gone;
     return `
       <tr class="admin-row">
         <td class="admin-td-check">${selectable ? `<input type="checkbox" class="ailog-check" data-video-id="${escapeHtml(r.video_id)}">` : ''}</td>
@@ -723,7 +727,7 @@ async function loadAiLog() {
       </tr>`;
   }).join('');
   // 현재 목록에 일괄 처리 가능한(거절제안·미처리) 행이 있으면 상단에 일괄 바를 붙인다
-  const selectableCount = data.filter(r => r.verdict === 'reject' && r.resolution === 'pending').length;
+  const selectableCount = data.filter(r => r.verdict === 'reject' && r.resolution === 'pending' && aiStreamMap.has(r.video_id)).length;
   const bulkBar = selectableCount ? `
     <div class="ailog-bulk-bar">
       <label class="ailog-bulk-all"><input type="checkbox" id="ailogCheckAll"> ${escapeHtml(t('ailog_select_all'))}</label>
