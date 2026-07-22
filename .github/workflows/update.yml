@@ -77,6 +77,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add country c browse.html globe.html index.html sitemap.xml
+          git add country c browse.html globe.html index.html sitemap.xml data/streams.json
           # 작업 도중 main에 새 커밋이 올라왔을 수 있으므로 rebase 후 푸시 (경합으로 인한 push 실패 방지)
           git diff --cached --quiet || (git commit -m "Regenerate SEO pages" && git pull --rebase origin main && git push)

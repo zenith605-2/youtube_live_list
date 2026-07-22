@@ -614,6 +614,49 @@ async function writeGlobePage(countByCode, slugByCode, visible, today, CAT_META_
   console.log(`globe.html 생성 (국가 ${globeCountries.length}개)`);
 }
 
+// 프런트엔드(js/app.js mapRow)가 카드에 실제로 쓰는 컬럼만. `select('*')`로 29개를 다 받으면
+// 행마다 컬럼 이름이 통째로 반복돼 페이로드가 배로 커진다.
+const STREAM_COLUMNS = [
+  'video_id', 'title', 'channel_title', 'channel_id', 'thumbnail', 'matched_keyword',
+  'added_at', 'source', 'added_by', 'upvote_count', 'downvote_count', 'visibility',
+  'status', 'country', 'category', 'max_quality', 'started_at', 'content_type',
+  'published_at', 'approval_status', 'offline_since', 'duration_seconds', 'tags', 'embeddable',
+].join(',');
+
+// 목록 전체를 정적 스냅샷으로 떨어뜨린다. 방문자는 이 파일을 CDN에서 받으므로
+// 평상시 Supabase 조회가 0건이 되고, HN/레딧발 트래픽 급증에도 DB가 영향을 받지 않는다.
+// 낮 동안 바뀌는 값(투표수, 신규 제보)은 app.js가 작은 델타 쿼리로 따로 덧씌운다.
+async function writeStreamSnapshot(streams) {
+  // 카드에 같이 뜨는 댓글 수·제보자 닉네임도 함께 굽는다. 이 둘 때문에 방문자마다
+  // comments 전체(1000행 페이징)와 profiles를 또 조회하고 있었다.
+  const commentCounts = {};
+  for (const row of await fetchAllRows('comments', 'video_id')) {
+    commentCounts[row.video_id] = (commentCounts[row.video_id] || 0) + 1;
+  }
+  const submitterIds = [...new Set(streams.filter(s => s.source === 'user' && s.added_by).map(s => s.added_by))];
+  const submitterNames = {};
+  if (submitterIds.length) {
+    const { data } = await supabase.from('profiles').select('id,display_name').in('id', submitterIds);
+    for (const row of data || []) submitterNames[row.id] = row.display_name;
+  }
+
+  const snapshot = {
+    // 1단계 때 쓰던 같은 이름의 파일이 camelCase 스키마였다. app.js가 그걸 잘못 집어
+    // 빈 카드를 그리는 일이 없도록 포맷을 명시하고 프런트에서 검사한다.
+    format: 'streams-v2',
+    generatedAt: new Date().toISOString(),
+    count: streams.length,
+    commentCounts,
+    submitterNames,
+    streams,
+  };
+  const file = path.join(ROOT, 'data', 'streams.json');
+  await mkdir(path.dirname(file), { recursive: true }); // 저장소에 data/가 비어 있으면 git이 폴더를 안 남긴다
+  await writeFile(file, JSON.stringify(snapshot));
+  const kb = Math.round((await readFile(file)).length / 1024);
+  console.log(`data/streams.json 생성 (${streams.length}건, ${kb}KB)`);
+}
+
 function sortForPage(list) {
   // 라이브 먼저, 그 안에서는 추천 많은 순 → 최신 순
   return [...list].sort((a, b) =>
@@ -625,7 +668,7 @@ function sortForPage(list) {
 
 async function main() {
   const [streams, categoriesRes, indexTemplate] = await Promise.all([
-    fetchAllRows('streams', 'video_id,title,channel_title,thumbnail,content_type,category,country,approval_status,status,visibility,duration_seconds,upvote_count,downvote_count,max_quality,added_at,tags'),
+    fetchAllRows('streams', STREAM_COLUMNS),
     supabase.from('categories').select('key,label_en,label_ko,label_ja,label_zh,label_es,icon,sort_order').order('sort_order'),
     readFile(path.join(ROOT, 'index.html'), 'utf-8'),
   ]);
@@ -645,6 +688,7 @@ async function main() {
   ).length;
   const today = new Date().toISOString().slice(0, 10);
   console.log(`전체 ${streams.length}건 중 공개 ${visible.length}건으로 페이지 생성`);
+  await writeStreamSnapshot(streams);
 
   // 홈페이지 공유 미리보기(og:image/twitter:image)를 현재 최상위 라이브 캠 썸네일로 갱신 →
   // 링크를 공유할 때 실제 캠 미리보기가 뜨고, 매일 신선한 유효 이미지로 유지된다.

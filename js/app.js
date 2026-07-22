@@ -232,6 +232,14 @@ function formatRelativeTime(iso) {
   return rtf.format(Math.round(diffHr / 24), 'day');
 }
 
+// mapRow가 실제로 읽는 컬럼만. `select('*')`이면 안 쓰는 컬럼까지 29개가 따라오고,
+// PostgREST는 행마다 컬럼 이름을 통째로 반복하므로 페이로드가 크게 불어난다.
+// scripts/generate_pages.mjs의 STREAM_COLUMNS와 같은 목록을 유지해야 한다.
+const STREAM_COLUMNS = 'video_id,title,channel_title,channel_id,thumbnail,matched_keyword,' +
+  'added_at,source,added_by,upvote_count,downvote_count,visibility,status,country,category,' +
+  'max_quality,started_at,content_type,published_at,approval_status,offline_since,' +
+  'duration_seconds,tags,embeddable';
+
 function mapRow(row) {
   return {
     videoId: row.video_id,
@@ -1925,32 +1933,80 @@ function populateCountryFilter() {
   countryFilter.value = countries.includes(current) ? current : '';
 }
 
-async function loadStreams() {
-  selectedForDelete.clear();
-  channelGroupsFullySelected.clear();
-  updateBulkActionBar();
-  // Supabase는 조회당 최대 1000행만 주므로, 전체를 받으려면 페이지를 돌아야 한다
-  const PAGE = 1000;
+// 야간 작업이 구워둔 정적 스냅샷. 방문자는 이걸 CDN에서 받으므로 평상시 목록 조회로
+// Supabase를 때리지 않는다 (예전에는 방문 1회당 streams 4회 + comments 페이징이 나갔다).
+// 목록 자체는 하루 한 번 갱신이고, 낮 동안 바뀌는 값만 아래에서 델타로 덧씌운다.
+async function loadStreamsFromSnapshot() {
+  const res = await fetch('data/streams.json');
+  if (!res.ok) throw new Error(`snapshot ${res.status}`);
+  const snap = await res.json();
+  // 포맷 검사 필수: 1단계 때 같은 경로에 camelCase 스키마 파일이 있었고, 그걸 그대로 읽으면
+  // mapRow가 전부 undefined를 뽑아 카드가 통째로 깨진 채 "성공"해 버린다.
+  if (snap.format !== 'streams-v2') throw new Error(`snapshot format ${snap.format}`);
+  if (!Array.isArray(snap.streams) || !snap.streams.length) throw new Error('snapshot empty');
+
+  streams = snap.streams.map(mapRow);
+  for (const [id, name] of Object.entries(snap.submitterNames || {})) submitterNames.set(id, name);
+  const counts = snap.commentCounts || {};
+  for (const s of streams) s.commentCount = counts[s.videoId] || 0;
+
+  // 델타 1: 스냅샷 이후 등록된 영상 (유저 제보가 바로 안 보이면 곤란하다)
+  const { data: fresh } = await sb.from('streams').select(STREAM_COLUMNS)
+    .gt('added_at', snap.generatedAt).order('added_at', { ascending: false });
+  if (fresh?.length) {
+    const known = new Set(streams.map(s => s.videoId));
+    streams = [...fresh.filter(r => !known.has(r.video_id)).map(mapRow), ...streams];
+  }
+
+  // 델타 2: 투표수는 실시간이어야 한다. 0표인 행은 스냅샷 값 그대로라 받을 필요가 없다.
+  const { data: voted } = await sb.from('streams').select('video_id,upvote_count,downvote_count')
+    .or('upvote_count.gt.0,downvote_count.gt.0');
+  if (voted?.length) {
+    const byId = new Map(streams.map(s => [s.videoId, s]));
+    for (const r of voted) {
+      const s = byId.get(r.video_id);
+      if (s) { s.upvoteCount = r.upvote_count || 0; s.downvoteCount = r.downvote_count || 0; }
+    }
+  }
+  console.info(`streams: 스냅샷 ${snap.streams.length}건 (${snap.generatedAt}) + 신규 ${fresh?.length || 0}건`);
+}
+
+// 스냅샷이 없거나 깨졌을 때만 쓰는 예전 경로 (배포 직후 첫 야간 작업 전 등)
+async function loadStreamsFromDb() {
+  const PAGE = 1000; // Supabase는 조회당 최대 1000행만 준다
   const all = [];
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await sb
       .from('streams')
-      .select('*')
+      .select(STREAM_COLUMNS)
       .order('added_at', { ascending: false })
       .range(from, from + PAGE - 1);
-    if (error) {
-      emptyState.textContent = t('load_failed');
-      emptyState.hidden = false;
-      console.error(error);
-      return;
-    }
+    if (error) throw error;
     all.push(...(data || []));
     if (!data || data.length < PAGE) break;
   }
-
   streams = all.map(mapRow);
   await loadSubmitterNames(streams);
   await loadCommentCounts();
+}
+
+async function loadStreams() {
+  selectedForDelete.clear();
+  channelGroupsFullySelected.clear();
+  updateBulkActionBar();
+  try {
+    await loadStreamsFromSnapshot();
+  } catch (err) {
+    console.warn('스냅샷 로드 실패, DB로 대체:', err.message);
+    try {
+      await loadStreamsFromDb();
+    } catch (dbErr) {
+      emptyState.textContent = t('load_failed');
+      emptyState.hidden = false;
+      console.error(dbErr);
+      return;
+    }
+  }
   populateCountryFilter();
   renderSidebar();
   render(currentFiltered());
