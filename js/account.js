@@ -45,7 +45,9 @@ function enhanceAdminTable(container) {
 
   const colCount = headRow.children.length;
   const PAGE_SIZE = 10;
-  let page = 0;
+  // 삭제 등으로 표를 다시 그려도 보던 페이지가 유지되도록 컨테이너에 기억해둔다
+  // (innerHTML을 갈아끼워도 컨테이너 자신의 dataset은 남는다)
+  let page = Number(container.dataset.adminPage) || 0;
   const filterRow = document.createElement('tr');
   filterRow.className = 'admin-filter-row';
   const controls = []; // 열별 필터 컨트롤 (없으면 null)
@@ -87,6 +89,7 @@ function enhanceAdminTable(container) {
     const pages = Math.max(1, Math.ceil(matching.length / PAGE_SIZE));
     if (page >= pages) page = pages - 1;
     if (page < 0) page = 0;
+    container.dataset.adminPage = page; // 다시 그릴 때 복원용
     const shown = new Set(matching.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE));
     for (const row of bodyRows) row.hidden = !shown.has(row);
     pager.hidden = pages <= 1;
@@ -623,6 +626,7 @@ document.getElementById('aiLogCalendar')?.addEventListener('click', (e) => {
   }
   if (e.target.closest('.cal-clear')) {
     aiLogDate = null;
+    delete adminAiLog.dataset.adminPage; // 대상이 바뀌었으니 1페이지부터
     renderAiLogCalendar();
     loadAiLog();
     return;
@@ -630,6 +634,7 @@ document.getElementById('aiLogCalendar')?.addEventListener('click', (e) => {
   const day = e.target.closest('.cal-day');
   if (day && !day.disabled) {
     aiLogDate = aiLogDate === day.dataset.date ? null : day.dataset.date; // 같은 날 재클릭 = 해제
+    delete adminAiLog.dataset.adminPage; // 대상이 바뀌었으니 1페이지부터
     renderAiLogCalendar();
     loadAiLog();
   }
@@ -738,6 +743,7 @@ document.querySelectorAll('.ailog-tab').forEach(tab => {
     document.querySelectorAll('.ailog-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     aiLogVerdict = tab.dataset.verdict;
+    delete adminAiLog.dataset.adminPage; // 대상이 바뀌었으니 1페이지부터
     loadAiLog();
   });
 });
