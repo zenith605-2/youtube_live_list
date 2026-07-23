@@ -1970,17 +1970,44 @@ async function loadStreamsFromSnapshot() {
     streams = [...fresh.filter(r => !known.has(r.video_id)).map(mapRow), ...streams];
   }
 
-  // 델타 2: 투표수는 실시간이어야 한다. 0표인 행은 스냅샷 값 그대로라 받을 필요가 없다.
-  const { data: voted } = await sb.from('streams').select('video_id,upvote_count,downvote_count')
-    .or('upvote_count.gt.0,downvote_count.gt.0');
-  if (voted?.length) {
+  // 델타 2: 스냅샷 이후 수정된 행(카테고리·국가·태그·투표·상태 등)을 통째로 교체.
+  // updated_at은 sql/059의 트리거가 관리한다. 마이그레이션 전(컬럼 없음)이면 에러가 나므로
+  // 그때는 예전 방식(투표수만 갱신)으로 폴백한다.
+  let changedCount = 0;
+  const { data: changed, error: chErr } = await sb.from('streams').select(STREAM_COLUMNS)
+    .gt('updated_at', snap.generatedAt);
+  if (!chErr && changed?.length) {
     const byId = new Map(streams.map(s => [s.videoId, s]));
-    for (const r of voted) {
+    for (const r of changed) {
+      const idx = streams.findIndex(s => s.videoId === r.video_id);
+      const mapped = mapRow(r);
+      if (idx >= 0) { mapped.commentCount = streams[idx].commentCount; streams[idx] = mapped; }
+      else if (!byId.has(r.video_id)) streams.unshift(mapped);
+    }
+    changedCount = changed.length;
+  } else if (chErr) {
+    const { data: voted } = await sb.from('streams').select('video_id,upvote_count,downvote_count')
+      .or('upvote_count.gt.0,downvote_count.gt.0');
+    const byId = new Map(streams.map(s => [s.videoId, s]));
+    for (const r of voted || []) {
       const s = byId.get(r.video_id);
       if (s) { s.upvoteCount = r.upvote_count || 0; s.downvoteCount = r.downvote_count || 0; }
     }
   }
-  console.info(`streams: 스냅샷 ${snap.streams.length}건 (${snap.generatedAt}) + 신규 ${fresh?.length || 0}건`);
+
+  // 델타 3: 스냅샷 이후 삭제된 행 제거. 모든 관리자 삭제는 blocklist에 기록되므로
+  // 그 시각(deleted_stream_ids 뷰, sql/059)으로 걸러낸다. 이게 없으면 지운 카드가
+  // 다음 스냅샷이 구워질 때까지 하루 종일 "부활"한 것처럼 보인다.
+  let deletedCount = 0;
+  const { data: gone2, error: delErr } = await sb.from('deleted_stream_ids').select('video_id')
+    .gt('created_at', snap.generatedAt);
+  if (!delErr && gone2?.length) {
+    const goneSet = new Set(gone2.map(r => r.video_id));
+    const before = streams.length;
+    streams = streams.filter(s => !goneSet.has(s.videoId));
+    deletedCount = before - streams.length;
+  }
+  console.info(`streams: 스냅샷 ${snap.streams.length}건 (${snap.generatedAt}) + 신규 ${fresh?.length || 0}건, 수정 ${changedCount}건, 삭제 반영 ${deletedCount}건`);
 }
 
 // 스냅샷이 없거나 깨졌을 때만 쓰는 예전 경로 (배포 직후 첫 야간 작업 전 등)
