@@ -890,6 +890,27 @@ body {
 }
 .seo-links a:hover { border-color: var(--accent); color: var(--accent); }
 
+/* SEO 랜딩 페이지 하단 에디토리얼(카테고리·국가 소개, 데이터 사실, FAQ) — 그리드 아래 배치 */
+.seo-outro {
+  max-width: 1400px;
+  margin: 30px auto 10px;
+  padding: 0 24px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+.seo-outro h2 {
+  color: var(--text);
+  font-size: 1.12rem;
+  margin: 24px 0 8px;
+}
+.seo-outro h3 {
+  color: var(--text);
+  font-size: 0.98rem;
+  margin: 14px 0 4px;
+}
+.seo-outro p { margin: 6px 0; }
+
 .approve-all-btn {
   display: block;
   margin: 10px 24px 0;

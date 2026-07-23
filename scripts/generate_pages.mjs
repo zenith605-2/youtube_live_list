@@ -215,13 +215,133 @@ function linkRow(label, links) {
   return `<nav class="seo-links"><span class="seo-links-label">${escapeHtml(label)}:</span> ${links.join(' ')}</nav>`;
 }
 
+// ----- 페이지 하단 에디토리얼 -----
+// AdSense "thin content" 반려의 직접 원인: 페이지가 카드(임베드 링크)뿐이고 원본 산문이 없음.
+// 아래는 (1) 사람이 쓴 카테고리/국가 소개 (템플릿 아님, 페이지마다 고유),
+// (2) 실데이터에서 뽑는 사실 문단(채널 구성·실측 화질·조건 태그·최장 방송),
+// (3) FAQ + FAQPage 구조화 데이터. 전부 그리드 아래(.seo-outro)에 들어간다.
+const CATEGORY_NOTES = {
+  beach: `Beach cams are the comfort food of the live-cam world: waves on a loop, weather you can read at a glance, and a horizon that resets your attention span. Surfers use them to check swell before driving out, expats use them to look in on a hometown shore, and plenty of people just leave one open as a window they don't have. They are also the easiest way to compare seasons — the same strip of sand in July and January is two different worlds.`,
+  parking: `Parking lots and garages are where the classic fixed-CCTV look lives on: high angles, wide lenses, constant low-level motion. That makes them oddly watchable — and genuinely useful. Vehicle-detection and occupancy-counting models are usually trained and tested on exactly this perspective, so a steady public parking feed is one of the few places to see that footage without owning a camera.`,
+  traffic: `Traffic cams are the workhorses of public webcams — intersections, highway gantries and roundabouts streamed by cities and road authorities around the clock. Watch one long enough and you can read a whole city's rhythm: rush hour building, night deliveries, the odd near-miss. For computer-vision work they are the canonical test scene for vehicle tracking, counting and flow estimation.`,
+  harbor: `Harbor cams reward patience. Container ships slide in over twenty minutes, tugs fuss around them, ferries keep schedules you can set a clock by. Port authorities and waterfront hotels run most of these feeds, and ship-spotters pair them with AIS trackers to identify every vessel that passes.`,
+  mountain: `Mountain cams exist for two audiences: skiers checking snow before a trip, and everyone else watching clouds pour over a ridge at sunrise. Resorts run most of them, which means they tend to be well-maintained, high up, and pointed at the best view the operator could find. Time-lapse fans get more weather drama per hour here than any other category.`,
+  downtown: `Downtown cams are people-watching at scale: crosswalks, shopping streets, plazas framed from a second-story window. They are the fastest way to feel a city's pulse without being there — and the background audio of a busy street is half the appeal. Pedestrian-flow and crowd-density research leans heavily on exactly this kind of fixed street view.`,
+  dashcam: `Dashcam footage is the moving-camera counterpart to everything else on this site: forward-facing driving video across weather, traffic cultures and road quality that varies wildly by country. It is the standard raw material for lane-detection and driving-perception work, and as pure viewing it doubles as a road trip you don't have to drive.`,
+  wildlife: `Wildlife cams are the category people get attached to. Eagle nests with named chicks, backyard feeders with regulars, waterholes that fill at dusk — operators from conservation groups to hobbyists keep these running for years, and their comment sections become small communities. No other category rewards checking back daily quite like this one.`,
+  indoor: `Indoor feeds cover the spaces the other categories miss: shop counters, aquarium tanks, workshops, waiting rooms. Lighting is controlled and the framing is close, which makes them a different technical world from outdoor cams — and a useful one for anyone testing detection models under artificial light.`,
+  walk: `Walking tours are the one genre here where the camera moves like a person. Steady first-person footage through markets, old towns and back streets has become its own YouTube profession, and the good ones are shot in 4K with clean audio. If you want the texture of a city — pavement, signage, crowd noise — this is the closest thing to being there.`,
+  train: `Rail cams have one of the most devoted audiences on YouTube: level crossings, station platforms and trackside views where the payoff is a scheduled event you can wait for. Railfans keep timetables in the chat, and the long quiet stretches between trains are part of the appeal, not a bug.`,
+  river: `River cams are slow television in the best sense — barge traffic, changing water levels, birds working the banks. In flood season they turn practical fast: locals genuinely use these feeds to watch levels rise hour by hour.`,
+  plaza: `Public squares concentrate everything a street cam does into one frame: foot traffic, events, pigeons, weather. Because plazas host markets and festivals, the same camera can show a different scene every week — and for crowd-analysis work, few fixed views offer more natural variation.`,
+  park: `Park cams sit at the calm end of the spectrum: lawns, paths, dog walkers, seasons changing on the same row of trees. Municipalities run many of them as amenity cameras, which keeps them stable for years — good for watching, and good for anyone who needs a consistent outdoor baseline scene.`,
+  alley: `Alley and backstreet cams show the unglamorous side of the urban feed — service lanes, narrow passages, the occasional delivery bike. The framing is tight and the light is tricky, which is precisely why security-camera research cares about this setting more than the postcard views.`,
+  construction: `Construction cams are time-lapse machines. Developers mount them to document a build from groundbreaking to topping-out, so the archive matters as much as the live view: scrub back far enough and you can watch a tower assemble itself. Machinery detection and site-safety monitoring are the standard technical uses.`,
+  aerial: `Aerial and rooftop views trade detail for scope — whole districts, coastlines or valleys in one frame. They are the establishing shots of the webcam world, and the first place to look when weather is the thing you actually want to watch.`,
+  skyline: `Skyline cams are the postcard category: a city's silhouette from a tall building, running through golden hour into night. They are many people's default "leave it on" feed, and the day-night cycle on a good skyline cam is a lighting dataset all by itself.`,
+  coast: `Coastal cams cover the dramatic edges beaches leave out — cliffs, lighthouses, breakwaters taking storm swell. The draw is weather as spectacle: the same camera that shows a flat calm sea in summer earns its keep the first time a front rolls through.`,
+  resort: `Resort cams are marketing that happens to be genuinely pleasant to watch: pool decks, ski-lift bases, beachfront terraces maintained by hotels that want the view to look good year-round. Reliability is their quiet strength — an operator with a business reason rarely lets the camera go down.`,
+  avenue: `Avenue cams frame the long straight view — boulevards, main streets, tree-lined approaches where traffic and pedestrians share the frame. They sit between a traffic cam and a downtown cam: enough vehicles to be useful, enough sidewalk life to be watchable.`,
+  airport: `Airport cams serve one of YouTube's great niche audiences: planespotters. Runway views with ATC audio, taxiway pans, holds short of the threshold — regulars identify every type on sight and the chat reads like a logbook. Movement is scheduled, which makes these feeds unusually predictable to test against.`,
+  space: `The space category points up instead of out: night-sky cameras, aurora watchers, observatory feeds and launch streams. These cams trade constant motion for rare payoffs — a clear night, a pass, a launch window — and the communities around them treat every one as an event.`,
+  space_view: `The space category points up instead of out: night-sky cameras, aurora watchers, observatory feeds and launch streams. Rare payoffs, devoted audiences.`,
+};
+const COUNTRY_NOTES = {
+  JP: `Japan has arguably the densest public-webcam culture in the world. Municipalities, rail operators, hotels and volunteers keep official 24/7 cameras on river levels, level crossings, coastlines and Mt. Fuji from a dozen angles — a legacy of using live cameras for disaster awareness that doubles as some of the most reliable scenery streaming anywhere.`,
+  US: `The United States contributes the widest spread of any country here: eagle nests in Pennsylvania, Florida beach cams, city skylines, construction time-lapses and a deep bench of hobbyist operators. If a webcam genre exists, an American channel is probably running one of its best examples.`,
+  KR: `South Korea's public feeds skew official — city governments and broadcasters run stable cameras on beaches, ports and historic sites, and the country's excellent network infrastructure shows in stream quality.`,
+  ES: `Spain is one of Europe's strongest webcam countries, with city halls and tourism boards streaming plazas, beaches and traffic corridors. Vigo's municipal traffic-camera network alone accounts for a remarkable share of consistently reliable feeds.`,
+  IT: `Italian cams lean scenic by default — panoramic operators like Panocam blanket the country's coastlines, piazzas and mountain towns, meaning even the "traffic" cams often come with a postcard backdrop.`,
+  DE: `German feeds mix engineering and patience: harbor cams on the Elbe, kestrel nest boxes in Berlin apartment blocks, autobahn views and construction documentation, typically run with the reliability you would expect.`,
+  GB: `British cams cluster around wildlife and weather — nest boxes, garden feeders, harbor towns and seafronts where the changing sky is the main event.`,
+  NL: `The Netherlands streams its infrastructure: rail projects, canal crossings and port operations, including official project cameras from ProRail documenting station works live.`,
+  BR: `Brazilian beach cams are a genre of their own — tourism operators run 24/7 views of Praia Grande, Rio and the Santos coast where the beach itself is the town square.`,
+  TH: `Thai feeds capture street life the way few countries do: markets, temples, beach roads and the constant choreography of scooters, often run by resorts and local businesses.`,
+  ID: `Indonesian cams are dominated by official city CCTV — Yogyakarta's government network streams intersections around the clock, offering an unusually candid view of Southeast Asian urban traffic.`,
+  PH: `Philippine feeds tend to be community-run — barangay halls, basketball courts and neighborhood streets, closer to daily life than tourist framing.`,
+  TW: `Taiwan runs polished official cameras on harbors, mountain passes and city intersections, with typhoon season turning coastal cams into essential viewing.`,
+  FR: `French cams favor the scenic-municipal blend: harbor towns, ski resorts and city panoramas, generally well-kept and long-running.`,
+  CH: `Swiss cams are mountain cams — resorts and cable-car operators stream summits, valleys and rail lines with typically Swiss uptime.`,
+  AT: `Austrian feeds center on alpine resorts and valley towns, where the same camera earns its keep in ski season and green season alike.`,
+  NO: `Norwegian cams offer the northern specialties: aurora watchers, fjord panoramas and harbor views where daylight itself changes character by month.`,
+  GR: `Greek cams point at what you would hope — island harbors, old-town streets and seafronts, largely run by local tourism operators.`,
+  PT: `Portuguese feeds concentrate on the Atlantic: surf beaches, river mouths and Lisbon viewpoints where the weather rolls in on camera.`,
+  TR: `Turkish cams span two continents' worth of scenes — Istanbul streetscapes, coastal resorts and mountain towns, with a strong municipal presence.`,
+  IN: `Indian feeds skew toward temples, ghats and street scenes — some of the most crowded, visually dense public cameras anywhere, which is exactly their appeal.`,
+  AU: `Australian cams are beach infrastructure: surf lifesaving clubs and councils stream the coastline so thoroughly that checking the cam before a swim is routine.`,
+  CA: `Canadian feeds mix wilderness and weather — harbor towns, mountain resorts and wildlife cameras where winter is the co-star.`,
+  MX: `Mexican cams lean resort and plaza — beachfronts, malecóns and town squares run by hotels and municipalities.`,
+  CZ: `Czech feeds favor town squares and rail — historic plazas streamed year-round, plus a healthy planespotting and train-watching community.`,
+  PL: `Polish cams cover market squares, mountain resorts and the Baltic coast, with municipal operators keeping the core feeds stable.`,
+  HR: `Croatian cams are Adriatic cams — harbors, old towns and beaches streamed for a tourism audience that plans trips around them.`,
+};
+
+function topCounts(list, keyFn, n) {
+  const counts = new Map();
+  for (const s of list) { const k = keyFn(s); if (k) counts.set(k, (counts.get(k) || 0) + 1); }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, n);
+}
+
+// 실데이터에서 뽑는 사실 문단들 — 같은 문장 틀이라도 수치·채널·태그가 페이지마다 실제로 다르다.
+function factsParagraphs(list, placeName = '') {
+  const out = [];
+  const chans = topCounts(list, s => s.channel_title, 3).filter(([, n]) => n >= 3);
+  if (chans.length) {
+    out.push(`Much of this collection comes from dedicated operators — ${humanList(chans.map(([name, n]) => `${escapeHtml(name)} (${n} feeds)`))} — channels that keep cameras running year-round rather than posting one-off clips.`);
+  }
+  let measured = 0; const q = { hd2160: 0, hd1440: 0, hd1080: 0, hd720: 0 };
+  for (const s of list) if (s.max_quality) { measured++; if (q[s.max_quality] != null) q[s.max_quality]++; }
+  if (measured >= 5) {
+    const bits = [];
+    if (q.hd2160) bits.push(`${q.hd2160} in 4K`);
+    if (q.hd1440) bits.push(`${q.hd1440} in QHD`);
+    if (q.hd1080) bits.push(`${q.hd1080} in full HD`);
+    if (q.hd720) bits.push(`${q.hd720} in HD`);
+    if (bits.length) out.push(`Resolution figures here are measured, not scraped from titles: Camlisted records the real playback quality when a feed is opened. ${measured} of these feeds have been measured so far — ${humanList(bits)}.`);
+  }
+  const tagCount = new Map();
+  for (const s of list) for (const t of (s.tags || [])) tagCount.set(t, (tagCount.get(t) || 0) + 1);
+  const cond = ['night', 'rain', 'snow', 'fog', 'accident', 'fire'].map(t => [t, tagCount.get(t) || 0]).filter(([, n]) => n > 0);
+  if (cond.length >= 2) {
+    out.push(`Condition tags mark what a clip actually shows, so you can jump straight to a scenario: currently ${humanList(cond.map(([t, n]) => `${n} ${t} ${n === 1 ? 'scene' : 'scenes'}`))}${placeName ? ` tagged in ${escapeHtml(placeName)}` : ' tagged here'}.`);
+  }
+  const oldest = list.filter(s => s.content_type === 'live' && s.started_at)
+    .sort((a, b) => String(a.started_at).localeCompare(String(b.started_at)))[0];
+  if (oldest) {
+    const yr = new Date(oldest.started_at).getFullYear();
+    if (new Date().getFullYear() - yr >= 1) {
+      out.push(`The longest-running live camera in this set has been broadcasting continuously since ${yr} — “${escapeHtml(truncTitle(oldest.title))}”.`);
+    }
+  }
+  return out;
+}
+
+function faqBlock(qas) {
+  const html = `<h2>Frequently asked questions</h2>` +
+    qas.map(([q, a]) => `<h3>${escapeHtml(q)}</h3><p>${a}</p>`).join('');
+  const jsonLd = {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: qas.map(([q, a]) => ({
+      '@type': 'Question', name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a.replace(/<[^>]+>/g, '') },
+    })),
+  };
+  return { html, jsonLd };
+}
+
+function outroSection(heading, paras, faqHtml = '') {
+  const body = paras.filter(Boolean).map(p => `<p>${p}</p>`).join('');
+  if (!body && !faqHtml) return '';
+  return `<section class="seo-outro">${heading ? `<h2>${escapeHtml(heading)}</h2>` : ''}${body}${faqHtml}</section>\n`;
+}
+
 // 공유 미리보기 이미지: 페이지 첫 캠의 유튜브 썸네일 (자산 없이 실제 캠 미리보기가 뜸)
 function ogImageOf(entries) {
   const first = entries.find(s => s.video_id);
   return first ? `https://i.ytimg.com/vi/${first.video_id}/hqdefault.jpg` : '';
 }
 // 페이지 구조화 데이터: CollectionPage + BreadcrumbList (JSON-LD 배열)
-function collectionJsonLd({ name, url, description, crumbs }) {
+function collectionJsonLd({ name, url, description, crumbs, extra }) {
   const blocks = [{
     '@context': 'https://schema.org', '@type': 'CollectionPage',
     name, url: SITE + url, description,
@@ -233,13 +353,14 @@ function collectionJsonLd({ name, url, description, crumbs }) {
       itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: SITE + c.path })),
     });
   }
+  for (const b of extra || []) blocks.push(b);
   return JSON.stringify(blocks);
 }
 
 // 홈 전용 정적 색인 블록의 자리. 매 실행마다 이 구간을 통째로 갈아끼우므로 반복 생성해도 누적되지 않는다.
 const HOME_STATIC_RE = /<!--HOME_STATIC_START-->[\s\S]*?<!--HOME_STATIC_END-->/;
 
-function appPage(indexTemplate, { title, description, canonicalPath, h1, presetScript, staticGrid, intro = '', ogImage = '', jsonLd = '' }) {
+function appPage(indexTemplate, { title, description, canonicalPath, h1, presetScript, staticGrid, intro = '', outro = '', ogImage = '', jsonLd = '' }) {
   let html = indexTemplate;
   html = html.replace(/<title[^>]*>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`);
   html = html.replace(/(<meta name="description" content=")[^"]*(")/, `$1${escapeHtml(description)}$2`);
@@ -261,6 +382,8 @@ function appPage(indexTemplate, { title, description, canonicalPath, h1, presetS
   html = html.replace(/<h1[^>]*><a href="\.\/" class="site-title-link" data-i18n="site_h1">[^<]*<\/a><\/h1>/,
     `<h1><a href="./" class="site-title-link">${escapeHtml(h1)}</a></h1>`);
   html = html.replace('<main id="grid" class="grid">', `${intro}<main id="grid" class="grid">${staticGrid}`);
+  // 에디토리얼 본문은 그리드 아래에 둔다 — 방문자에겐 목록이 먼저, 크롤러에겐 원본 산문이 같은 문서에
+  if (outro) html = html.replace('</main>', `</main>\n${outro}`);
   html = html.replace(HOME_STATIC_RE, ''); // 홈 전용 정적 색인 블록 — 국가/카테고리 페이지엔 자체 staticGrid가 있으므로 제외
   html = html.replace('<script src="js/app.js">', `<script>${presetScript}</script>\n<script src="js/app.js">`);
   return html;
@@ -772,6 +895,20 @@ async function main() {
     const comboLinks = (combosByCountry.get(code) || []).slice(0, 12)
       .map(cb => `<a href="/country/${cb.slug}/${cb.catkey}.html">${cb.icon ? cb.icon + ' ' : ''}${escapeHtml(cb.label)}</a>`);
     const intro = introSection([p1, p2], [linkRow(`Categories in ${name}`, comboLinks)]);
+    const faq = faqBlock([
+      [`How many live webcams does ${name} have on Camlisted?`,
+        `${liveCount} live YouTube cameras from ${escapeHtml(name)} are listed right now, alongside ${videoCount} recorded clips. The exact number shifts daily — every feed is re-checked each night and dead streams drop off automatically.`],
+      [`What kinds of scenes can I watch in ${name}?`,
+        topCats.length
+          ? `The current mix is strongest in ${humanList(topCats.map(c => c.toLowerCase()))}.${ex.length ? ` Recent examples include ${humanList(ex)}.` : ''}`
+          : `A changing mix of live cameras and recorded footage, updated nightly.`],
+      ['Is it free to watch? Do I need an account?',
+        'Yes, and no account is needed. Every feed is a public YouTube stream embedded from its original channel — Camlisted links to sources and never hosts or downloads video.'],
+      ['How current is this list?',
+        'The whole catalogue is verified once a day: an automated job confirms each stream is still live or public, fills in missing details, and retires anything that has gone offline.'],
+    ]);
+    const outro = outroSection(`About live cams in ${name}`,
+      [COUNTRY_NOTES[code], ...factsParagraphs(list, name)], faq.html);
     const html = appPage(indexTemplate, {
       title: `${name} Live Cams & Webcams — Watch Free | Camlisted`,
       description: `${liveCount} live cams and ${videoCount} videos from ${name}${topCats.length ? ' — ' + topCats.slice(0, 3).join(', ').toLowerCase() : ''}. Free, no sign-up, verified daily.`,
@@ -780,10 +917,12 @@ async function main() {
       presetScript: `window.__presetCountry=${JSON.stringify(code)};`,
       staticGrid: entries.map(entryCard).join(''),
       intro,
+      outro,
       ogImage: ogImageOf(entries),
       jsonLd: collectionJsonLd({
         name: `Live Cams in ${name}`, url: `/country/${slug}.html`, description: `${list.length} live cams and videos from ${name}.`,
         crumbs: [{ name: 'Home', path: '/' }, { name: name, path: `/country/${slug}.html` }],
+        extra: [faq.jsonLd],
       }),
     });
     await writeFile(path.join(ROOT, 'country', `${slug}.html`), html);
@@ -813,6 +952,16 @@ async function main() {
     const comboLinks = (combosByCategory.get(cat.key) || []).slice(0, 15)
       .map(cb => `<a href="/country/${cb.slug}/${cb.catkey}.html">${escapeHtml(cb.name)}</a>`);
     const intro = introSection([p1, p2], [linkRow(`${label} cams by country`, comboLinks)]);
+    const faq = faqBlock([
+      [`How many ${lower} live cams are there?`,
+        `${liveCount} live ${lower} cameras are streaming right now, plus ${videoCount} recorded clips${topCountries.length ? `, with the deepest coverage in ${humanList(topCountries)}` : ''}. The list is re-verified every night.`],
+      [`What are ${lower} cams useful for?`,
+        `Beyond watching for its own sake, fixed public cameras of this kind are widely used as reference and test footage — checking how detection or tracking models behave on real scenes instead of curated datasets.`],
+      ['Is it free to watch? Do I need an account?',
+        'Yes, and no account is needed. Every feed is a public YouTube stream embedded from its original channel — Camlisted links to sources and never hosts or downloads video.'],
+    ]);
+    const outro = outroSection(`About ${lower} cams`,
+      [CATEGORY_NOTES[cat.key], ...factsParagraphs(list)], faq.html);
     const html = appPage(indexTemplate, {
       title: `${label} Live Cams — Free 24/7 Webcams | Camlisted`,
       description: `${liveCount} live ${lower} cams and ${videoCount} videos${topCountries.length ? ' from ' + topCountries.slice(0, 3).join(', ') : ''}. Curated from YouTube, verified daily, free to watch.`,
@@ -821,10 +970,12 @@ async function main() {
       presetScript: `window.__presetCategory=${JSON.stringify(cat.key)};`,
       staticGrid: entries.map(entryCard).join(''),
       intro,
+      outro,
       ogImage: ogImageOf(entries),
       jsonLd: collectionJsonLd({
         name: `${label} Live Cams`, url: `/c/${cat.key}.html`, description: `${list.length} ${lower} live cams and videos worldwide.`,
         crumbs: [{ name: 'Home', path: '/' }, { name: `${label} cams`, path: `/c/${cat.key}.html` }],
+        extra: [faq.jsonLd],
       }),
     });
     await writeFile(path.join(ROOT, 'c', `${cat.key}.html`), html);
@@ -854,6 +1005,10 @@ async function main() {
       `<a href="/c/${cb.catkey}.html">${escapeHtml(cb.label)} worldwide</a>`,
     ];
     const intro = introSection([p1, p2], [linkRow('See also', backLinks)]);
+    // 조합 페이지엔 데이터 사실만 넣는다 — 카테고리 소개문까지 복제하면 수십 페이지에 같은 문단이 반복돼
+    // 오히려 중복 콘텐츠가 된다. 사실 문단은 조합마다 수치·채널이 달라 고유하다.
+    const comboFacts = factsParagraphs(cb.list, cb.name);
+    const outro = comboFacts.length ? outroSection(`About ${lower} cams in ${cb.name}`, comboFacts) : '';
     const html = appPage(indexTemplate, {
       title: `${cb.name} ${cb.label} Live Cams | Camlisted`,
       description: `${cb.list.length} ${lower} live cams and videos in ${cb.name}, ${liveCount} live now. Free to watch, verified daily on Camlisted.`,
@@ -862,6 +1017,7 @@ async function main() {
       presetScript: `window.__presetCountry=${JSON.stringify(cb.code)};window.__presetCategory=${JSON.stringify(cb.catkey)};`,
       staticGrid: entries.map(entryCard).join(''),
       intro,
+      outro,
       ogImage: ogImageOf(entries),
       jsonLd: collectionJsonLd({
         name: `${cb.name} ${cb.label} Live Cams`, url: `/country/${cb.slug}/${cb.catkey}.html`, description: `${cb.list.length} ${lower} live cams in ${cb.name}.`,
