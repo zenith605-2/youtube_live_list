@@ -1156,6 +1156,7 @@ async function openVideoPanel(videoId, fallbackTitle = '') {
     if (data) { s = data; catlogStreamMap.set(videoId, data); }
   }
   videoPanel.hidden = false;
+  document.body.classList.add('video-panel-open'); // 본문을 패널 폭만큼 밀어 delete 버튼 등이 가려지지 않게
   videoPanelTitle.textContent = (s?.title || fallbackTitle || videoId).slice(0, 80);
   videoPanelFrame.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&playsinline=1`;
   const [catMap, tagMap] = await Promise.all([getCategoryLabelMap(), getTagLabelMap()]);
@@ -1167,6 +1168,7 @@ async function openVideoPanel(videoId, fallbackTitle = '') {
 
 function closeVideoPanel() {
   videoPanel.hidden = true;
+  document.body.classList.remove('video-panel-open');
   videoPanelFrame.src = 'about:blank'; // 재생 중지
 }
 document.getElementById('videoPanelClose')?.addEventListener('click', closeVideoPanel);

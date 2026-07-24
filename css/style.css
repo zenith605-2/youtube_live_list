@@ -1930,6 +1930,14 @@ body {
 @media (max-width: 900px) {
   .account-video-panel .panel-resize { display: none; }
 }
+/* 패널이 열려 있는 동안 본문을 패널 폭만큼 밀어내 관리자 테이블의 delete 버튼 등이
+   패널 밑에 가려지지 않게 한다. 폭은 --video-panel-w를 그대로 따라가므로 드래그 중에도 실시간 반영.
+   테이블 자체는 .admin-table-wrap의 overflow-x:auto가 이미 처리하므로, 밀려서 좁아지면 그쪽에서 가로 스크롤이 생긴다. */
+body.video-panel-open { padding-right: min(var(--video-panel-w, 420px), 100vw); }
+@media (max-width: 900px) {
+  /* 좁은 화면에서는 패널이 전체 폭을 덮으므로 본문까지 밀면 아예 안 보이게 된다 — 밀지 않음 */
+  body.video-panel-open { padding-right: 0; }
+}
 .account-video-panel-head {
   display: flex;
   align-items: center;
