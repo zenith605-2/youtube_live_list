@@ -86,19 +86,28 @@ jobs:
       # 커밋하므로, 그 비공개 저장소의 git 히스토리 자체가 "특정 날짜로 롤백" 역할을 한다 —
       # 날짜별 파일을 따로 관리할 필요가 없다. 두 시크릿이 없으면 조용히 건너뛴다.
       - name: Dump database
-        if: ${{ secrets.SUPABASE_DB_URL != '' && secrets.BACKUP_REPO_TOKEN != '' }}
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
+          # if: 에서 secrets 컨텍스트를 직접 못 써서 (GitHub Actions 파서가 거부함) 스크립트 안에서 체크한다.
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "SUPABASE_DB_URL 시크릿 없음 — 백업 건너뜀"
+            exit 0
+          fi
           # 러너에 미리 깔린 pg_dump 버전이 Supabase 서버 버전과 안 맞아 실패하는 걸 피하려고
           # postgres:16 공식 이미지 안의 pg_dump를 그대로 쓴다.
           docker run --rm postgres:16 pg_dump "$SUPABASE_DB_URL" --no-owner --no-privileges > db-backup.sql
           test -s db-backup.sql # 빈 파일이면 실패 처리 (깨진 백업을 조용히 커밋하지 않기 위해)
 
       - name: Push backup to private repo
-        if: ${{ secrets.SUPABASE_DB_URL != '' && secrets.BACKUP_REPO_TOKEN != '' }}
+        env:
+          BACKUP_REPO_TOKEN: ${{ secrets.BACKUP_REPO_TOKEN }}
         run: |
-          git clone --depth 1 https://x-access-token:${{ secrets.BACKUP_REPO_TOKEN }}@github.com/zenith605-2/camlisted-backups.git backup-repo
+          if [ -z "$BACKUP_REPO_TOKEN" ] || [ ! -s db-backup.sql ]; then
+            echo "BACKUP_REPO_TOKEN 시크릿 또는 덤프 파일 없음 — 백업 건너뜀"
+            exit 0
+          fi
+          git clone --depth 1 "https://x-access-token:${BACKUP_REPO_TOKEN}@github.com/zenith605-2/camlisted-backups.git" backup-repo
           mkdir -p backup-repo/backup
           mv db-backup.sql backup-repo/backup/latest.sql
           cd backup-repo
