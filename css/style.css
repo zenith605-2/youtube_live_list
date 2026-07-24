@@ -1955,6 +1955,12 @@ body.video-panel-open { padding-right: min(var(--video-panel-w, 420px), 100vw); 
 }
 .account-video-panel-player { aspect-ratio: 16 / 9; background: #000; }
 .account-video-panel-player iframe { width: 100%; height: 100%; border: 0; }
+/* 오른쪽 패널에서 지금 재생 중인 영상의 목록 행을 표시 — 표(<tr>)와 카드(<div>) 리스트 공통.
+   목록이 길 때 어떤 항목을 보고 있는지 스크롤해도 놓치지 않게 하기 위함. */
+.admin-table .admin-row.row-preview-active { background: rgba(255, 59, 59, 0.16); }
+.admin-row.row-preview-active { background: rgba(255, 59, 59, 0.16); border-color: var(--accent); }
+.admin-row.row-preview-active .panel-play-link { color: var(--accent); font-weight: 700; }
+
 .account-video-panel-meta {
   padding: 14px;
   display: flex;

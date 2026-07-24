@@ -89,10 +89,12 @@ const PAGE_CSS = `
   .globe-sel-label { position: absolute; top: 10px; left: 12px; z-index: 5; background: rgba(0,0,0,.7); border: 1px solid var(--accent); border-radius: 6px; padding: 4px 10px; color: #fff; font-size: 0.9rem; font-weight: 600; pointer-events: none; }
   .globe-bar { display: flex; gap: 12px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
   .random-btn { background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
-  .panel { position: fixed; right: 0; top: 0; bottom: 0; width: min(500px, 100%); z-index: 40; background: rgba(13,17,23,.97); border-left: 1px solid var(--border); padding: 16px; display: none; flex-direction: column; gap: 10px; }
+  .panel { position: fixed; right: 0; top: 0; bottom: 0; width: min(var(--panel-w, 500px), 100%); z-index: 40; background: rgba(13,17,23,.97); border-left: 1px solid var(--border); padding: 16px; display: none; flex-direction: column; gap: 10px; }
   .panel-resize { position: absolute; left: -3px; top: 0; bottom: 0; width: 8px; cursor: ew-resize; z-index: 5; }
   .panel-resize:hover { background: var(--accent); opacity: 0.5; }
   .panel.open { display: flex; }
+  /* 패널이 열린 동안 본문(지도·목록)을 패널 폭만큼 밀어내 가려지지 않게 — 드래그 중에도 --panel-w를 그대로 따라간다 */
+  body.panel-open { padding-right: min(var(--panel-w, 500px), 100vw); }
   .panel .close { position: absolute; top: 10px; right: 12px; background: none; border: 0; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
   .panel h2 { font-size: 1.1rem; color: #fff; padding-right: 30px; margin: 0; }
   .panel .sub { color: var(--muted); font-size: 0.85rem; }
@@ -124,6 +126,8 @@ const PAGE_CSS = `
     .panel { top: auto; bottom: 0; height: 85%; width: 100% !important; border-left: 0; border-top: 1px solid var(--border); }
     .panel .player { max-height: 34vh; }
     .panel-resize { display: none; }
+    /* 좁은 화면에선 패널이 하단 시트로 전체 폭을 덮으므로 본문까지 밀면 화면 밖으로 사라진다 — 밀지 않음 */
+    body.panel-open { padding-right: 0; }
   }
 `;
 
@@ -1461,6 +1465,7 @@ async function main() {
             globe.pointOfView({ lat: gc.lat, lng: gc.lng, altitude: alt }, 900);
           }
           panel.classList.add('open');
+          document.body.classList.add('panel-open');
           var gsl = document.getElementById('globeSelLabel');
           if (gsl) {
             var paint = function () { gsl.textContent = d.name + localTime(d.code); };
@@ -1518,6 +1523,7 @@ async function main() {
         }
         function closePanel() {
           panel.classList.remove('open');
+          document.body.classList.remove('panel-open');
           document.getElementById('player').innerHTML = '';
           var gsl = document.getElementById('globeSelLabel');
           if (gsl) gsl.hidden = true;
@@ -1554,21 +1560,24 @@ async function main() {
           });
         });
         (function () {
-          // 패널 좌우 폭 드래그로 조정 (기기별 저장) — 데스크톱만
-          var panel = document.getElementById('panel');
+          // 패널 좌우 폭 드래그로 조정 (기기별 저장) — 데스크톱만.
+          // panel.style.width 대신 --panel-w 커스텀 프로퍼티를 갱신한다: .panel과 body.panel-open의
+          // padding-right가 같은 값을 참조하므로, 드래그하는 동안 본문(지도·목록)도 실시간으로 따라 밀린다.
           var handle = document.getElementById('panelResize');
           var saved = localStorage.getItem('panelWidth');
-          if (saved && window.innerWidth > 900) panel.style.width = saved + 'px';
+          if (saved && window.innerWidth > 900) document.documentElement.style.setProperty('--panel-w', saved + 'px');
           var dragging = false;
           handle.addEventListener('mousedown', function (e) { dragging = true; e.preventDefault(); document.body.style.userSelect = 'none'; });
           window.addEventListener('mousemove', function (e) {
             if (!dragging) return;
-            panel.style.width = Math.max(320, Math.min(window.innerWidth - e.clientX, window.innerWidth - 80)) + 'px';
+            var w = Math.max(320, Math.min(window.innerWidth - e.clientX, window.innerWidth - 80));
+            document.documentElement.style.setProperty('--panel-w', w + 'px');
           });
           window.addEventListener('mouseup', function () {
             if (!dragging) return;
             dragging = false; document.body.style.userSelect = '';
-            localStorage.setItem('panelWidth', parseInt(panel.style.width, 10));
+            var w = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--panel-w'), 10);
+            if (w) localStorage.setItem('panelWidth', w);
           });
         })();
       </script>

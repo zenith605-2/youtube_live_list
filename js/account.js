@@ -1148,6 +1148,16 @@ async function getCategoryLabelMap() {
   return categoryLabelMap;
 }
 
+// 지금 패널에서 재생 중인 영상의 목록 행을 표시한다 — 같은 videoId가 여러 섹션/여러 행에
+// 걸쳐 있을 수 있으므로(예: 카테고리 로그에 같은 영상이 여러 번), 매칭되는 전부에 표시한다.
+function markPreviewActiveRow(videoId) {
+  document.querySelectorAll('.admin-row.row-preview-active').forEach(r => r.classList.remove('row-preview-active'));
+  if (!videoId) return;
+  document.querySelectorAll(`.panel-play-link[data-video-id="${CSS.escape(videoId)}"]`).forEach(link => {
+    link.closest('.admin-row')?.classList.add('row-preview-active');
+  });
+}
+
 async function openVideoPanel(videoId, fallbackTitle = '') {
   let s = catlogStreamMap.get(videoId);
   if (!s) {
@@ -1157,6 +1167,7 @@ async function openVideoPanel(videoId, fallbackTitle = '') {
   }
   videoPanel.hidden = false;
   document.body.classList.add('video-panel-open'); // 본문을 패널 폭만큼 밀어 delete 버튼 등이 가려지지 않게
+  markPreviewActiveRow(videoId);
   videoPanelTitle.textContent = (s?.title || fallbackTitle || videoId).slice(0, 80);
   videoPanelFrame.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&playsinline=1`;
   const [catMap, tagMap] = await Promise.all([getCategoryLabelMap(), getTagLabelMap()]);
@@ -1169,17 +1180,14 @@ async function openVideoPanel(videoId, fallbackTitle = '') {
 function closeVideoPanel() {
   videoPanel.hidden = true;
   document.body.classList.remove('video-panel-open');
+  markPreviewActiveRow(null);
   videoPanelFrame.src = 'about:blank'; // 재생 중지
 }
 document.getElementById('videoPanelClose')?.addEventListener('click', closeVideoPanel);
 
-// 프리뷰 패널이 열려 있을 때 바깥을 클릭하거나 Esc를 누르면 닫는다
-document.addEventListener('click', (e) => {
-  if (videoPanel.hidden) return;
-  if (e.target.closest('#videoPanel')) return;      // 패널 내부 클릭은 유지
-  if (e.target.closest('.panel-play-link')) return; // 다른 영상 열기 클릭은 openVideoPanel이 처리
-  closeVideoPanel();
-});
+// 바깥 클릭으로는 닫지 않는다 — 패널을 열어둔 채 같은 행의 카테고리/국가/조건 select를
+// 편집하려고 클릭하면 그 클릭이 "바깥 클릭"으로 잡혀 패널이 먼저 닫혀버리는 문제가 있었다.
+// 닫기는 X 버튼과 Esc로만.
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !videoPanel.hidden) closeVideoPanel();
 });
