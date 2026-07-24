@@ -1953,30 +1953,47 @@ body.video-panel-open { padding-right: min(var(--video-panel-w, 420px), 100vw); 
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.account-video-panel-player { aspect-ratio: 16 / 9; background: #000; }
+.account-video-panel-player { position: relative; aspect-ratio: 16 / 9; background: #000; }
 .account-video-panel-player iframe { width: 100%; height: 100%; border: 0; }
+/* 임베드 차단 영상: iframe 대신 썸네일 위에 유튜브 바로가기 버튼만 표시 */
+.video-panel-blocked {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  background: #000;
+}
+.video-panel-blocked[hidden] { display: none; }
+.video-panel-blocked img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.45;
+}
+.video-panel-yt-badge {
+  position: absolute; top: 8px; left: 8px; z-index: 1;
+  background: rgba(0, 0, 0, 0.75); color: #fff; font-size: 0.68rem; font-weight: 600;
+  padding: 3px 9px; border-radius: 999px;
+}
+.video-panel-yt-link {
+  position: relative; z-index: 1;
+  background: #ff0000; color: #fff; text-decoration: none; font-weight: 700;
+  padding: 9px 18px; border-radius: 999px; font-size: 0.85rem;
+}
+.video-panel-yt-link:hover { background: #cc0000; }
 /* 오른쪽 패널에서 지금 재생 중인 영상의 목록 행을 표시 — 표(<tr>)와 카드(<div>) 리스트 공통.
    목록이 길 때 어떤 항목을 보고 있는지 스크롤해도 놓치지 않게 하기 위함. */
 .admin-table .admin-row.row-preview-active { background: rgba(255, 59, 59, 0.16); }
 .admin-row.row-preview-active { background: rgba(255, 59, 59, 0.16); border-color: var(--accent); }
 .admin-row.row-preview-active .panel-play-link { color: var(--accent); font-weight: 700; }
 
-.account-video-panel-meta {
-  padding: 14px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.panel-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--card-bg);
-  font-size: 0.82rem;
-  color: var(--text);
-}
-.panel-badge-tag { color: var(--muted); }
+/* 패널 안에서 카테고리/국가/조건을 바로 수정 — 왼쪽 테이블의 ailog-cat-select 등과 같은 클래스를
+   재사용해 스타일이 자동으로 맞는다. 테이블 셀 안에 가두던 max-width는 패널에선 필요 없어 해제. */
+.video-panel-edit { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.video-panel-edit-row { display: flex; flex-direction: column; gap: 4px; }
+.video-panel-edit-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.video-panel-edit .ailog-country-select { max-width: none; min-width: 0; width: 100%; }
+.video-panel-edit .ailog-cat-select { font-size: 0.85rem; padding: 6px 8px; }
+.video-panel-edit .ailog-tags { gap: 6px; }
+.video-panel-edit .ailog-tag-chip { font-size: 0.75rem; padding: 4px 10px; }
+.video-panel-channel { color: var(--muted); font-size: 0.82rem; }
+
+.account-video-panel-meta { padding: 14px; }
 
 /* 계정/관리자 탭 */
 .account-tabs {

@@ -1106,6 +1106,19 @@ const videoPanel = document.getElementById('videoPanel');
 const videoPanelFrame = document.getElementById('videoPanelFrame');
 const videoPanelTitle = document.getElementById('videoPanelTitle');
 const videoPanelMeta = document.getElementById('videoPanelMeta');
+const videoPanelBlocked = document.getElementById('videoPanelBlocked');
+const videoPanelBlockedThumb = document.getElementById('videoPanelBlockedThumb');
+const videoPanelBlockedLink = document.getElementById('videoPanelBlockedLink');
+const videoPanelUrlInput = document.getElementById('videoPanelUrlInput');
+
+document.getElementById('videoPanelCopyBtn')?.addEventListener('click', async (e) => {
+  const btn = e.currentTarget;
+  try { await navigator.clipboard.writeText(videoPanelUrlInput.value); }
+  catch { videoPanelUrlInput.select(); document.execCommand('copy'); }
+  const original = btn.textContent;
+  btn.textContent = t('copy_done');
+  setTimeout(() => { btn.textContent = original; }, 1500);
+});
 
 // 패널 왼쪽 가장자리를 드래그해 폭 조절 (AI 검수 로그 등에서 썸네일이 작아 보기 힘들다는 요청).
 // globe.html/browse.html의 동일 패턴(panelWidth)과 저장 키를 맞춰, 기기당 한 번만 조절하면
@@ -1159,29 +1172,105 @@ function markPreviewActiveRow(videoId) {
 }
 
 async function openVideoPanel(videoId, fallbackTitle = '') {
-  let s = catlogStreamMap.get(videoId);
-  if (!s) {
-    // 카테고리 로그 외(예: AI 검수 로그)에서 연 경우: 스트림 정보를 즉석 조회해 캐시
-    const { data } = await sb.from('streams').select('video_id, title, category, tags, content_type').eq('video_id', videoId).maybeSingle();
-    if (data) { s = data; catlogStreamMap.set(videoId, data); }
-  }
+  // 카테고리/국가/조건을 패널에서 직접 수정할 수 있어야 하므로, 캐시된 부분 정보(catlogStreamMap)에
+  // 기대지 않고 항상 최신 전체 필드를 조회한다 — 캐시에는 country/embeddable/channel_title이 없다.
+  const { data: s } = await sb.from('streams')
+    .select('video_id, title, channel_title, category, tags, content_type, country, embeddable, thumbnail')
+    .eq('video_id', videoId).maybeSingle();
+  // 스트림이 이미 삭제된 경우(예: 오래된 AI 로그 항목)엔 캐시에 남은 제목만이라도 보여준다
+  const cachedTitle = s ? null : catlogStreamMap.get(videoId)?.title;
+
   videoPanel.hidden = false;
   document.body.classList.add('video-panel-open'); // 본문을 패널 폭만큼 밀어 delete 버튼 등이 가려지지 않게
   markPreviewActiveRow(videoId);
-  videoPanelTitle.textContent = (s?.title || fallbackTitle || videoId).slice(0, 80);
-  videoPanelFrame.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&playsinline=1`;
+  videoPanelTitle.textContent = (s?.title || cachedTitle || fallbackTitle || videoId).slice(0, 80);
+  videoPanelUrlInput.value = `https://www.youtube.com/watch?v=${videoId}`;
+
+  // 임베드가 차단된 영상(저작권 관리 등)은 iframe이 유튜브 자체 에러 화면만 띄우므로,
+  // 아예 iframe을 열지 않고 썸네일 + 유튜브 바로가기로 대체한다 (메인 사이트 openCard와 같은 판단 기준).
+  if (s && !s.embeddable) {
+    videoPanelFrame.src = 'about:blank';
+    videoPanelBlockedThumb.src = s.thumbnail || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+    videoPanelBlockedLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+    videoPanelBlocked.hidden = false;
+  } else {
+    videoPanelBlocked.hidden = true;
+    videoPanelFrame.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&mute=1&playsinline=1`;
+  }
+
+  if (!s) {
+    // 삭제된 영상: 수정할 대상이 없음
+    videoPanelMeta.innerHTML = `<span class="admin-meta">–</span>`;
+    return;
+  }
   const [catMap, tagMap] = await Promise.all([getCategoryLabelMap(), getTagLabelMap()]);
-  const cat = s?.category ? catMap.get(s.category) : null;
-  const catHtml = cat ? `<span class="panel-badge">${escapeHtml(cat.icon)} ${escapeHtml(cat.label)}</span>` : '';
-  const tagHtml = (s?.tags || []).map(tg => `<span class="panel-badge panel-badge-tag">${escapeHtml(tagMap.get(tg) || tg)}</span>`).join('');
-  videoPanelMeta.innerHTML = catHtml + tagHtml || `<span class="admin-meta">–</span>`;
+  const catOptions = [...catMap.entries()]
+    .map(([k, v]) => `<option value="${escapeHtml(k)}" ${s.category === k ? 'selected' : ''}>${escapeHtml(v.icon)} ${escapeHtml(v.label)}</option>`)
+    .join('');
+  const tagsRow = s.content_type === 'video'
+    ? `<div class="video-panel-edit-row">
+         <span class="video-panel-edit-label">${escapeHtml(t('admin_col_conditions'))}</span>
+         <div class="ailog-tags" data-video-id="${escapeHtml(videoId)}">
+           ${[...tagMap.entries()].map(([k, label]) =>
+             `<span class="ailog-tag-chip ${(s.tags || []).includes(k) ? 'on' : ''}" data-video-id="${escapeHtml(videoId)}" data-tag="${escapeHtml(k)}">${escapeHtml(label)}</span>`).join('')}
+         </div>
+       </div>`
+    : '';
+  videoPanelMeta.innerHTML = `
+    <div class="video-panel-edit">
+      ${s.channel_title ? `<div class="video-panel-channel">${escapeHtml(s.channel_title)}</div>` : ''}
+      <div class="video-panel-edit-row">
+        <span class="video-panel-edit-label">${escapeHtml(t('admin_col_category'))}</span>
+        <select class="ailog-cat-select" data-video-id="${escapeHtml(videoId)}">${catOptions}</select>
+      </div>
+      <div class="video-panel-edit-row">
+        <span class="video-panel-edit-label">${escapeHtml(t('filter_country'))}</span>
+        <select class="ailog-cat-select ailog-country-select" data-video-id="${escapeHtml(videoId)}">${ailogCountryOptions(s.country || '')}</select>
+      </div>
+      ${tagsRow}
+    </div>`;
 }
+
+// 패널 안 카테고리/국가 select 변경 — 표(ailog 등)의 같은 RPC를 그대로 재사용
+videoPanelMeta.addEventListener('change', async (e) => {
+  const countrySel = e.target.closest('.ailog-country-select');
+  if (countrySel) {
+    countrySel.disabled = true;
+    const { error } = await sb.rpc('set_stream_country', { p_video_id: countrySel.dataset.videoId, p_country: countrySel.value || null });
+    countrySel.disabled = false;
+    if (error) { alert(error.message); return; }
+    countrySel.classList.add('saved');
+    setTimeout(() => countrySel.classList.remove('saved'), 1000);
+    return;
+  }
+  const sel = e.target.closest('.ailog-cat-select');
+  if (!sel) return;
+  sel.disabled = true;
+  const { error } = await sb.rpc('set_stream_category', { p_video_id: sel.dataset.videoId, p_category: sel.value });
+  sel.disabled = false;
+  if (error) { alert(error.message); return; }
+  sel.classList.add('saved');
+  setTimeout(() => sel.classList.remove('saved'), 1000);
+});
+
+// 패널 안 조건 태그 칩 토글 — 낙관적 갱신, 실패 시 되돌림
+videoPanelMeta.addEventListener('click', async (e) => {
+  const chip = e.target.closest('.ailog-tag-chip');
+  if (!chip) return;
+  const container = chip.closest('.ailog-tags');
+  chip.classList.toggle('on');
+  const next = [...container.querySelectorAll('.ailog-tag-chip.on')].map(c => c.dataset.tag);
+  const { error } = await sb.rpc('set_stream_tags', { p_video_id: chip.dataset.videoId, p_tags: next });
+  if (error) { chip.classList.toggle('on'); alert(error.message); }
+});
 
 function closeVideoPanel() {
   videoPanel.hidden = true;
   document.body.classList.remove('video-panel-open');
   markPreviewActiveRow(null);
   videoPanelFrame.src = 'about:blank'; // 재생 중지
+  videoPanelBlocked.hidden = true;
+  videoPanelBlockedThumb.src = '';
 }
 document.getElementById('videoPanelClose')?.addEventListener('click', closeVideoPanel);
 
