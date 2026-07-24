@@ -2263,9 +2263,22 @@ body.video-panel-open { padding-right: min(var(--video-panel-w, 420px), 100vw); 
   font-size: 1.1rem;
 }
 
+/* 국가별 통계처럼 길어지기 쉬운 표는 기본 접힘 — 네이티브 <details>라 별도 JS 없이 동작 */
+.stats-collapsible { margin: 28px 0 10px; }
+.stats-collapsible summary.stats-subheading {
+  margin: 0 0 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.stats-collapsible summary.stats-subheading:hover { color: var(--accent); }
+.stats-collapsible[open] summary.stats-subheading { margin-bottom: 14px; }
+
 .stats-page {
   max-width: 1200px; /* 통계 표(10컬럼)가 720px 약관용 폭엔 안 맞아서 넓게 */
 }
+
+/* 달력에서 날짜를 클릭해 해당 페이지로 이동했을 때, 그 행을 잠깐 강조 */
+.stats-row-flash { background: rgba(255, 59, 59, 0.22); transition: background 1.4s ease; }
 
 .stats-table .ip-cell {
   word-break: break-all; /* IPv6 같은 긴 주소가 표를 밀어내지 않게 */

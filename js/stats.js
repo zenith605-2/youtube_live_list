@@ -9,6 +9,52 @@ const statsSummary = document.getElementById('statsSummary');
 const statsTableBody = document.getElementById('statsTableBody');
 
 const DAYS_TO_SHOW = 30;
+const PAGE_SIZE = 10;
+
+// 여러 표(일일 집계/재방문자/최근 방문자)가 전부 "N개씩 페이지네이션"이 필요해서 하나로 통일.
+// account.js의 renderVisitorPage와 같은 패턴 — 행 HTML을 캐시해두고 슬라이스만 다시 그린다.
+function makePager(tbodyId, pageSize = PAGE_SIZE) {
+  const state = { page: 0, rows: [] };
+  function render() {
+    const body = document.getElementById(tbodyId);
+    if (!body) return;
+    const pages = Math.max(1, Math.ceil(state.rows.length / pageSize));
+    if (state.page >= pages) state.page = pages - 1;
+    if (state.page < 0) state.page = 0;
+    body.innerHTML = state.rows.slice(state.page * pageSize, (state.page + 1) * pageSize).join('');
+    let pager = document.getElementById(tbodyId + 'Pager');
+    if (!pager) {
+      pager = document.createElement('div');
+      pager.id = tbodyId + 'Pager';
+      pager.className = 'admin-pager';
+      body.closest('.stats-table-wrap').after(pager);
+      pager.addEventListener('click', (e) => {
+        const b = e.target.closest('.pager-btn');
+        if (!b || b.disabled) return;
+        state.page += Number(b.dataset.nav);
+        render();
+      });
+    }
+    pager.hidden = pages <= 1;
+    pager.innerHTML = `
+      <button type="button" class="pager-btn" data-nav="-1" ${state.page === 0 ? 'disabled' : ''}>◀</button>
+      <span class="pager-info">${state.page + 1} / ${pages} · ${state.rows.length}</span>
+      <button type="button" class="pager-btn" data-nav="1" ${state.page === pages - 1 ? 'disabled' : ''}>▶</button>`;
+  }
+  return {
+    setRows(rows) { state.rows = rows; state.page = 0; render(); },
+    gotoPage(p) { state.page = p; render(); },
+    get pageCount() { return Math.max(1, Math.ceil(state.rows.length / pageSize)); },
+  };
+}
+
+// 저장/필터 변경 등 즉시 반응을 보여줄 때 쓰는 짧은 강조 깜빡임 (계정 페이지의 .saved 패턴과 같은 취지)
+function flashRow(selector) {
+  const el = document.querySelector(selector);
+  if (!el) return;
+  el.classList.add('stats-row-flash');
+  setTimeout(() => el.classList.remove('stats-row-flash'), 1600);
+}
 
 function escapeHtml(str) {
   return String(str ?? '').replace(/[&<>"']/g, c => (
@@ -22,6 +68,52 @@ async function isAdminUser() {
   const { data } = await sb.from('profiles').select('is_admin').eq('id', session.user.id).maybeSingle();
   return !!data?.is_admin;
 }
+
+const dailyPager = makePager('statsTableBody');
+let dailyCalMonth = new Date();
+let dailyDatesSet = new Set(); // 데이터가 있는 날짜(YYYY-MM-DD) — 달력에 표시용
+let dailySortedDates = []; // 최신순 정렬된 날짜 목록 — 달력 클릭 시 몇 페이지인지 계산용
+
+// 계정 페이지 AI 로그 달력과 같은 구조(cal-head/cal-grid/cal-day 등 CSS 재사용).
+// 데이터가 있는 날만 클릭 가능하며, 클릭하면 그 날짜가 있는 페이지로 이동 + 해당 행을 잠깐 강조한다.
+function renderDailyCalendar() {
+  const el = document.getElementById('dailyStatsCalendar');
+  if (!el) return;
+  const y = dailyCalMonth.getFullYear();
+  const m = dailyCalMonth.getMonth();
+  const startDow = new Date(y, m, 1).getDay();
+  const days = new Date(y, m + 1, 0).getDate();
+  const monthLabel = new Date(y, m, 1).toLocaleString(undefined, { year: 'numeric', month: 'long' });
+  const wd = [...Array(7)].map((_, i) => new Date(2023, 0, 1 + i).toLocaleString(undefined, { weekday: 'narrow' }));
+  let html = `<div class="cal-head">
+    <button type="button" class="cal-nav" data-nav="-1">◀</button>
+    <span class="cal-title">${escapeHtml(monthLabel)}</span>
+    <button type="button" class="cal-nav" data-nav="1">▶</button>
+  </div><div class="cal-grid">`;
+  html += wd.map(w => `<span class="cal-wd">${escapeHtml(w)}</span>`).join('');
+  for (let i = 0; i < startDow; i++) html += '<span></span>';
+  for (let d = 1; d <= days; d++) {
+    const key = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const has = dailyDatesSet.has(key);
+    html += `<button type="button" class="cal-day${has ? ' has' : ''}" data-date="${key}" ${has ? '' : 'disabled'}>${d}</button>`;
+  }
+  el.innerHTML = html + '</div>';
+}
+
+document.getElementById('dailyStatsCalendar')?.addEventListener('click', (e) => {
+  const nav = e.target.closest('.cal-nav');
+  if (nav) {
+    dailyCalMonth = new Date(dailyCalMonth.getFullYear(), dailyCalMonth.getMonth() + Number(nav.dataset.nav), 1);
+    renderDailyCalendar();
+    return;
+  }
+  const day = e.target.closest('.cal-day');
+  if (!day || day.disabled) return;
+  const idx = dailySortedDates.indexOf(day.dataset.date);
+  if (idx === -1) return;
+  dailyPager.gotoPage(Math.floor(idx / PAGE_SIZE));
+  setTimeout(() => flashRow(`#statsTableBody tr[data-date="${day.dataset.date}"]`), 50);
+});
 
 async function loadStats() {
   const [dailyRes, visitRes, signupRes, durationRes, streamCountRes, profileCountRes, pendingRes, offlineRes, visibleRes, visitStatsRes] = await Promise.all([
@@ -64,12 +156,17 @@ async function loadStats() {
   const dates = [...allDates].sort().reverse().slice(0, DAYS_TO_SHOW);
   const dailyByDate = new Map(daily.map(r => [r.stat_date, r]));
 
-  statsTableBody.innerHTML = dates.map(d => {
+  dailyDatesSet = new Set(dates);
+  dailySortedDates = dates; // 이미 최신순 정렬돼 있음
+  dailyCalMonth = dates.length ? new Date(dates[0]) : new Date();
+  renderDailyCalendar();
+
+  dailyPager.setRows(dates.map(d => {
     const s = dailyByDate.get(d);
     const dur = durationByDate.get(d);
     const dash = '<td class="stats-dash">–</td>';
     return `
-      <tr>
+      <tr data-date="${escapeHtml(d)}">
         <td>${escapeHtml(d)}</td>
         ${s ? `<td>${s.existing_count}</td><td>${s.valid_count}</td><td>${s.offline_count}</td><td>${s.new_count}</td><td>${s.deleted_count}</td>` : dash.repeat(5)}
         <td>${signupsByDate.get(d) ?? 0}</td>
@@ -78,7 +175,10 @@ async function loadStats() {
         <td>${fmtDur(dur?.median_seconds)}</td>
       </tr>
     `;
-  }).join('') || '<tr><td colspan="10">No data yet — the first row appears after the next daily update run.</td></tr>';
+  }));
+  if (!dates.length) {
+    statsTableBody.innerHTML = '<tr><td colspan="10">No data yet — the first row appears after the next daily update run.</td></tr>';
+  }
 
   const totalStreams = streamCountRes.count ?? '?';
   const totalUsers = profileCountRes.count ?? '?';
@@ -233,34 +333,7 @@ function fmtStay(secs) {
   return m ? `${m}m ${s}s` : `${s}s`;
 }
 
-let visitorPage = 0;
-const VISITOR_PAGE_SIZE = 10;
-let visitorRowsHtml = []; // 행 HTML 캐시 (페이지 전환 시 재조회 없이 슬라이스)
-
-function renderVisitorPage() {
-  const body = document.getElementById('visitorTableBody');
-  const pages = Math.max(1, Math.ceil(visitorRowsHtml.length / VISITOR_PAGE_SIZE));
-  if (visitorPage >= pages) visitorPage = pages - 1;
-  body.innerHTML = visitorRowsHtml.slice(visitorPage * VISITOR_PAGE_SIZE, (visitorPage + 1) * VISITOR_PAGE_SIZE).join('');
-  let pager = document.getElementById('visitorPager');
-  if (!pager) {
-    pager = document.createElement('div');
-    pager.id = 'visitorPager';
-    pager.className = 'admin-pager';
-    body.closest('.stats-table-wrap').after(pager);
-    pager.addEventListener('click', (e) => {
-      const b = e.target.closest('.pager-btn');
-      if (!b || b.disabled) return;
-      visitorPage += Number(b.dataset.nav);
-      renderVisitorPage();
-    });
-  }
-  pager.hidden = pages <= 1;
-  pager.innerHTML = `
-    <button type="button" class="pager-btn" data-nav="-1" ${visitorPage === 0 ? 'disabled' : ''}>◀</button>
-    <span class="pager-info">${visitorPage + 1} / ${pages} · ${visitorRowsHtml.length}</span>
-    <button type="button" class="pager-btn" data-nav="1" ${visitorPage === pages - 1 ? 'disabled' : ''}>▶</button>`;
-}
+const visitorPager = makePager('visitorTableBody');
 
 async function loadRecentVisitors() {
   const body = document.getElementById('visitorTableBody');
@@ -297,7 +370,7 @@ async function loadRecentVisitors() {
   const fmtTime = (ts) => new Date(ts).toLocaleString('ko-KR', {
     timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
   });
-  visitorRowsHtml = data.map(r => `
+  visitorPager.setRows(data.map(r => `
     <tr>
       <td>${fmtTime(r.created_at)}</td>
       <td>${escapeHtml(r.country || '–')}</td>
@@ -306,10 +379,10 @@ async function loadRecentVisitors() {
       <td>${escapeHtml((r.visitor_key || '').slice(0, 8))}</td>
       <td>${fmtStay(stayByKeyDate.get(`${r.visitor_key}|${kstDateOf(r.created_at)}`))}</td>
     </tr>
-  `);
-  visitorPage = 0;
-  renderVisitorPage();
+  `));
 }
+
+const returningPager = makePager('returningTableBody');
 
 // IP 기준 재방문자: 같은 IP가 서로 다른 날짜에 2번 이상 방문한 목록 (방문 일수 많은 순)
 async function loadReturningVisitors() {
@@ -339,14 +412,14 @@ async function loadReturningVisitors() {
     body.innerHTML = '<tr><td colspan="5">No returning visitors yet (same IP on 2+ days).</td></tr>';
     return;
   }
-  body.innerHTML = rows.map((r, i) => `
+  returningPager.setRows(rows.map((r, i) => `
     <tr>
       <td>${i + 1}</td>
       <td class="ip-cell">${escapeHtml(r.ip)}</td>
       <td>${escapeHtml(r.country)}</td>
       <td><strong>${r.days}</strong></td>
       <td>${escapeHtml(r.first)} → ${escapeHtml(r.last)}</td>
-    </tr>`).join('');
+    </tr>`));
 }
 
 async function init() {
@@ -356,7 +429,8 @@ async function init() {
   }
   statsGate.hidden = true;
   statsContent.hidden = false;
-  await Promise.all([loadStats(), loadRecentVisitors(), loadSourceStats(), loadCountryStats(), loadReturningVisitors(), loadTodayTopIps()]);
+  // 실제 화면 순서(달력+일일집계 → Today's Top IPs → Traffic Sources → 국가별(접힘) → 재방문자 → 최근 방문자)와 맞춰 나열
+  await Promise.all([loadStats(), loadTodayTopIps(), loadSourceStats(), loadCountryStats(), loadReturningVisitors(), loadRecentVisitors()]);
 }
 
 init();

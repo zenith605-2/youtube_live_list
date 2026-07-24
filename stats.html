@@ -6,7 +6,7 @@
 <title>Daily Stats - Camlisted</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="css/style.css?v=20260722a">
+<link rel="stylesheet" href="css/style.css?v=20260724a">
 </head>
 <body>
 <header class="site-header">
@@ -21,6 +21,7 @@
 
   <div id="statsContent" hidden>
     <div class="stats-summary" id="statsSummary"></div>
+    <div id="dailyStatsCalendar" class="ailog-calendar"></div>
     <div class="stats-table-wrap">
       <table class="stats-table">
         <thead>
@@ -40,37 +41,7 @@
         <tbody id="statsTableBody"></tbody>
       </table>
     </div>
-    <p class="stats-note">"Existing/Valid/Offline/New/Deleted" are recorded by the daily midnight-KST update job (from the day it first runs after this feature was added). Signups and Visitors are counted live from the database.</p>
-
-    <h2 class="stats-subheading">Traffic Sources</h2>
-    <p class="stats-note">Where visitors came from on their first visit (reddit, google, direct, etc.). Google Search Console only shows google search — this shows everything else too. Sorted by last 7 days; the bar shows the all-time (90-day) share.</p>
-    <div class="stats-table-wrap">
-      <table class="stats-table">
-        <thead>
-          <tr>
-            <th>Source</th>
-            <th>Today</th>
-            <th>7 days</th>
-            <th style="width:45%">All (90d) · share</th>
-          </tr>
-        </thead>
-        <tbody id="sourceTableBody"></tbody>
-      </table>
-    </div>
-
-    <h2 class="stats-subheading">Visitors by Country (all time)</h2>
-    <div class="stats-table-wrap">
-      <table class="stats-table">
-        <thead>
-          <tr>
-            <th>Country</th>
-            <th>Visits</th>
-            <th style="width:50%">Share</th>
-          </tr>
-        </thead>
-        <tbody id="countryTableBody"></tbody>
-      </table>
-    </div>
+    <p class="stats-note">"Existing/Valid/Offline/New/Deleted" are recorded by the daily midnight-KST update job (from the day it first runs after this feature was added). Signups and Visitors are counted live from the database. Click a marked day on the calendar to jump to it.</p>
 
     <h2 class="stats-subheading">Today's Top IPs</h2>
     <p class="stats-note">Most active IPs today. A single IP with many hits usually means a crawler or repeated visits from one device (e.g. private-window testing) rather than real traffic — that is what inflates the daily count.</p>
@@ -89,6 +60,38 @@
         <tbody id="todayIpTableBody"></tbody>
       </table>
     </div>
+
+    <h2 class="stats-subheading">Traffic Sources</h2>
+    <p class="stats-note">Where visitors came from on their first visit (reddit, google, direct, etc.). Google Search Console only shows google search — this shows everything else too. Sorted by last 7 days; the bar shows the all-time (90-day) share.</p>
+    <div class="stats-table-wrap">
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Today</th>
+            <th>7 days</th>
+            <th style="width:45%">All (90d) · share</th>
+          </tr>
+        </thead>
+        <tbody id="sourceTableBody"></tbody>
+      </table>
+    </div>
+
+    <details class="stats-collapsible">
+      <summary class="stats-subheading">Visitors by Country (all time)</summary>
+      <div class="stats-table-wrap">
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Visits</th>
+              <th style="width:50%">Share</th>
+            </tr>
+          </thead>
+          <tbody id="countryTableBody"></tbody>
+        </table>
+      </div>
+    </details>
 
     <h2 class="stats-subheading">Returning Visitors (by IP)</h2>
     <p class="stats-note">Same IP that showed up on 2+ different days, most visits first. Note: one IP can be several people (offices, mobile carriers), so treat this as a rough loyalty signal.</p>
@@ -128,6 +131,6 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/stats.js?v=20260722a"></script>
+<script src="js/stats.js?v=20260724a"></script>
 </body>
 </html>
