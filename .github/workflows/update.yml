@@ -95,8 +95,10 @@ jobs:
             exit 0
           fi
           # 러너에 미리 깔린 pg_dump 버전이 Supabase 서버 버전과 안 맞아 실패하는 걸 피하려고
-          # postgres:16 공식 이미지 안의 pg_dump를 그대로 쓴다.
-          docker run --rm postgres:16 pg_dump "$SUPABASE_DB_URL" --no-owner --no-privileges > db-backup.sql
+          # postgres:17 공식 이미지 안의 pg_dump를 그대로 쓴다. pg_dump는 자기보다 최신 버전 서버는
+          # 덤프를 거부하는데, 실제로 Supabase가 17.6을 쓰고 있는 걸 이번에 확인했다 (16으로 시도했다가
+          # "server version mismatch"로 실패). 같은 메이저 버전이면 마이너 차이는 문제없다.
+          docker run --rm postgres:17 pg_dump "$SUPABASE_DB_URL" --no-owner --no-privileges > db-backup.sql
           test -s db-backup.sql # 빈 파일이면 실패 처리 (깨진 백업을 조용히 커밋하지 않기 위해)
 
       - name: Push backup to private repo
