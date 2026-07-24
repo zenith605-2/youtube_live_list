@@ -226,21 +226,30 @@ async function getVideoInfo(videoIds) {
   return map;
 }
 
-// content_type에 따라 "지금도 유효한지" 판단 기준이 다름: live는 방송 중인지, video는 공개 상태인지
+// 라이브가 다시보기(VOD) 저장 없이 끝나면 privacyStatus는 public으로 남지만 재생 가능한 콘텐츠가
+// 없다 — 이때 contentDetails.duration이 0(P0D 등, parseDurationSeconds가 null 반환) 또는 누락으로
+// 온다. "공개 상태"만으로는 이 반쪽짜리 영상을 걸러낼 수 없어 재생시간까지 확인한다.
+function hasPlayableDuration(info) {
+  const secs = parseDurationSeconds(info?.contentDetails?.duration);
+  return secs != null && secs > 0;
+}
+
+// content_type에 따라 "지금도 유효한지" 판단 기준이 다름: live는 방송 중인지, video는 공개 + 재생 가능인지
 function isValidFor(contentType, info) {
   if (!info) return false;
   if (contentType === 'video') {
-    return info.status?.privacyStatus === 'public' || info.status?.privacyStatus === 'unlisted';
+    return (info.status?.privacyStatus === 'public' || info.status?.privacyStatus === 'unlisted') && hasPlayableDuration(info);
   }
   return info.snippet?.liveBroadcastContent === 'live';
 }
 
 // API 응답으로 실제 content_type을 판별한다. (등록 시 유저가 라이브/영상을 잘못 골랐어도 여기서 교정)
-// 지금 방송 중이면 'live', 아니면서 공개/미등록 영상이면 'video', 둘 다 아니면(비공개·삭제·종료) null.
+// 지금 방송 중이면 'live', 아니면서 공개/미등록 + 재생 가능한 영상이면 'video',
+// 그 외(비공개·삭제·종료했지만 다시보기 없음)는 null.
 function trueContentType(info) {
   if (!info) return null;
   if (info.snippet?.liveBroadcastContent === 'live') return 'live';
-  if (info.status?.privacyStatus === 'public' || info.status?.privacyStatus === 'unlisted') return 'video';
+  if ((info.status?.privacyStatus === 'public' || info.status?.privacyStatus === 'unlisted') && hasPlayableDuration(info)) return 'video';
   return null;
 }
 
